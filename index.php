@@ -1,54 +1,220 @@
 <?php 
 $page_title = "Rs JHC Tasikmalaya | Home";
-require_once "public/layout/public_header.php"; 
-echo "<!-- DEBUG: PHP Execution Reached Here -->";
+
+if (file_exists("config.php")) {
+    require_once "config.php";
+} else {
+    // Fallback jika config ada di folder parent
+    if (file_exists("../config.php")) require_once "../config.php";
+}
+
+$appointment_status = "";
+$appointment_message = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_appointment'])) {
+    $name = trim($_POST['name']);
+    $phone = trim($_POST['phone']);
+    $email = trim($_POST['email']);
+    $message = trim($_POST['message']); 
+    $category = trim($_POST['category'] ?? '-');
+
+    $final_message = "[Kategori: $category] " . $message;
+
+    if (!empty($name) && !empty($phone)) {
+        $stmt = $mysqli->prepare("INSERT INTO appointments (name, phone, email, message, status) VALUES (?, ?, ?, ?, 'new')");
+        $stmt->bind_param("ssss", $name, $phone, $email, $final_message);
+        
+        if ($stmt->execute()) {
+            $appointment_status = "success";
+            $appointment_message = "Permintaan janji temu berhasil dikirim! Tim kami akan segera menghubungi Anda.";
+        } else {
+            $appointment_status = "danger";
+            $appointment_message = "Gagal mengirim data: " . $stmt->error;
+        }
+        $stmt->close();
+    } else {
+        $appointment_status = "warning";
+        $appointment_message = "Nama dan Nomor Telepon wajib diisi.";
+    }
+}
+
+// --- FETCH DATA ---
+
+$settings = [];
+$set_result = $mysqli->query("SELECT * FROM settings2");
+if ($set_result) { 
+    while($row = $set_result->fetch_assoc()) { 
+        $settings[$row['setting_key']] = $row['setting_value']; 
+    } 
+}
 
 $banners_data = [];
-$banner_sql = "SELECT image_path, title, description FROM banners2 ORDER BY display_order ASC";
-$banner_result = $mysqli->query($banner_sql);
-if ($banner_result && $banner_result->num_rows > 0) {
-    while($row = $banner_result->fetch_assoc()) {
-        $banners_data[] = $row;
-    }
+$banner_result = $mysqli->query("SELECT image_path, title, description FROM banners ORDER BY display_order ASC");
+if ($banner_result) { while($row = $banner_result->fetch_assoc()) { $banners_data[] = $row; } }
+
+$layanan_data = [];
+$poliklinik_data = [];
+
+$dept_result = $mysqli->query("SELECT id, name, category, icon_path, icon_hover_path FROM departments ORDER BY display_order ASC");
+
+if ($dept_result) { 
+    while($row = $dept_result->fetch_assoc()) { 
+        if ($row['category'] == 'Layanan') {
+            $layanan_data[] = $row;
+        } else {
+            $poliklinik_data[] = $row;
+        }
+    } 
 }
+$doctors_data = [];
+$doc_result = $mysqli->query("SELECT * FROM doctors WHERE is_featured = 1 ORDER BY id ASC");
+if ($doc_result) { while($row = $doc_result->fetch_assoc()) { $doctors_data[] = $row; } }
+
+$news_data = [];
+$news_result = $mysqli->query("SELECT * FROM news ORDER BY post_date DESC LIMIT 3");
+if ($news_result) { while($row = $news_result->fetch_assoc()) { $news_data[] = $row; } }
+
+$careers_data = [];
+$career_result = $mysqli->query("SELECT * FROM careers WHERE status = 'open' ORDER BY post_date DESC");
+if ($career_result) { while($row = $career_result->fetch_assoc()) { $careers_data[] = $row; } }
+
+$vr_data = null;
+$vr_result = $mysqli->query("SELECT title, content, image_path_360 FROM page_virtual_room WHERE id = 1");
+if ($vr_result && $vr_result->num_rows > 0) { $vr_data = $vr_result->fetch_assoc(); }
 
 $mcu_packages_data = [];
-$mcu_sql = "SELECT image_path, title, description, price FROM mcu_packages2 ORDER BY display_order ASC";
-$mcu_result = $mysqli->query($mcu_sql);
-if ($mcu_result && $mcu_result->num_rows > 0) {
-    while($row = $mcu_result->fetch_assoc()) {
-        $mcu_packages_data[] = $row;
-    }
-}
+$mcu_result = $mysqli->query("SELECT * FROM mcu_packages ORDER BY display_order ASC"); 
+if ($mcu_result) { while($row = $mcu_result->fetch_assoc()) { $mcu_packages_data[] = $row; } }
 
 $partners_data = [];
-$partners_sql = "SELECT name, logo_path, url FROM partners2 ORDER BY name ASC";
-$partners_result = $mysqli->query($partners_sql);
-if ($partners_result && $partners_result->num_rows > 0) {
-    while($row = $partners_result->fetch_assoc()) {
-        $partners_data[] = $row;
-    }
-}
+$partners_result = $mysqli->query("SELECT * FROM partners ORDER BY name ASC");
+if ($partners_result) { while($row = $partners_result->fetch_assoc()) { $partners_data[] = $row; } }
+
+$facilities_data = [];
+$fac_result = $mysqli->query("SELECT * FROM facilities ORDER BY display_order ASC");
+if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[] = $row; } }
+
 ?>
-      <section class="py-xxl-10 pb-0" id="home">
-        <div class="bg-holder bg-size" style="background-image:url(public/<?php echo htmlspecialchars($settings['hero_background_path'] ?? 'assets/img/gallery/hero-bg.png'); ?>);background-position:top center;background-size:cover;">
-        </div>
-        <!--/.bg-holder-->
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?php echo $page_title; ?></title>
+
+    <?php 
+    $favicon = !empty($settings['favicon_path']) ? $settings['favicon_path'] : 'assets/img/favicons/favicon.ico';
+    ?>
+    <link rel="shortcut icon" type="image/x-icon" href="public/<?php echo htmlspecialchars($favicon); ?>">
+    <link href="public/assets/css/theme.css" rel="stylesheet" />
+    <link href="public/vendors/fontawesome/all.min.js" rel="stylesheet" />
+
+<style>
+    :root {
+        --primary-color: #1B71A1;
+        --secondary-color: #2D3B48;
+        --accent-color: #F95C19;
+    }
+    
+    .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .hover-lift:hover { transform: translateY(-10px); box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important; }
+
+    .banner-overlay {
+    /* Ganti 0.9 dan 0.4 menjadi angka lebih kecil */
+    background: linear-gradient(to right, rgba(27, 113, 161, 0.5), rgba(45, 59, 72, 0.2));
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
+    }
+    .hero-content { position: relative; z-index: 2; }
+
+    .doctor-card img { transition: transform 0.5s ease; }
+    .doctor-card:hover img { transform: scale(1.05); }
+
+    .partner-logo { filter: grayscale(100%); opacity: 0.7; transition: all 0.3s; }
+    .partner-logo:hover { filter: grayscale(0%); opacity: 1; }
+
+    .section-title {
+        position: relative; display: inline-block; margin-bottom: 3rem; font-weight: 800; color: var(--secondary-color);
+    }
+    .section-title::after {
+        content: ''; display: block; width: 60px; height: 4px; background: var(--primary-color); margin: 10px auto 0; border-radius: 2px;
+    }
+
+    .news-date-badge {
+        position: absolute; top: 15px; left: 15px; background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; z-index: 10;
+    }
+    
+    .form-control-modern {
+        border-radius: 10px; padding: 15px; border: 1px solid #e0e0e0; background: #f8f9fa;
+    }
+    .form-control-modern:focus {
+        background: #fff; box-shadow: 0 0 0 4px rgba(27, 113, 161, 0.1); border-color: var(--primary-color);
+    }
+</style>
+  </head>
+  <body>
+    <main class="main" id="top">
+      
+      <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 d-block" data-navbar-on-scroll="data-navbar-on-scroll">
         <div class="container">
-          <div class="row min-vh-xl-100 min-vh-xxl-25 align-items-center">
-            <div class="col-md-6 text-md-start text-center py-6">
-              <h1 class="fw-light font-base fs-6 fs-xxl-7" id="banner-title"></h1>
-              <p class="fs-1 mb-5" id="banner-description"></p>
-              <a class="btn btn-lg btn-primary rounded-pill" href="<?php echo BASE_URL; ?>#appointment" role="button">Make an Appointment</a>
+          <a class="navbar-brand" href="index.php">
+            <?php 
+            $header_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/logo.png';
+            ?>
+            <img src="public/<?php echo htmlspecialchars($header_logo); ?>" width="118" alt="logo" />
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"> </span></button>
+          <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto pt-2 pt-lg-0 font-base">
+              <li class="nav-item px-2"><a class="nav-link" aria-current="page" href="#about">Tentang Kami</a></li>
+              <li class="nav-item px-2"><a class="nav-link" href="#departments">Layanan</a></li>
+              <li class="nav-item px-2"><a class="nav-link" href="#doctors">Dokter</a></li>
+              <li class="nav-item px-2"><a class="nav-link" href="#news">Berita</a></li>
+              <li class="nav-item px-2"><a class="nav-link" href="#appointment">Kontak</a></li>
+            </ul>
+            <a class="btn btn-sm btn-outline-primary rounded-pill order-1 order-lg-0 ms-lg-4" href="#appointment">Janji Temu</a>
+          </div>
+        </div>
+      </nav>
+
+      <section class="py-0 position-relative" id="home">
+        <div class="bg-holder" style="
+            background-image:url(public/<?php echo htmlspecialchars($settings['hero_background_path'] ?? 'assets/img/gallery/JHC2.jpg'); ?>);
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            height: 100vh;
+            min-height: 600px;
+            width: 100%;">       
             </div>
-            <div class="col-md-6 order-0 order-md-1 text-end">
-              <div id="banner-slider" style="width: 100%; height: 400px; overflow: hidden; position: relative;">
+        <div class="banner-overlay"></div>
+        
+        <div class="container h-100">
+          <div class="row min-vh-100 align-items-center hero-content">
+            <div class="col-md-7 text-md-start text-center py-6">
+              <span class="badge bg-light text-primary mb-3 px-3 py-2 rounded-pill shadow-sm fw-bold">Selamat Datang di JHC Tasikmalaya</span>
+              <h1 class="fw-bold text-white display-4 mb-4" id="banner-title"></h1>
+              <p class="fs-1 mb-5 text-white lead" id="banner-description"></p>
+              <div class="d-flex gap-3 justify-content-center justify-content-md-start">
+                  <a class="btn btn-lg btn-light text-primary fw-bold rounded-pill px-5 shadow-lg" href="#appointment" role="button">Buat Janji Temu</a>
+                  <a class="btn btn-lg btn-outline-light rounded-pill px-5" href="#doctors" role="button">Lihat Dokter</a>
+              </div>
+            </div>
+            
+            <div class="col-md-5 d-none d-md-block">
+                <div id="banner-slider" style="display:none;">
                 <?php if (!empty($banners_data)): ?>
                   <?php foreach ($banners_data as $index => $banner): ?>
-                    <img class="banner-image" src="public/<?php echo htmlspecialchars($banner['image_path']); ?>" data-title="<?php echo htmlspecialchars($banner['title']); ?>" data-description="<?php echo htmlspecialchars($banner['description']); ?>" style="width: 100%; height: 100%; object-fit: cover; opacity: <?php echo ($index === 0) ? '1' : '0'; ?>; z-index: <?php echo ($index === 0) ? '1' : '0'; ?>;" alt="<?php echo htmlspecialchars($banner['title']); ?>" />
+                    <div class="banner-item" 
+                         data-title="<?php echo htmlspecialchars($banner['title']); ?>" 
+                         data-description="<?php echo htmlspecialchars($banner['description']); ?>">
+                    </div>
                   <?php endforeach; ?>
                 <?php else: ?>
-                  <img src="public/assets/img/gallery/hero.png" style="width: 100%; height: 100%; object-fit: cover;" alt="Default Banner" />
+                    <div class="banner-item" 
+                         data-title="Pelayanan Kesehatan Terbaik" 
+                         data-description="Kami bertekad memberikan pelayanan medis profesional dan sepenuh hati untuk Anda dan keluarga.">
+                    </div>
                 <?php endif; ?>
               </div>
             </div>
@@ -58,674 +224,495 @@ if ($partners_result && $partners_result->num_rows > 0) {
 
       <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const bannerImages = document.querySelectorAll('.banner-image');
+            const bannerItems = document.querySelectorAll('.banner-item');
             const bannerTitle = document.getElementById('banner-title');
             const bannerDescription = document.getElementById('banner-description');
             let currentIndex = 0;
 
-            function updateBannerContent() {
-                bannerImages.forEach((img, index) => {
-                    if (index === currentIndex) {
-                        img.style.opacity = '1';
-                        img.style.zIndex = '1'; // Bring to front
-                        bannerTitle.textContent = img.dataset.title;
-                        bannerDescription.textContent = img.dataset.description;
-                    } else {
-                        img.style.opacity = '0';
-                        img.style.zIndex = '0'; // Send to back
-                    }
-                });
+            function updateBanner() {
+                if(bannerItems.length === 0) return;
+                bannerTitle.style.opacity = 0;
+                bannerDescription.style.opacity = 0;
+                setTimeout(() => {
+                    bannerTitle.textContent = bannerItems[currentIndex].dataset.title;
+                    bannerDescription.textContent = bannerItems[currentIndex].dataset.description;
+                    bannerTitle.style.opacity = 1;
+                    bannerDescription.style.opacity = 1;
+                    bannerTitle.style.transition = "opacity 0.5s ease-in-out";
+                    bannerDescription.style.transition = "opacity 0.5s ease-in-out";
+                }, 500);
             }
 
-            function nextBanner() {
-                currentIndex = (currentIndex + 1) % bannerImages.length;
-                updateBannerContent();
-            }
-
-            if (bannerImages.length > 0) {
-                // Initialize with the first banner's content
-                bannerTitle.textContent = bannerImages[0].dataset.title;
-                bannerDescription.textContent = bannerImages[0].dataset.description;
-                bannerImages[0].style.opacity = '1';
-                bannerImages[0].style.zIndex = '1';
-
-                setInterval(nextBanner, 3000); // Change every 3 seconds
-            } else {
-                bannerTitle.textContent = "Welcome to JHC";
-                bannerDescription.textContent = "We're determined for your better life. You can get the care you need 24/7 – be it online or in person. You will be treated by caring specialist doctors.";
+            if(bannerItems.length > 0) {
+                updateBanner();
+                setInterval(() => {
+                    currentIndex = (currentIndex + 1) % bannerItems.length;
+                    updateBanner();
+                }, 6000);
             }
         });
       </script>
 
-
-      <!-- ============================================-->
-      <!-- <section> begin ============================-->
-      <section class="py-5" id="departments">
-
+      <section class="py-5 bg-white" id="departments">
         <div class="container">
-          <div class="row">
-            <div class="col-12 py-3">
-              <div class="bg-holder bg-size" style="background-image:url(public/<?php echo htmlspecialchars($settings['bg_departments_path'] ?? 'assets/img/gallery/bg-departments.png'); ?>);background-position:top center;background-size:contain;">
-              </div>
-              <!--/.bg-holder-->
-
-              <h1 class="text-center">POLIKLINIK</h1>
+            
+            <div class="row justify-content-center mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="section-title">PELAYANAN KAMI</h2>
+                    <p class="text-muted">Kami menyediakan berbagai layanan unggulan dan poliklinik spesialis.</p>
+                </div>
             </div>
-          </div>
-        </div>
-        <!-- end of .container-->
 
-      </section>
-      <!-- <section> close ============================-->
-      <!-- ============================================-->
+            <?php if (!empty($layanan_data)): ?>
+            <div class="mb-5">
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <h4 class="fw-bold text-primary"><i class="fas fa-star me-2"></i>LAYANAN UNGGULAN</h4>
+                        <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--accent-color); opacity: 1;">
+                    </div>
+                </div>
 
-
-
-
-      <!-- ============================================-->
-      <!-- <section> begin ============================-->
-      <section class="py-0">
-
-        <div class="container">
-          <div class="row py-5 align-items-center justify-content-center justify-content-lg-evenly">
-            <?php 
-              $dept_sql = "SELECT id, name, icon_path, icon_hover_path FROM departments2 ORDER BY display_order ASC";
-              $dept_result = $mysqli->query($dept_sql);
-              if ($dept_result->num_rows > 0) {
-                while($dept = $dept_result->fetch_assoc()) {
-            ?>
-            <div class="col-auto col-md-4 col-lg-auto text-xl-start">
-              <div class="d-flex flex-column align-items-center">
-                <div class="icon-box text-center icon-hover-effect"><a class="text-decoration-none department-link" href="#!" data-department-id="<?php echo $dept['id']; ?>" data-department-name="<?php echo $dept['name']; ?>"><img class="mb-3 deparment-icon" src="public/<?php echo $dept['icon_path']; ?>" style="width: 50px; height: 50px; object-fit: contain; display: block; margin: 0 auto;" alt="..." />
-                    <img class="mb-3 deparment-icon-hover" src="public/<?php echo $dept['icon_hover_path']; ?>" style="width: 50px; height: 50px; object-fit: contain; display: none; margin: 0 auto;" alt="..." />
-                    <p class="fs-1 fs-xxl-2 text-center"><?php echo $dept['name']; ?></p>
-                  </a></div>
-              </div>
+                <div class="row gx-4 gy-4 justify-content-center">
+                    <?php foreach($layanan_data as $layanan): ?>
+                    <div class="col-6 col-md-4 col-lg-3 mb-2">
+                        <div class="card h-100 border-0 shadow hover-lift text-center p-4" style="background: #f8faff;">
+                            <div class="card-body d-flex flex-column align-items-center">
+                                <div class="mb-4 d-flex justify-content-center align-items-center bg-white rounded-circle shadow-sm" style="width: 80px; height: 80px;">
+                                    <?php if(!empty($layanan['icon_path'])): ?>
+                                        <img src="public/<?php echo htmlspecialchars($layanan['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="..." />
+                                    <?php else: ?>
+                                        <i class="fas fa-star fa-2x text-warning"></i>
+                                    <?php endif; ?>
+                                </div>
+                                <h5 class="card-title fw-bold text-dark mb-3"><?php echo htmlspecialchars($layanan['name']); ?></h5>
+                                <div class="mt-auto">
+                                    <a href="#!" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">Detail Layanan</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
-            <?php 
-                }
-              }
-            ?>
-          </div>
-        </div>
-        <!-- end of .container-->
+        <?php endif; ?>
 
-      </section>
-      <!-- <section> close ============================-->
-      <!-- ============================================-->
+        <?php if (!empty($poliklinik_data)): ?>
+        <div class="mt-5">
+            <div class="row mb-4 pt-4">
+                <div class="col-12 text-center">
+                    <h4 class="fw-bold text-secondary"><i class="fas fa-stethoscope me-2"></i>POLIKLINIK SPESIALIS</h4>
+                    <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--secondary-color); opacity: 1;">
+                </div>
+            </div>
 
-
-      <section class="bg-secondary">
-        <div class="bg-holder" style="background-image:url(public/assets/img/gallery/bg-eye-care.png);background-position:center;background-size:contain;">
-        </div>
-        <!--/.bg-holder-->
-
-        <div class="container">
-          <?php if (!empty($mcu_packages_data)): ?>
-            <div id="mcuCarousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-indicators">
-                <?php foreach ($mcu_packages_data as $index => $package): ?>
-                  <button type="button" data-bs-target="#mcuCarousel" data-bs-slide-to="<?php echo $index; ?>" class="<?php echo ($index === 0) ? 'active' : ''; ?>" aria-current="<?php echo ($index === 0) ? 'true' : 'false'; ?>" aria-label="Slide <?php echo $index + 1; ?>"></button>
+            <div class="row gx-4 gy-4 justify-content-center">
+                <?php foreach($poliklinik_data as $poli): ?>
+                <div class="col-6 col-md-4 col-lg-3 mb-2">
+                    <div class="card h-100 border-0 shadow-sm hover-lift text-center p-4">
+                        <div class="card-body d-flex flex-column align-items-center">
+                            <div class="mb-4 d-flex justify-content-center align-items-center bg-light rounded-circle shadow-sm" style="width: 80px; height: 80px;">
+                                <?php if(!empty($poli['icon_path'])): ?>
+                                    <img src="public/<?php echo htmlspecialchars($poli['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="..." />
+                                <?php else: ?>
+                                    <i class="fas fa-heartbeat fa-2x text-primary"></i>
+                                <?php endif; ?>
+                            </div>
+                            <h5 class="card-title fw-bold text-dark mb-3"><?php echo htmlspecialchars($poli['name']); ?></h5>
+                            <div class="mt-auto">
+                                <a href="#!" class="btn btn-outline-primary btn-sm rounded-pill px-4">Jadwal Dokter</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <?php endforeach; ?>
-              </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+            </div>
+        </section>
+
+      <?php if (!empty($mcu_packages_data)): ?>
+      <section class="py-5" style="background-color: #f1f7fc;">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-8 text-center">
+                    <h2 class="section-title">PAKET MEDICAL CHECK UP</h2>
+                    <p class="text-muted">Pencegahan lebih baik daripada pengobatan.</p>
+                </div>
+            </div>
+            
+            <div id="mcuCarousel" class="carousel slide" data-bs-ride="carousel">
               <div class="carousel-inner">
                 <?php foreach ($mcu_packages_data as $index => $package): ?>
                   <div class="carousel-item <?php echo ($index === 0) ? 'active' : ''; ?>">
-                    <div class="row align-items-center">
-                      <div class="col-md-5 col-xxl-6 position-relative">
-                        <img class="img-fluid" src="public/<?php echo htmlspecialchars($package['image_path']); ?>" alt="<?php echo htmlspecialchars($package['title']); ?>" style="width: 100%; height: 300px; object-fit: cover;" />
-                        <div class="price-sticker" style="position: absolute; top: 10px; right: 10px;">
-                            Rp <?php echo number_format($package['price'], 0, ',', '.'); ?>
+                    <div class="card border-0 shadow-lg overflow-hidden mx-auto" style="max-width: 900px;">
+                        <div class="row g-0">
+                            <div class="col-md-5">
+                                <img src="public/<?php echo htmlspecialchars($package['image_path']); ?>" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 300px;" alt="<?php echo htmlspecialchars($package['title']); ?>">
+                            </div>
+                            <div class="col-md-7 d-flex align-items-center bg-white">
+                                <div class="card-body p-5 text-center text-md-start">
+                                    <span class="badge bg-warning text-dark mb-2">Populer</span>
+                                    <h3 class="card-title fw-bold text-primary mb-3"><?php echo htmlspecialchars($package['title']); ?></h3>
+                                    <p class="card-text text-muted mb-4"><?php echo nl2br(htmlspecialchars($package['description'])); ?></p>
+                                    <h4 class="text-dark fw-bold mb-4">Rp <?php echo number_format($package['price'], 0, ',', '.'); ?></h4>
+                                    
+                                    <?php
+                                    $whatsapp_number = '6287760615300';
+                                    $whatsapp_message = urlencode("Halo JHC, saya ingin booking paket MCU: " . $package['title']);
+                                    $whatsapp_link = "https://api.whatsapp.com/send?phone={$whatsapp_number}&text={$whatsapp_message}";
+                                    ?>
+                                    <a href="<?php echo $whatsapp_link; ?>" target="_blank" class="btn btn-primary rounded-pill px-4 py-2">
+                                        <i class="fab fa-whatsapp me-2"></i> Booking Via WhatsApp
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                      <div class="col-md-7 col-xxl-6 text-center text-md-start">
-                        <h2 class="fw-bold text-light mb-4 mt-4 mt-lg-0"><?php echo htmlspecialchars($package['title']); ?></h2>
-                        <p class="text-light"><?php echo nl2br(htmlspecialchars($package['description'])); ?></p>
-                        <div class="py-3">
-                          <?php
-                            $whatsapp_number = '6287760615300';
-                            $whatsapp_message = urlencode("Saya ingin order pemeriksaan MCU dengan paket " . $package['title'] . " dengan harga Rp " . number_format($package['price'], 0, ',', '.') . ".");
-                            $whatsapp_link = "https://api.whatsapp.com/send?phone={$whatsapp_number}&text={$whatsapp_message}";
-                          ?>
-                          <a class="btn btn-lg btn-light rounded-pill" href="<?php echo $whatsapp_link; ?>" target="_blank" role="button">Booking MCU</a>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 <?php endforeach; ?>
               </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#mcuCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
+              <button class="carousel-control-prev" type="button" data-bs-target="#mcuCarousel" data-bs-slide="prev" style="width: 5%;">
+                <span class="carousel-control-prev-icon bg-primary rounded-circle p-3" aria-hidden="true"></span>
               </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#mcuCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
+              <button class="carousel-control-next" type="button" data-bs-target="#mcuCarousel" data-bs-slide="next" style="width: 5%;">
+                <span class="carousel-control-next-icon bg-primary rounded-circle p-3" aria-hidden="true"></span>
               </button>
             </div>
-          <?php else: ?>
-            <div class="row align-items-center">
-              <div class="col-12 text-center">
-                <h2 class="fw-bold text-light mb-4 mt-4 mt-lg-0">No MCU Packages Available</h2>
-                <p class="text-light">Please check back later for our exciting health checkup packages.</p>
-              </div>
-            </div>
-          <?php endif; ?>
         </div>
       </section>
+      <?php endif; ?>
 
-
-      <!-- ============================================-->
-      <!-- <section> begin ============================-->
-      <section class="pb-0" id="about">
-
+      <?php if ($vr_data): ?>
+      <section class="py-5" id="about">
         <div class="container">
-          <div class="row">
-            <div class="col-12 py-3">
-              <div class="bg-holder bg-size" style="background-image:url(public/assets/img/gallery/about-us.png);background-position:top center;background-size:contain;">
-              </div>
-              <!--/.bg-holder-->
-            </div>
-          </div>
-        </div>
-        <!-- end of .container-->
-
-      </section>
-      <!-- <section> close ============================-->
-      <!-- ============================================-->
-
-      <?php
-        $about_us_sections = [];
-        $sql_about = "SELECT section_key, title, content, image_path FROM about_us_sections2";
-        $result_about = $mysqli->query($sql_about);
-        if ($result_about && $result_about->num_rows > 0) {
-            while($row = $result_about->fetch_assoc()) {
-                $about_us_sections[$row['section_key']] = $row;
-            }
-        }
-      ?>
-      <section class="py-5">
-        <div class="bg-holder bg-size" style="background-image:url(public/<?php echo htmlspecialchars($settings['bg_about_path'] ?? 'assets/img/gallery/about-bg.png'); ?>);background-position:top center;background-size:contain;">
-        </div>
-        <!--/.bg-holder-->
-
-        <div class="container">
-            <div class="row align-items-center mb-4">
-                <div class="col-md-3">
-                    <h1 class="text-center text-md-start">TENTANG KAMI</h1>
-                </div>
-                <div class="col-md-9">
-                    <ul class="nav nav-pills justify-content-center justify-content-md-start" id="about-us-tabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="visi-misi-tab" data-bs-toggle="pill" data-bs-target="#visi-misi" type="button" role="tab" aria-controls="visi-misi" aria-selected="true">Visi-Misi</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="sejarah-tab" data-bs-toggle="pill" data-bs-target="#sejarah" type="button" role="tab" aria-controls="sejarah" aria-selected="false">Sejarah</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="salam-direktur-tab" data-bs-toggle="pill" data-bs-target="#salam-direktur" type="button" role="tab" aria-controls="salam-direktur" aria-selected="false">Salam Direktur</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="budaya-kerja-tab" data-bs-toggle="pill" data-bs-target="#budaya-kerja" type="button" role="tab" aria-controls="budaya-kerja" aria-selected="false">Budaya Kerja</button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="tab-content" id="about-us-tabs-content">
-                <?php $first = true; foreach ($about_us_sections as $key => $section): ?>
-                <div class="tab-pane fade <?php if($first) echo 'show active'; ?>" id="<?php echo $key; ?>" role="tabpanel" aria-labelledby="<?php echo $key; ?>-tab">
-                    <div class="row align-items-center">
-                        <div class="col-md-6 order-lg-1 mb-5 mb-lg-0">
-                            <img class="fit-cover rounded-circle w-100" src="public/<?php echo $section['image_path']; ?>" alt="..." />
-                        </div>
-                        <div class="col-md-6 text-center text-md-start">
-                            <h2 class="fw-bold mb-4"><?php echo $section['title']; ?></h2>
-                            <p><?php echo nl2br($section['content']); ?></p>
-                        </div>
+            <div class="row align-items-center gx-5">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="position-relative">
+                        <div class="bg-primary position-absolute rounded-3" style="width: 100%; height: 100%; top: 15px; left: -15px; z-index: -1;"></div>
+                        <?php if(!empty($vr_data['image_path_360'])): ?>
+                            <img src="public/<?php echo htmlspecialchars($vr_data['image_path_360']); ?>" class="img-fluid rounded-3 shadow w-100" alt="Virtual Room">
+                        <?php else: ?>
+                            <img src="public/assets/img/gallery/health-care.png" class="img-fluid rounded-3 shadow w-100" alt="About">
+                        <?php endif; ?>
                     </div>
                 </div>
-                <?php $first = false; endforeach; ?>
-            </div>
-        </div>
-      </section>
-
-
-      <!-- ============================================-->
-      <!-- <section> begin ============================-->
-      <section class="pb-0" id="our-doctors">
-
-        <div class="container">
-          <div class="row">
-            <div class="col-12 py-3">
-              <div class="bg-holder bg-size" style="background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url(public/<?php echo htmlspecialchars($settings['bg_doctors_path'] ?? 'assets/img/gallery/doctors-us.png'); ?>);background-position:center;background-size:cover;">
-              </div>
-              <!--/.bg-holder-->
-
-              <h1 class="text-center position-relative">DOKTER KAMI</h1>
-            </div>
-          </div>
-        </div>
-        <!-- end of .container-->
-
-      </section>
-      <!-- <section> close ============================-->
-      <!-- ============================================-->
-
-
-      <section class="py-5">
-        <div class="bg-holder bg-size" style="background-image:url(public/assets/img/gallery/doctors-bg.png);background-position:top center;background-size:contain;">
-        </div>
-        <!--/.bg-holder-->
-
-        <div class="container">
-          <div class="row flex-center">
-            <div class="col-xl-10 px-0">
-              <div class="carousel slide" id="carouselExampleDark" data-bs-ride="carousel"><a class="carousel-control-prev carousel-icon z-index-2" href="#carouselExampleDark" role="button" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span></a><a class="carousel-control-next carousel-icon z-index-2" href="#carouselExampleDark" role="button" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span></a>
-                <div class="carousel-inner">
-                  <?php
-                    $featured_sql = "SELECT id, name, specialty, photo_path FROM doctors2 WHERE is_featured = 1";
-                    $featured_result = $mysqli->query($featured_sql);
-                    if ($featured_result && $featured_result->num_rows > 0) {
-                        $featured_doctors = $featured_result->fetch_all(MYSQLI_ASSOC);
-                        $doctor_chunks = array_chunk($featured_doctors, 3);
-                        $is_first_item = true;
-                        foreach ($doctor_chunks as $chunk) {
-                  ?>
-                  <div class="carousel-item <?php if ($is_first_item) { echo 'active'; $is_first_item = false; } ?>" data-bs-interval="10000">
-                    <div class="row h-100 m-lg-7 mx-3 mt-6 mx-md-4 my-md-7">
-                      <?php foreach ($chunk as $doctor) { ?>
-                      <div class="col-md-4 mb-8 mb-md-0">
-                        <div class="card card-span h-100 shadow">
-                          <div class="card-body d-flex flex-column flex-center py-5">
-                            <img src="public/<?php echo htmlspecialchars($doctor['photo_path'] ? $doctor['photo_path'] : 'assets/img/gallery/jane.png'); ?>" width="128" alt="..." />
-                            <h5 class="mt-3"><?php echo htmlspecialchars($doctor['name']); ?></h5>
-                            <p class="mb-0 fs-xxl-1"><?php echo htmlspecialchars($doctor['specialty']); ?></p>
-                            <div class="text-center mt-4">
-                              <a class="btn btn-outline-secondary rounded-pill" href="public/doctor_details.php?id=<?php echo $doctor['id']; ?>">View Profile</a>
+                <div class="col-lg-6">
+                    <h5 class="text-primary fw-bold text-uppercase">Tentang Kami</h5>
+                    <h2 class="fw-bold mb-4 display-6"><?php echo htmlspecialchars($vr_data['title']); ?></h2>
+                    <p class="text-secondary lead text-justify mb-4"><?php echo nl2br(htmlspecialchars($vr_data['content'])); ?></p>
+                    <div class="d-flex gap-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light rounded-circle p-3 text-primary me-3"><i class="fas fa-user-md fa-lg"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Dokter Ahli</h6>
+                                <small class="text-muted">Berpengalaman</small>
                             </div>
-                          </div>
                         </div>
-                      </div>
-                      <?php } ?>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light rounded-circle p-3 text-primary me-3"><i class="fas fa-clock fa-lg"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Layanan 24 Jam</h6>
+                                <small class="text-muted">Selalu Siap</small>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <?php 
-                        }
-                    } else {
-                  ?>
-                    <div class="carousel-item active"><p class="text-center">No featured doctors found.</p></div>
-                  <?php } ?>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
       </section>
+      <?php endif; ?>
 
-
-      <!-- ============================================-->
-      <!-- <section> begin ============================-->
-      <section id="facilities">
-        <div class="container">
-          <div class="row">
-            <div class="col-12 py-3">
-              <div class="bg-holder bg-size" style="background-image:url(public/assets/img/gallery/bg-departments.png);background-position:top center;background-size:contain;">
-              </div>
-              <h1 class="text-center">FASILITAS</h1>
-            </div>
-          </div>
-          <div class="row">
-            <?php
-              $facilities_sql = "SELECT * FROM facilities2 ORDER BY display_order ASC";
-              $facilities_result = $mysqli->query($facilities_sql);
-              if ($facilities_result && $facilities_result->num_rows > 0) {
-                while($facility = $facilities_result->fetch_assoc()) {
-            ?>
-            <div class="col-lg-4 col-md-6 mb-4">
-              <div class="card h-100 shadow card-span rounded-3">
-                <img class="card-img-top rounded-top-3" src="public/<?php echo htmlspecialchars($facility['image_path']); ?>" alt="<?php echo htmlspecialchars($facility['name']); ?>" />
-                <div class="card-body">
-                  <h5 class="font-base fs-lg-0 fs-xl-1 my-3"><?php echo htmlspecialchars($facility['name']); ?></h5>
-                  <p><?php echo nl2br(htmlspecialchars($facility['description'])); ?></p>
-                </div>
-              </div>
-            </div>
-            <?php 
-                }
-              }
-            ?>
-          </div>
-        </div>
+      <section class="py-5 bg-white" id="doctors">
+         <div class="container">
+             <div class="row justify-content-center mb-5">
+                 <div class="col-md-8 text-center">
+                     <h2 class="section-title">TIM DOKTER KAMI</h2>
+                     <p class="text-muted">Ditangani langsung oleh dokter spesialis yang berpengalaman di bidangnya.</p>
+                 </div>
+             </div>
+             
+             <div class="row g-4 justify-content-center">
+                 <?php foreach($doctors_data as $doc): ?>
+                 <div class="col-sm-6 col-lg-3">
+                     <div class="card h-100 border-0 shadow-sm hover-lift doctor-card text-center">
+                         <div class="card-body p-4">
+                             <div class="mx-auto mb-4 position-relative" style="width: 140px; height: 140px;">
+                                 <img src="public/<?php echo htmlspecialchars(!empty($doc['photo_path']) ? $doc['photo_path'] : 'assets/img/gallery/jane.png'); ?>" class="w-100 h-100 rounded-circle border border-4 border-light shadow-sm" style="object-fit: cover;" alt="Doctor">
+                             </div>
+                             <h5 class="fw-bold text-dark mb-1"><?php echo htmlspecialchars($doc['name']); ?></h5>
+                             <p class="text-primary small fw-bold text-uppercase mb-3"><?php echo htmlspecialchars($doc['specialty']); ?></p>
+                             <a href="#" class="btn btn-outline-primary btn-sm rounded-pill px-4">Lihat Profil</a>
+                         </div>
+                     </div>
+                 </div>
+                 <?php endforeach; ?>
+             </div>
+         </div>
       </section>
-      <!-- <section> close ============================-->
-      <!-- ============================================-->
 
+      <?php if (!empty($facilities_data)): ?>
+      <section class="py-5" id="facilities" style="background-color: #F8FDFF;">
+         <div class="container">
+             <div class="row justify-content-center mb-5">
+                 <div class="col-md-8 text-center">
+                     <h2 class="section-title">FASILITAS UNGGULAN</h2>
+                 </div>
+             </div>
+             <div class="row g-4">
+                 <?php foreach($facilities_data as $fac): ?>
+                 <div class="col-md-4">
+                     <div class="card h-100 border-0 shadow-sm hover-lift overflow-hidden rounded-3">
+                         <div class="position-relative" style="height: 220px;">
+                             <img src="public/<?php echo htmlspecialchars($fac['image_path']); ?>" class="w-100 h-100" style="object-fit: cover;" alt="Fasilitas">
+                             <div class="position-absolute bottom-0 start-0 w-100 p-3" style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-0 fw-bold"><?php echo htmlspecialchars($fac['name']); ?></h5>
+                             </div>
+                         </div>
+                         <div class="card-body">
+                             <p class="card-text text-muted small"><?php echo nl2br(htmlspecialchars($fac['description'])); ?></p>
+                         </div>
+                     </div>
+                 </div>
+                 <?php endforeach; ?>
+             </div>
+         </div>
+      </section>
+      <?php endif; ?>
 
-      <!-- ============================================-->
-      <!-- <section> begin ============================-->
-      <section id="careers" class="bg-light">
+      <?php if (!empty($careers_data)): ?>
+      <section class="py-5 bg-white" id="careers">
+         <div class="container">
+             <div class="row justify-content-center mb-5">
+                 <div class="col-md-8 text-center">
+                     <h2 class="section-title">BERGABUNG BERSAMA KAMI</h2>
+                     <p class="text-muted">Karir dan peluang kerja terbaru di JHC Tasikmalaya.</p>
+                 </div>
+             </div>
+             
+             <div class="row justify-content-center">
+                 <div class="col-lg-10">
+                     <?php foreach($careers_data as $job): ?>
+                     <div class="card mb-3 border-0 shadow-sm hover-lift">
+                         <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-center">
+                             <div class="mb-3 mb-md-0">
+                                 <h5 class="fw-bold text-primary mb-1"><?php echo htmlspecialchars($job['job_title']); ?></h5>
+                                 <div class="text-muted small">
+                                     <i class="fas fa-map-marker-alt me-2"></i><?php echo htmlspecialchars($job['location']); ?>
+                                     <?php if (!empty($job['end_date'])): ?>
+                                        <span class="mx-2">•</span> <span class="text-danger">Deadline: <?php echo date('d M Y', strtotime($job['end_date'])); ?></span>
+                                     <?php endif; ?>
+                                 </div>
+                             </div>
+                             <button class="btn btn-primary rounded-pill px-4" type="button" data-bs-toggle="collapse" data-bs-target="#jobDesc<?php echo $job['id']; ?>">Detail</button>
+                         </div>
+                         <div class="collapse" id="jobDesc<?php echo $job['id']; ?>">
+                             <div class="card-footer bg-light border-0 p-4">
+                                 <h6>Deskripsi Pekerjaan:</h6>
+                                 <p class="small text-secondary mb-3"><?php echo nl2br(htmlspecialchars($job['description'])); ?></p>
+                                 <a href="#" class="btn btn-sm btn-outline-primary">Kirim Lamaran</a>
+                             </div>
+                         </div>
+                     </div>
+                     <?php endforeach; ?>
+                 </div>
+             </div>
+         </div>
+      </section>
+      <?php endif; ?>
+
+      <section class="py-5" id="news" style="background-color: #f9f9f9;">
         <div class="container">
-          <div class="row">
-            <div class="col-12 py-3">
-              <h1 class="text-center">KARIR</h1>
+          <div class="row justify-content-center mb-5">
+            <div class="col-md-8 text-center">
+                <h2 class="section-title"><?php echo htmlspecialchars($settings['news_section_title'] ?? 'BERITA & ARTIKEL'); ?></h2>
             </div>
           </div>
-          <div class="row">
-            <div class="accordion" id="careersAccordion">
-            <?php
-              $careers_sql = "SELECT * FROM careers2 WHERE status = 'open' AND (end_date IS NULL OR end_date >= CURDATE()) ORDER BY post_date DESC";
-              $careers_result = $mysqli->query($careers_sql);
-              if ($careers_result && $careers_result->num_rows > 0) {
-                $is_first_career = true;
-                while($career = $careers_result->fetch_assoc()) {
-            ?>
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="heading<?php echo $career['id']; ?>">
-                  <button class="accordion-button <?php if(!$is_first_career) echo 'collapsed'; ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $career['id']; ?>" aria-expanded="<?php echo $is_first_career ? 'true' : 'false'; ?>" aria-controls="collapse<?php echo $career['id']; ?>">
-                    <?php echo htmlspecialchars($career['job_title']); ?> - <small class="text-muted ms-2"><?php echo htmlspecialchars($career['location']); ?>
-                    <?php if (!empty($career['end_date'])): ?>
-                        <br>Tanggal Beakhir : <?php echo date('d M Y', strtotime($career['end_date'])); ?>
-                    <?php endif; ?>
-                    </small>
-                  </button>
-                </h2>
-                <div id="collapse<?php echo $career['id']; ?>" class="accordion-collapse collapse <?php if($is_first_career) echo 'show'; ?>" aria-labelledby="heading<?php echo $career['id']; ?>" data-bs-parent="#careersAccordion">
-                  <div class="accordion-body">
-                    <?php echo nl2br(htmlspecialchars($career['description'])); ?>
-                    <div class="mt-3">
-                        <a href="public/apply.php?job_id=<?php echo $career['id']; ?>" class="btn btn-primary">Apply Now</a>
+          <div class="row g-4">
+            <?php foreach($news_data as $article): ?>
+            <div class="col-md-4">
+              <div class="card h-100 border-0 shadow-sm hover-lift rounded-3 overflow-hidden">
+                <div class="position-relative">
+                    <img src="public/<?php echo htmlspecialchars($article['image_path']); ?>" class="card-img-top" style="height: 220px; object-fit: cover;" alt="<?php echo htmlspecialchars($article['title']); ?>" />
+                    <div class="news-date-badge shadow-sm">
+                        <?php echo date('d M Y', strtotime($article['post_date'])); ?>
                     </div>
+                </div>
+                <div class="card-body p-4">
+                  <span class="badge bg-light text-primary mb-2"><?php echo htmlspecialchars($article['category']); ?></span>
+                  <h5 class="card-title fw-bold text-dark mt-2 mb-3 lh-sm">
+                      <a href="#!" class="text-decoration-none text-dark"><?php echo htmlspecialchars($article['title']); ?></a>
+                  </h5>
+                  <p class="card-text text-muted small"><?php echo substr(strip_tags($article['content']), 0, 90); ?>...</p>
+                </div>
+                <div class="card-footer bg-white border-0 p-4 pt-0">
+                    <a href="#!" class="text-primary fw-bold text-decoration-none small">Baca Selengkapnya <i class="fas fa-chevron-right ms-1"></i></a>
+                </div>
+              </div>
+            </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-5 bg-white">
+         <div class="container">
+             <div class="row justify-content-center mb-4">
+                 <div class="col-12 text-center"><h4 class="fw-bold text-secondary">MITRA ASURANSI & PERUSAHAAN</h4></div>
+             </div>
+             <div class="row justify-content-center align-items-center g-4">
+                 <?php foreach($partners_data as $partner): ?>
+                 <div class="col-4 col-md-2 text-center">
+                     <a href="<?php echo htmlspecialchars($partner['url'] ?? '#'); ?>" target="_blank" data-bs-toggle="tooltip" title="<?php echo htmlspecialchars($partner['name']); ?>">
+                         <img src="public/<?php echo htmlspecialchars($partner['logo_path']); ?>" class="img-fluid partner-logo" style="max-height: 60px; object-fit: contain;" alt="Partner">
+                     </a>
+                 </div>
+                 <?php endforeach; ?>
+             </div>
+         </div>
+      </section>
+
+      <section class="py-5" id="appointment" style="background: linear-gradient(135deg, #1B71A1 0%, #2D3B48 100%);">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-5 mb-5 mb-lg-0 text-white">
+                <h2 class="fw-bold display-6 mb-3">Butuh Bantuan Medis?</h2>
+                <p class="lead mb-4 opacity-75">Isi formulir di samping untuk membuat janji temu atau konsultasi dengan tim medis kami.</p>
+                
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-white text-primary rounded-circle p-3 me-3"><i class="fas fa-phone-alt"></i></div>
+                    <div>
+                        <h6 class="mb-0 text-white">Hubungi Kami</h6>
+                        <p class="mb-0 fw-bold fs-5">0265 123 4567</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="bg-white text-primary rounded-circle p-3 me-3"><i class="fas fa-envelope"></i></div>
+                    <div>
+                        <h6 class="mb-0 text-white">Email</h6>
+                        <p class="mb-0 fw-bold">info@jhc-tasikmalaya.com</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-7">
+              <div class="card border-0 shadow-lg rounded-3">
+                  <div class="card-body p-5">
+                      <h4 class="fw-bold text-primary mb-4">Formulir Janji Temu</h4>
+                      
+                      <?php if ($appointment_status): ?>
+                        <div class="alert alert-<?php echo $appointment_status; ?> alert-dismissible fade show" role="alert">
+                          <?php echo $appointment_message; ?>
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                      <?php endif; ?>
+
+                      <form class="row g-3" id="appointment-form" method="POST" action="index.php#appointment">
+                        <div class="col-md-6">
+                          <label class="form-label small fw-bold text-muted">Nama Lengkap</label>
+                          <input class="form-control form-control-modern" name="name" type="text" required />
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label small fw-bold text-muted">No. WhatsApp</label>
+                          <input class="form-control form-control-modern" name="phone" type="text" required />
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label small fw-bold text-muted">Email (Opsional)</label>
+                          <input class="form-control form-control-modern" name="email" type="email" />
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label small fw-bold text-muted">Kategori</label>
+                          <select class="form-select form-control-modern" name="category">
+                            <option value="Jadwal Dokter">Jadwal Dokter</option>
+                            <option value="Layanan Medis">Layanan Medis</option>
+                            <option value="Keluhan">Keluhan / Saran</option>
+                            <option value="Lainnya">Lainnya</option>
+                          </select>
+                        </div>
+                        <div class="col-12">
+                          <label class="form-label small fw-bold text-muted">Pesan / Keluhan</label>
+                          <textarea class="form-control form-control-modern" name="message" rows="4" required></textarea>
+                        </div>
+                        <div class="col-12 mt-4">
+                          <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm" type="submit" name="submit_appointment">Kirim Pesan Sekarang <i class="fas fa-paper-plane ms-2"></i></button>
+                        </div>
+                      </form>
                   </div>
-                </div>
-              </div>
-            <?php 
-                  $is_first_career = false;
-                }
-              } else {
-                echo "<p class='text-center'>No open positions at the moment.</p>";
-              }
-            ?>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- <section> close ============================-->
-      <!-- ============================================-->
-
-      <!-- ============================================-->
-      <!-- <section> begin ============================-->
-      <section id="virtual-room">
-        <div class="container">
-          <?php
-            $vr_sql = "SELECT title, content, image_path_360 FROM page_virtual_room2 WHERE id = 1";
-            $vr_result = $mysqli->query($vr_sql);
-            $vr_content = $vr_result->fetch_assoc();
-          ?>
-          <div class="row text-center">
-            <div class="col-12 py-3">
-              <h1 class="text-center"><?php echo htmlspecialchars($vr_content['title']); ?></h1>
-              <p><?php echo htmlspecialchars($vr_content['content']); ?></p>
-            </div>
-            <div class="col-12">
-              <?php if (!empty($vr_content['image_path_360'])) : ?>
-                <div id="panorama" style="width: 100%; height: 500px;"></div>
-                <script>
-                  document.addEventListener('DOMContentLoaded', function() {
-                    pannellum.viewer('panorama', {
-                      "type": "equirectangular",
-                      "panorama": "<?php echo BASE_URL . 'public/' . htmlspecialchars($vr_content['image_path_360']); ?>",
-                      "autoLoad": true
-                    });
-                  });
-                </script>
-              <?php else: ?>
-                <div class="alert alert-info">No 360-degree image available for virtual tour. Please upload one from the admin panel.</div>
-              <?php endif; ?>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- <section> close ============================-->
-      <!-- ============================================-->
-
-      </section>
-      <!-- DEBUG NEWS SECTION START -->
-      <section class="py-5" id="news">
-
-        <div class="container">
-          <div class="row">
-            <div class="col-12 py-3">
-              <div class="bg-holder bg-size" style="background-image:url(public/<?php echo htmlspecialchars($settings['bg_news_path'] ?? 'assets/img/gallery/blog-post.png'); ?>);background-position:top center;background-size:contain;">
-              </div>
-              <!--/.bg-holder-->
-
-              <h1 class="text-center">BERITA</h1>
-            </div>
-          </div>
-        </div>
-        <!-- end of .container-->
-
-      </section>
-      <!-- <section> close ============================-->
-      <!-- ============================================-->
-
-
-      <section>
-        <div class="bg-holder bg-size" style="background-image:url(public/assets/img/gallery/dot-bg.png);background-position:top left;background-size:auto;">
-        </div>
-        <!--/.bg-holder-->
-
-        <div class="container">
-          <div class="row">
-            <?php
-              $news_sql = "SELECT * FROM news2 ORDER BY post_date DESC LIMIT 4";
-              $news_result = $mysqli->query($news_sql);
-              if ($news_result && $news_result->num_rows > 0) {
-                while($article = $news_result->fetch_assoc()) {
-            ?>
-            <div class="col-sm-6 col-lg-4 mb-4">
-              <div class="card h-100 shadow card-span rounded-3"><img class="card-img-top rounded-top-3" src="public/<?php echo htmlspecialchars($article['image_path']); ?>" style="height: 300px; object-fit: cover;" alt="<?php echo htmlspecialchars($article['title']); ?>" />
-                <div class="card-body"><span class="fs--1 text-primary me-3">Health</span>
-                  <svg class="bi bi-calendar2 me-2" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H2z"></path>
-                    <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V4z"> </path>
-                  </svg><span class="fs--1 text-900">Nov 21, 2021</span><span class="fs--1"></span>
-                  <h5 class="font-base fs-lg-0 fs-xl-1 my-3"><?php echo htmlspecialchars($article['title']); ?></h5><a class="stretched-link" href="public/news_article.php?id=<?php echo $article['id']; ?>">read full article</a>
-                </div>
               </div>
             </div>
-            <?php 
-                }
-              } else {
-                echo "<p class='text-center'>No news articles found.</p>";
-              }
-            ?>
           </div>
         </div>
       </section>
-      <!-- DEBUG NEWS SECTION END -->
 
-
-      <!-- ============================================-->
-      <!-- <section> begin ============================-->
-      <section class="py-5 position-relative" id="partners">
-        <?php if (!empty($settings['bg_partners_path'])):
-            $bg_url = 'public/' . htmlspecialchars($settings['bg_partners_path']);
-        ?>
-        <div class="bg-holder bg-size" style="background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('<?php echo $bg_url; ?>'); background-position: center; background-size: cover;">
-        </div>
-        <!--/.bg-holder-->
-        <?php endif; ?>
+      <footer class="py-0 bg-primary">
+        <div class="bg-holder opacity-25" style="background-image:url(public/assets/img/gallery/dot-bg.png);background-position:top left;margin-top:-3.125rem;background-size:auto;"></div>
+        
         <div class="container">
-            <div class="row">
-                <div class="col-12 py-3">
-                    <h1 class="text-center">MITRA KERJA SAMA</h1>
+          <div class="row py-7 py-lg-8">
+            <div class="col-12 col-sm-6 col-lg-3 mb-4 order-0 order-sm-0">
+                <a class="text-decoration-none" href="#">
+                    <?php 
+                    $footer_logo = !empty($settings['footer_logo_path']) ? $settings['footer_logo_path'] : 'assets/img/gallery/footer-logo.png';
+                    ?>
+                    <img src="public/<?php echo htmlspecialchars($footer_logo); ?>" height="51" alt="" />
+                </a>
+                <p class="text-light mt-4 mb-0">EU: +49 9999 0000</p>
+                <p class="text-light mb-0">US: +00 4444 0000</p>
+                <p class="text-light mt-4 mb-0">info@jhc.com</p>
+                <div class="d-flex mt-5">
+                    <a class="text-decoration-none me-3" href="#!"><img src="public/assets/img/icons/facebook.svg" alt="" /></a>
+                    <a class="text-decoration-none me-3" href="#!"><img src="public/assets/img/icons/twitter.svg" alt="" /></a>
+                    <a class="text-decoration-none me-3" href="#!"><img src="public/assets/img/icons/instagram.svg" alt="" /></a>
                 </div>
             </div>
-
-            <div class="row mt-4">
-                <?php
-
-                if (!empty($partners_data)) {
-                    foreach($partners_data as $partner) {
-                        echo '<div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">';
-                        echo '    <div class="card h-100 text-center shadow-sm">';
-                        if (!empty($partner['url'])) {
-                            echo '        <a href="' . htmlspecialchars($partner['url']) . '" target="_blank">';
-                        }
-                        echo '            <img src="public/' . htmlspecialchars($partner['logo_path']) . '" class="card-img-top p-3" alt="' . htmlspecialchars($partner['name']) . '" style="object-fit: contain; height: 100px;">';
-                        if (!empty($partner['url'])) {
-                            echo '        </a>';
-                        }
-                        echo '        <div class="card-footer">';
-                        echo '            <h6 class="card-title fs--1">' . htmlspecialchars($partner['name']) . '</h6>';
-                        echo '        </div>';
-                        echo '    </div>';
-                        echo '</div>';
-                    }
-                } else {
-                    echo '<div class="col-12"><p class="text-center">Tidak ada mitra untuk ditampilkan.</p></div>';
-                }
-                ?>
-            </div>
-        </div>
-    </section>
-      <!-- <section> close ============================-->
-      <!-- ============================================-->
-      <!-- ============================================-->
-      <!-- <section> begin ============================-->
-      <!-- DEBUG APPOINTMENT SECTION START -->
-      <section class="py-5">
-
-        <div class="container">
-          <div class="row">
-            <div class="col-12 py-3">
-              <div class="bg-holder bg-size" style="background-image:url(public/assets/img/gallery/people.png);background-position:top center;background-size:contain;">
-              </div>
-              <!--/.bg-holder-->
-
-              <h1 class="text-center">KONTAK</h1>
-            </div>
-          </div>
-        </div>
-        <!-- end of .container-->
-
-      </section>
-      <!-- <section> close ============================-->
-      <!-- ============================================-->
-
-
-      <section class="py-8" id="appointment">
-        <div class="container">
-          <div class="row">
-            <div class="bg-holder bg-size" style="background-image:url(public/<?php echo htmlspecialchars($settings['bg_contact_path'] ?? 'assets/img/gallery/dot-bg.png'); ?>);background-position:bottom right;background-size:auto;">
-            </div>
-            <!--/.bg-holder-->
-
-            <div class="col-lg-6 z-index-2 mb-5"><img class="w-100" src="public/assets/img/gallery/appointment.png" alt="..." /></div>
-            <div class="col-lg-6 z-index-2">
-              <div id="appointment-message"></div>
-              <form class="row g-3" id="appointment-form">
-                <div class="col-md-6">
-                  <label class="visually-hidden" for="inputName">Name</label>
-                  <input class="form-control form-livedoc-control" id="inputName" name="name" type="text" placeholder="Name" required />
-                </div>
-                <div class="col-md-6">
-                  <label class="visually-hidden" for="inputPhone">Phone</label>
-                  <input class="form-control form-livedoc-control" id="inputPhone" name="phone" type="text" placeholder="Phone" />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label visually-hidden" for="inputCategory">Category</label>
-                  <select class="form-select" id="inputCategory" name="category">
-                    <option selected="selected">Category</option>
-                    <option> Pelayanan</option>
-                    <option> Jadwal</option>
-                    <option> Fasilitas</option>
-                  </select>
-                </div>
-                <div class="col-md-6">
-                  <label class="visually-hidden" for="inputEmail">Email</label>
-                  <input class="form-control form-livedoc-control" id="inputEmail" name="email" type="email" placeholder="Email" required />
-                </div>
-                <div class="col-md-12">
-                  <label class="form-label visually-hidden" for="validationTextarea">Message</label>
-                  <textarea class="form-control form-livedoc-control" id="validationTextarea" name="message" placeholder="Message" style="height: 250px;" required></textarea>
-                </div>
-                <div class="col-12">
-                  <div class="d-grid">
-                    <button class="btn btn-primary rounded-pill" type="submit">Send Message</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- DEBUG APPOINTMENT SECTION END -->
-
-      <section class="py-0 bg-secondary">
-        <div class="bg-holder opacity-25" style="background-image:url(public/assets/img/gallery/dot-bg.png);background-position:top left;margin-top:-3.125rem;background-size:auto;">
-        </div>
-        <!--/.bg-holder-->
-
-        <div class="container">
-          <?php
-            // Settings are already fetched in public_header.php
-            // $settings = [];
-            // $settings_result = $mysqli->query("SELECT * FROM settings WHERE setting_key LIKE 'contact_%'");
-            // while($setting = $settings_result->fetch_assoc()){
-            //     $settings[$setting['setting_key']] = $setting['setting_value'];
-            // }
-          ?>
-          <div class="row py-8">
-            <div class="col-12 col-sm-12 col-lg-6 mb-4 order-0 order-sm-0"><a class="text-decoration-none" href="#"><img src="/comprojhc/public/<?php echo htmlspecialchars($settings['footer_logo_path'] ?? 'assets/img/gallery/footer-logo.png'); ?>" height="51" alt="" /></a>
-              <p class="text-light my-4"><?php echo nl2br(htmlspecialchars($settings['contact_tagline'] ?? '')); ?></p>
-            </div>
+            
             <div class="col-6 col-sm-4 col-lg-2 mb-3 order-2 order-sm-1">
-              <h5 class="lh-lg fw-bold mb-4 text-light font-sans-serif">Poliklinik</h5>
+              <h5 class="lh-lg fw-bold text-light mb-4 font-sans-serif">Departments</h5>
               <ul class="list-unstyled mb-md-4 mb-lg-0">
-                <li class="lh-lg"><a class="footer-link" href="#!">Jantung</a></li>
-                <li class="lh-lg"><a class="footer-link" href="#!">Neurologi</a></li>
-                <li class="lh-lg"><a class="footer-link" href="#!">Penyakit Dalam</a></li>
+                <?php foreach(array_slice($dept_data, 0, 5) as $d): ?>
+                    <li class="lh-lg"><a class="text-200" href="#departments"><?php echo htmlspecialchars($d['name']); ?></a></li>
+                <?php endforeach; ?>
               </ul>
             </div>
+            
             <div class="col-6 col-sm-4 col-lg-2 mb-3 order-3 order-sm-2">
-              <h5 class="lh-lg fw-bold text-light mb-4 font-sans-serif"> Customer Care</h5>
+              <h5 class="lh-lg fw-bold text-light mb-4 font-sans-serif">Useful Links</h5>
               <ul class="list-unstyled mb-md-4 mb-lg-0">
-                <li class="lh-lg"><a class="footer-link" href="#!">About Us</a></li>
-                <li class="lh-lg"><a class="footer-link" href="#!">Contact US</a></li>
-                <li class="lh-lg"><a class="footer-link" href="#!">Get Update</a></li>
+                <li class="lh-lg"><a class="text-200" href="#about">About Us</a></li>
+                <li class="lh-lg"><a class="text-200" href="#news">Blog</a></li>
+                <li class="lh-lg"><a class="text-200" href="#appointment">Contact</a></li>
+                <li class="lh-lg"><a class="text-200" href="#appointment">Appointment</a></li>
               </ul>
             </div>
-            <div class="col-6 col-sm-4 col-lg-2 mb-3 order-3 order-sm-2">
-              <h5 class="lh-lg fw-bold text-light mb-4 font-sans-serif"> Our Location</h5>
-              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.3026479277464!2d108.22658777513445!3d-7.319860891719987!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6f575256b155e3%3A0xf50e5319fe82a294!2sRS%20Jantung%20Tasikmalaya!5e0!3m2!1sid!2sid!4v1759453736032!5m2!1sid!2sid" width="200" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            
+           <div class="col-6 col-sm-4 col-lg-3 mb-3 order-3 order-sm-2">
+              <h5 class="lh-lg fw-bold text-light mb-4 font-sans-serif">Our Location</h5>
+              <div class="ratio ratio-1x1" style="max-height: 200px; max-width: 250px;">
+                <iframe 
+                  src="https://maps.google.com/maps?q=RS+Jantung+Tasikmalaya+JHC&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                  style="border:0;" 
+                  allowfullscreen="" 
+                  loading="lazy" 
+                  referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+              </div>
             </div>
           </div>
         </div>
 
-
-        <!-- ============================================-->
-        <!-- <section> begin ============================-->
-        <section class="py-0 bg-primary">
-
-          <div class="container">
-            <div class="row justify-content-md-between justify-content-evenly py-4">
-              <div class="col-12 col-sm-8 col-md-6 col-lg-auto text-center text-md-start">
-                <p class="fs--1 my-2 fw-bold text-200">&copy; NuTech, 2025</p>
-              </div>
-              <div class="col-12 col-sm-8 col-md-6">
-               
-              </div>
+        <div class="container">
+          <div class="row justify-content-md-between justify-content-evenly py-4">
+            <div class="col-12 col-sm-8 col-md-6 col-lg-auto text-center text-md-start">
+              <p class="fs--1 my-2 fw-bold text-200">All rights Reserved © JHC, 2026</p>
             </div>
           </div>
-          <!-- end of .container-->
-
-        </section>
-        <!-- <section> close ============================-->
-        <!-- ============================================-->
-
-
+        </div>
       </section>
-<?php require_once "public/layout/public_footer.php"; ?>
+<?php 
+if (file_exists("public/layout/public_footer.php")) {
+    require_once "public/layout/public_footer.php"; 
+} else {
+    echo '<footer class="py-4 bg-light text-center"><p class="mb-0 text-muted">&copy; '.date('Y').' Rs JHC Tasikmalaya. All rights reserved.</p></footer><script src="public/vendors/bootstrap/bootstrap.min.js"></script></body></html>';
+}
+?>
