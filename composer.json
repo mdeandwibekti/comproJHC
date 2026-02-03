@@ -1,0 +1,6 @@
+{
+    "name": "gemini/comprojhc",
+    "require": {
+        "phpmailer/phpmailer": "^6.10"
+    }
+}

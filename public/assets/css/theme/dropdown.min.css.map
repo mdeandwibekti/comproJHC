@@ -1,0 +1,1 @@
+{"version":3,"sources":["theme/dropdown.scss"],"names":[],"mappings":"AAAA,eACI,eAAA,CACA,QAAA,CACA,eAAA,CACA,uBAAA,CAAA,eAAA,CACA,wBAAA","file":"dropdown.min.css","sourcesContent":[".dropdown-menu {\r\n    min-width: 16rem;\r\n    border: 0;\r\n    border-radius: 0;\r\n    box-shadow:none;\r\n    background-color: #F0F4F9;\r\n}"]}
