@@ -8,12 +8,10 @@ $page_title = "Add New Job Opening";
 $id = null;
 $job_title_err = $description_err = $location_err = $end_date_err = "";
 
-// Cek apakah ada parameter ID (Mode Edit)
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
     $page_title = "Edit Job Opening";
     
-    // Query SELECT tetap ke tabel 'careers'
     $sql = "SELECT job_title, description, location, status, end_date FROM careers WHERE id = ?";
     
     if ($stmt = $mysqli->prepare($sql)) {
@@ -28,7 +26,6 @@ if (isset($_GET['id'])) {
                 $status = $row['status'];
                 $end_date = $row['end_date'];
             } else {
-                // Redirect ke list careers jika ID tidak valid
                 header("location: careers.php");
                 exit();
             }
@@ -39,25 +36,21 @@ if (isset($_GET['id'])) {
     }
 }
 
-// Proses Form Submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = trim($_POST['id']);
 
-    // Validate job_title
     if (empty(trim($_POST["job_title"]))) {
         $job_title_err = "Please enter a job title.";
     } else {
         $job_title = trim($_POST["job_title"]);
     }
 
-    // Validate description
     if (empty(trim($_POST["description"]))) {
         $description_err = "Please enter a description.";
     } else {
         $description = trim($_POST["description"]);
     }
 
-    // Validate location
     if (empty(trim($_POST["location"]))) {
         $location_err = "Please enter a location.";
     } else {
@@ -67,17 +60,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $status = trim($_POST["status"]);
     $end_date = trim($_POST["end_date"]);
 
-    // Validate end_date (optional)
     if (!empty($end_date) && !preg_match("/^\d{4}-\d{2}-\d{2}$/", $end_date)) {
         $end_date_err = "Please enter a valid date format (YYYY-MM-DD).";
     } elseif (empty($end_date)) {
         $end_date = NULL; 
     }
 
-    // Cek error sebelum insert/update
     if (empty($job_title_err) && empty($description_err) && empty($location_err) && empty($end_date_err)) {
         
-        // PERUBAHAN DI SINI: Menggunakan tabel 'careers' (bukan careers2)
         if (empty($id)) {
             $sql = "INSERT INTO careers (job_title, description, location, status, end_date) VALUES (?, ?, ?, ?, ?)";
         } else {
@@ -92,7 +82,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             
             if ($stmt->execute()) {
-                // Redirect ke careers.php setelah sukses
                 header("location: careers.php");
                 exit();
             } else {

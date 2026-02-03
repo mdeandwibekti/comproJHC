@@ -2,7 +2,6 @@
 require_once "../../config.php";
 require_once 'layout/header.php';
 
-// Menggunakan tabel 'careers' (bukan careers2)
 $sql = "SELECT * FROM careers ORDER BY post_date DESC";
 $result = $mysqli->query($sql);
 ?>
@@ -27,10 +26,8 @@ $result = $mysqli->query($sql);
             if ($result && $result->num_rows > 0) {
                 while($row = $result->fetch_assoc()) {
                     echo "<tr>";
-                    // Kolom disesuaikan dengan database yang sudah di-ALTER
                     echo "<td>" . htmlspecialchars($row['job_title']) . "</td>";
                     
-                    // Cek jika kolom location ada isinya
                     $loc = isset($row['location']) ? $row['location'] : '-';
                     echo "<td>" . htmlspecialchars($loc) . "</td>";
                     
@@ -39,7 +36,6 @@ $result = $mysqli->query($sql);
                     
                     echo "<td>" . date('Y-m-d', strtotime($row['post_date'])) . "</td>";
                     
-                    // Link diperbaiki ke career_edit.php
                     echo "<td><a href='career_edit.php?id=" . $row['id'] . "' class='btn btn-sm btn-info'>Edit</a></td>";
                     echo "</tr>";
                 }

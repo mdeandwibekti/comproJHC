@@ -4,11 +4,10 @@ require_once 'layout/header.php';
 
 $page_title = "Manage Banners";
 
-// Handle delete action
 if (isset($_GET['delete_id'])) {
     $delete_id = $_GET['delete_id'];
-    // Get image path to delete file from server
-    $stmt = $mysqli->prepare("SELECT image_path FROM banners2 WHERE id = ?");
+    
+    $stmt = $mysqli->prepare("SELECT image_path FROM banners WHERE id = ?");
     $stmt->bind_param("i", $delete_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -19,10 +18,10 @@ if (isset($_GET['delete_id'])) {
         unlink('../' . $banner_to_delete['image_path']);
     }
 
-    $stmt = $mysqli->prepare("DELETE FROM banners2 WHERE id = ?");
+    $stmt = $mysqli->prepare("DELETE FROM banners WHERE id = ?");
     $stmt->bind_param("i", $delete_id);
     if ($stmt->execute()) {
-        header("location: banners2.php?deleted=true");
+        header("location: banners.php?deleted=true");
         exit();
     } else {
         echo "Error deleting record: " . $mysqli->error;
@@ -30,22 +29,20 @@ if (isset($_GET['delete_id'])) {
     $stmt->close();
 }
 
-// Fetch all banners
 $banners = [];
-$sql = "SELECT id, image_path, title, description, display_order FROM banners2 ORDER BY display_order ASC";
+$sql = "SELECT id, image_path, title, description, display_order FROM banners ORDER BY display_order ASC";
 $result = $mysqli->query($sql);
 if ($result && $result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $banners[] = $row;
     }
 }
-
 ?>
 
 <div class="container-fluid">
     <h3><?php echo $page_title; ?></h3>
     <hr>
-    <a href="banner_edit2.php" class="btn btn-primary mb-3">Add New Banner</a>
+    <a href="banner_edit.php" class="btn btn-primary mb-3">Add New Banner</a>
 
     <?php if (isset($_GET['saved'])): ?>
         <div class="alert alert-success">Banner saved successfully!</div>
@@ -76,8 +73,8 @@ if ($result && $result->num_rows > 0) {
                             <td><?php echo htmlspecialchars(substr($banner['description'], 0, 100)); ?>...</td>
                             <td><?php echo $banner['display_order']; ?></td>
                             <td>
-                                <a href="banner_edit2.php?id=<?php echo $banner['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
-                                <a href="banners2.php?delete_id=<?php echo $banner['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this banner?');">Delete</a>
+                                <a href="banner_edit.php?id=<?php echo $banner['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="banners.php?delete_id=<?php echo $banner['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this banner?');">Delete</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

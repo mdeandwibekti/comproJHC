@@ -1,9 +1,8 @@
-
 <?php
 require_once '../../config.php';
 require_once 'layout/header.php';
 
-$sql = "SELECT a.*, c.job_title FROM applicants2 a JOIN careers2 c ON a.job_id = c.id ORDER BY a.applied_at DESC";
+$sql = "SELECT a.*, c.job_title FROM applicants a JOIN careers c ON a.job_id = c.id ORDER BY a.applied_at DESC";
 $result = $mysqli->query($sql);
 ?>
 
@@ -37,9 +36,9 @@ $result = $mysqli->query($sql);
                     echo "<td>" . htmlspecialchars($row['phone']) . "</td>";
                     echo "<td>" . htmlspecialchars($row['email']) . "</td>";
                     echo "<td>" . htmlspecialchars($row['education']) . "</td>";
-                    echo "<td><a href='../" . htmlspecialchars($row['cv_path']) . "' target='_blank'>Download CV</a></td>";
+                    echo "<td><a href='../" . htmlspecialchars($row['cv_path']) . "' target='_blank' class='btn btn-sm btn-outline-primary'>Download CV</a></td>";
                     
-                    $status_color = 'bg-warning';
+                    $status_color = 'bg-warning text-dark';
                     if ($row['status'] == 'Diterima') {
                         $status_color = 'bg-success';
                     } elseif ($row['status'] == 'Ditolak') {
@@ -51,14 +50,16 @@ $result = $mysqli->query($sql);
                     
                     echo "<td>";
                     if ($row['status'] == 'Pending') {
-                        echo "<button class='btn btn-sm btn-success update-status-btn' data-id='" . $row['id'] . "' data-status='Diterima'>Diterima</button>";
-                        echo "<button class='btn btn-sm btn-danger update-status-btn' data-id='" . $row['id'] . "' data-status='Ditolak'>Ditolak</button>";
+                        echo "<button class='btn btn-sm btn-success update-status-btn mx-1' data-id='" . $row['id'] . "' data-status='Diterima'>Terima</button>";
+                        echo "<button class='btn btn-sm btn-danger update-status-btn mx-1' data-id='" . $row['id'] . "' data-status='Ditolak'>Tolak</button>";
+                    } else {
+                        echo "-";
                     }
                     echo "</td>";
                     echo "</tr>";
                 }
             } else {
-                echo "<tr><td colspan='10'>No applicants found.</td></tr>";
+                echo "<tr><td colspan='10' class='text-center'>No applicants found.</td></tr>";
             }
             ?>
         </tbody>
@@ -88,8 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (data.success) {
                         messageDiv.className = 'alert alert-success';
                         messageDiv.textContent = data.message;
-                        // Reload the page to reflect changes
-                        setTimeout(() => window.location.reload(), 1500);
+                        setTimeout(() => window.location.reload(), 1000);
                     } else {
                         messageDiv.className = 'alert alert-danger';
                         messageDiv.textContent = data.message;
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.error('Error:', error);
                     const messageDiv = document.getElementById('status-update-message');
                     messageDiv.className = 'alert alert-danger';
-                    messageDiv.textContent = 'An error occurred.';
+                    messageDiv.textContent = 'An error occurred while connecting to server.';
                 });
             }
         });

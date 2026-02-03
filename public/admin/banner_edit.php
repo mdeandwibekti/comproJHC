@@ -25,7 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $display_order = $_POST['display_order'];
     $image_path = $_POST['current_image'];
 
-    // Handle image upload
     if (isset($_FILES["image"]) && $_FILES["image"]["error"] == 0) {
         $new_filename = uniqid() . '-' . basename($_FILES["image"]["name"]);
         $upload_dir = "../assets/img/banners/";
@@ -38,15 +37,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $image_err = "Error uploading image.";
         }
-    } else if (empty($image_path) && empty($id)) { // Image is required for new banners
+    } else if (empty($image_path) && empty($id)) { 
         $image_err = "Please upload an image.";
     }
 
     if (empty($title_err) && empty($image_err)) {
         if (empty($id)) {
-            $sql = "INSERT INTO banners2 (image_path, title, description, display_order) VALUES (?, ?, ?, ?)";
+            $sql = "INSERT INTO banners (image_path, title, description, display_order) VALUES (?, ?, ?, ?)";
         } else {
-            $sql = "UPDATE banners2 SET image_path = ?, title = ?, description = ?, display_order = ? WHERE id = ?";
+            $sql = "UPDATE banners SET image_path = ?, title = ?, description = ?, display_order = ? WHERE id = ?";
         }
 
         if ($stmt = $mysqli->prepare($sql)) {
@@ -57,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             
             if ($stmt->execute()) {
-                header("location: banners2.php?saved=true");
+                header("location: banners.php?saved=true");
                 exit();
             } else {
                 echo "Something went wrong. Please try again later." . $mysqli->error;
@@ -68,13 +67,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 if (!empty($id)) {
-    $sql = "SELECT image_path, title, description, display_order FROM banners2 WHERE id = ?";
+    $sql = "SELECT image_path, title, description, display_order FROM banners WHERE id = ?";
     if ($stmt = $mysqli->prepare($sql)) {
         $stmt->bind_param("i", $id);
         if ($stmt->execute()) {
             $stmt->store_result();
-            $stmt->bind_result($image_path, $title, $description, $display_order);
-            $stmt->fetch();
+            if ($stmt->num_rows == 1) {
+                $stmt->bind_result($image_path, $title, $description, $display_order);
+                $stmt->fetch();
+            }
         }
         $stmt->close();
     }
@@ -84,7 +85,7 @@ if (!empty($id)) {
 <div class="container-fluid">
     <h3><?php echo $page_title; ?></h3>
     <hr>
-    <form action="banner_edit2.php" method="post" enctype="multipart/form-data">
+    <form action="banner_edit.php<?php echo $id ? '?id='.$id : ''; ?>" method="post" enctype="multipart/form-data">
         <input type="hidden" name="id" value="<?php echo $id; ?>">
         <div class="form-group">
             <label>Title</label>
@@ -109,7 +110,7 @@ if (!empty($id)) {
 
         <div class="form-group mt-4">
             <input type="submit" class="btn btn-primary" value="Save">
-            <a href="banners2.php" class="btn btn-secondary">Cancel</a>
+            <a href="banners.php" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>
