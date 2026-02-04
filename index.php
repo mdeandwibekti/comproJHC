@@ -112,9 +112,104 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
 <style>
     :root {
-        --primary-color: #1B71A1;
-        --secondary-color: #2D3B48;
-        --accent-color: #F95C19;
+        --jhc-red: #C8102E;
+        --jhc-navy: #002855;
+        --jhc-light: #F8F9FA;
+    }
+
+    /* Navbar */
+    .navbar {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        min-height: 70px; 
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+
+    /* Efek saat Navbar di-scroll (Jika menggunakan JS bawaan theme Anda) */
+    .navbar.navbar-scrolled {
+        padding: 10px 0;
+        border-bottom: 3px solid var(--jhc-red);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+   .navbar .container {
+        max-width: 1200px;
+        padding-left: 10px; /* Memberikan jarak dari pinggir kiri */
+        padding-right: 1px;
+    }
+
+  /* Mengatur ukuran Logo JHC */
+    .navbar-brand img {
+        height: 80px; 
+        width: auto;  
+        transition: transform 0.3s ease;
+        object-fit: contain;
+    }
+
+    .navbar-brand:hover img {
+        transform: scale(1.05); 
+    }
+
+    /* Menu Animasi */
+    .nav-link {
+        color: var(--jhc-navy) !important;
+        font-weight: 700;
+        position: relative;
+        margin: 0 5px;
+    }
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: var(--jhc-red);
+        transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+        width: 100%;
+    }
+
+    .navbar-nav .nav-link {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+
+    .navbar-brand img {
+        transition: all 0.3s ease-in-out;
+        filter: drop-shadow(0px 0px 0px rgba(200, 16, 46, 0));
+    }
+
+    .navbar-brand:hover img {
+        transform: scale(1.1) rotate(-2deg); /* Logo membesar sedikit dan miring */
+        filter: drop-shadow(0px 4px 8px rgba(200, 16, 46, 0.3)); /* Memberikan glow merah halus */
+    }
+
+    /* Navbar yang berubah warna saat di-scroll */
+    .navbar.navbar-scrolled {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+    }
+
+    /* Tombol Janji Temu Interaktif */
+    .btn-janji {
+        background: var(--jhc-red);
+        color: white !important;
+        border-radius: 50px;
+        padding: 8px 20px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        border: 2px solid var(--jhc-red);
+        transition: all 0.3s ease;
+    } 
+    .btn-janji:hover {
+        background: transparent;
+        color: var(--jhc-red) !important;
+        box-shadow: 0 5px 15px rgba(200, 16, 46, 0.3);
     }
     
     .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
@@ -156,26 +251,31 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     <main class="main" id="top">
       
       <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 d-block" data-navbar-on-scroll="data-navbar-on-scroll">
-        <div class="container">
-          <a class="navbar-brand" href="index.php">
-            <?php 
-            $header_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/logo.png';
-            ?>
-            <img src="public/<?php echo htmlspecialchars($header_logo); ?>" width="118" alt="logo" />
-          </a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"> </span></button>
-          <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
+    <div class="container">
+        <a class="navbar-brand" href="index.php">
+    <?php 
+    // Sesuaikan nama file dengan yang ada di folder public/assets/img/gallery/
+    $header_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/JHC_Logo.png';
+    ?>
+    <img src="public/<?php echo htmlspecialchars($header_logo); ?>" width="130" alt="JHC Logo" />
+</a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto pt-2 pt-lg-0 font-base">
-              <li class="nav-item px-2"><a class="nav-link" aria-current="page" href="#about">Tentang Kami</a></li>
-              <li class="nav-item px-2"><a class="nav-link" href="#departments">Layanan</a></li>
-              <li class="nav-item px-2"><a class="nav-link" href="#doctors">Dokter</a></li>
-              <li class="nav-item px-2"><a class="nav-link" href="#news">Berita</a></li>
-              <li class="nav-item px-2"><a class="nav-link" href="#appointment">Kontak</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#about">Tentang Kami</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#departments">Layanan</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#doctors">Dokter</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#news">Berita</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#appointment">Kontak</a></li>
             </ul>
-            <a class="btn btn-sm btn-outline-primary rounded-pill order-1 order-lg-0 ms-lg-4" href="#appointment">Janji Temu</a>
-          </div>
+            <a class="btn btn-janji order-1 order-lg-0 ms-lg-4" href="#appointment">Janji Temu</a>
         </div>
-      </nav>
+    </div>
+</nav>
 
       <section class="py-0 position-relative" id="home">
         <div class="bg-holder" style="
