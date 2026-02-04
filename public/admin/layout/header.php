@@ -51,7 +51,7 @@ while($setting = $settings_result->fetch_assoc()){
                         Settings
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="background_settings.php">Background Settings</a></li>
+                        <li><a class="dropdown-item" href="background_settings2.php">Background Settings</a></li>
                         <li><a class="dropdown-item" href="logo_settings.php">Logo Settings</a></li>
                         <li><a class="dropdown-item" href="popup_settings2.php">Popup Settings</a></li>
                     </ul>

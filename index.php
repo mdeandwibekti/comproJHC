@@ -254,135 +254,90 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       </script>
 
       <section class="py-5 bg-white" id="departments">
-        <div class="container">
-            
-            <div class="row justify-content-center mb-5">
-                <div class="col-12 text-center">
-                    <h2 class="section-title">PELAYANAN KAMI</h2>
-                    <p class="text-muted">Kami menyediakan berbagai layanan unggulan dan poliklinik spesialis.</p>
-                </div>
-            </div>
-
-            <?php if (!empty($layanan_data)): ?>
-            <div class="mb-5">
-                <div class="row mb-4">
+            <div class="container">
+                
+                <div class="row justify-content-center mb-5">
                     <div class="col-12 text-center">
-                        <h4 class="fw-bold text-primary"><i class="fas fa-star me-2"></i>LAYANAN UNGGULAN</h4>
-                        <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--accent-color); opacity: 1;">
+                        <h2 class="section-title">PELAYANAN KAMI</h2>
+                        <p class="text-muted">Kami menyediakan berbagai layanan unggulan dan poliklinik spesialis.</p>
                     </div>
                 </div>
 
-                <div class="row gx-4 gy-4 justify-content-center">
-                    <?php foreach($layanan_data as $layanan): ?>
-                    <div class="col-6 col-md-4 col-lg-3 mb-2">
-                        <div class="card h-100 border-0 shadow hover-lift text-center p-4" style="background: #f8faff;">
-                            <div class="card-body d-flex flex-column align-items-center">
-                                <div class="mb-4 d-flex justify-content-center align-items-center bg-white rounded-circle shadow-sm" style="width: 80px; height: 80px;">
-                                    <?php if(!empty($layanan['icon_path'])): ?>
-                                        <img src="public/<?php echo htmlspecialchars($layanan['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="..." />
-                                    <?php else: ?>
-                                        <i class="fas fa-star fa-2x text-warning"></i>
-                                    <?php endif; ?>
-                                </div>
-                                <h5 class="card-title fw-bold text-dark mb-3"><?php echo htmlspecialchars($layanan['name']); ?></h5>
-                                <div class="mt-auto">
-                                    <a href="#!" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">Detail Layanan</a>
+                <?php if (!empty($layanan_data)): ?>
+                <div class="mb-5">
+                    <div class="row mb-4">
+                        <div class="col-12 text-center">
+                            <h4 class="fw-bold text-primary"><i class="fas fa-star me-2"></i>LAYANAN UNGGULAN</h4>
+                            <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--accent-color); opacity: 1;">
+                        </div>
+                    </div>
+
+                    <div class="row gx-4 gy-4 justify-content-center">
+                        <?php foreach($layanan_data as $layanan): ?>
+                        <div class="col-6 col-md-4 col-lg-3 mb-2">
+                            <div class="card h-100 border-0 shadow hover-lift text-center p-4" style="background: #f8faff;">
+                                <div class="card-body d-flex flex-column align-items-center">
+                                    <div class="mb-4 d-flex justify-content-center align-items-center bg-white rounded-circle shadow-sm" style="width: 80px; height: 80px;">
+                                        <?php if(!empty($layanan['icon_path'])): ?>
+                                            <img src="public/<?php echo htmlspecialchars($layanan['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="..." />
+                                        <?php else: ?>
+                                            <i class="fas fa-star fa-2x text-warning"></i>
+                                        <?php endif; ?>
+                                    </div>
+                                    <h5 class="card-title fw-bold text-dark mb-3"><?php echo htmlspecialchars($layanan['name']); ?></h5>
+                                    <div class="mt-auto">
+                                        <a href="#appointment" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">Detail Layanan</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <?php endforeach; ?>
                     </div>
-                    <?php endforeach; ?>
                 </div>
-            </div>
-        <?php endif; ?>
+                <?php endif; ?>
 
-        <?php if (!empty($poliklinik_data)): ?>
-        <div class="mt-5">
-            <div class="row mb-4 pt-4">
-                <div class="col-12 text-center">
-                    <h4 class="fw-bold text-secondary"><i class="fas fa-stethoscope me-2"></i>POLIKLINIK SPESIALIS</h4>
-                    <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--secondary-color); opacity: 1;">
-                </div>
-            </div>
-
-            <div class="row gx-4 gy-4 justify-content-center">
-                <?php foreach($poliklinik_data as $poli): ?>
-                <div class="col-6 col-md-4 col-lg-3 mb-2">
-                    <div class="card h-100 border-0 shadow-sm hover-lift text-center p-4">
-                        <div class="card-body d-flex flex-column align-items-center">
-                            <div class="mb-4 d-flex justify-content-center align-items-center bg-light rounded-circle shadow-sm" style="width: 80px; height: 80px;">
-                                <?php if(!empty($poli['icon_path'])): ?>
-                                    <img src="public/<?php echo htmlspecialchars($poli['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="..." />
-                                <?php else: ?>
-                                    <i class="fas fa-heartbeat fa-2x text-primary"></i>
-                                <?php endif; ?>
-                            </div>
-                            <h5 class="card-title fw-bold text-dark mb-3"><?php echo htmlspecialchars($poli['name']); ?></h5>
-                            <div class="mt-auto">
-                                <a href="#!" class="btn btn-outline-primary btn-sm rounded-pill px-4">Jadwal Dokter</a>
-                            </div>
+                <?php if (!empty($poliklinik_data)): ?>
+                <div class="mt-5">
+                    <div class="row mb-4 pt-4">
+                        <div class="col-12 text-center">
+                            <h4 class="fw-bold text-secondary"><i class="fas fa-stethoscope me-2"></i>POLIKLINIK SPESIALIS</h4>
+                            <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--secondary-color); opacity: 1;">
                         </div>
                     </div>
+
+                    <div class="row gx-4 gy-4 justify-content-center">
+                        <?php foreach($poliklinik_data as $poli): ?>
+                        <div class="col-6 col-md-4 col-lg-3 mb-2">
+                            <div class="card h-100 border-0 shadow-sm hover-lift text-center p-4">
+                                <div class="card-body d-flex flex-column align-items-center">
+                                    <div class="mb-4 d-flex justify-content-center align-items-center bg-light rounded-circle shadow-sm" style="width: 80px; height: 80px;">
+                                        <?php if(!empty($poli['icon_path'])): ?>
+                                            <img src="public/<?php echo htmlspecialchars($poli['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="..." />
+                                        <?php else: ?>
+                                            <i class="fas fa-heartbeat fa-2x text-primary"></i>
+                                        <?php endif; ?>
+                                    </div>
+                                    <h5 class="card-title fw-bold text-dark mb-3"><?php echo htmlspecialchars($poli['name']); ?></h5>
+                                    
+                                    <div class="mt-auto">
+                                        <button type="button" 
+                                                class="btn btn-outline-primary btn-sm rounded-pill px-4 btn-view-doctors" 
+                                                data-id="<?php echo $poli['id']; ?>" 
+                                                data-name="<?php echo htmlspecialchars($poli['name']); ?>">
+                                            Jadwal Dokter
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-        <?php endif; ?>
+                <?php endif; ?>
 
             </div>
         </section>
-
-      <?php if (!empty($mcu_packages_data)): ?>
-      <section class="py-5" style="background-color: #f1f7fc;">
-        <div class="container">
-            <div class="row justify-content-center mb-5">
-                <div class="col-md-8 text-center">
-                    <h2 class="section-title">PAKET MEDICAL CHECK UP</h2>
-                    <p class="text-muted">Pencegahan lebih baik daripada pengobatan.</p>
-                </div>
-            </div>
-            
-            <div id="mcuCarousel" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <?php foreach ($mcu_packages_data as $index => $package): ?>
-                  <div class="carousel-item <?php echo ($index === 0) ? 'active' : ''; ?>">
-                    <div class="card border-0 shadow-lg overflow-hidden mx-auto" style="max-width: 900px;">
-                        <div class="row g-0">
-                            <div class="col-md-5">
-                                <img src="public/<?php echo htmlspecialchars($package['image_path']); ?>" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 300px;" alt="<?php echo htmlspecialchars($package['title']); ?>">
-                            </div>
-                            <div class="col-md-7 d-flex align-items-center bg-white">
-                                <div class="card-body p-5 text-center text-md-start">
-                                    <span class="badge bg-warning text-dark mb-2">Populer</span>
-                                    <h3 class="card-title fw-bold text-primary mb-3"><?php echo htmlspecialchars($package['title']); ?></h3>
-                                    <p class="card-text text-muted mb-4"><?php echo nl2br(htmlspecialchars($package['description'])); ?></p>
-                                    <h4 class="text-dark fw-bold mb-4">Rp <?php echo number_format($package['price'], 0, ',', '.'); ?></h4>
-                                    
-                                    <?php
-                                    $whatsapp_number = '6287760615300';
-                                    $whatsapp_message = urlencode("Halo JHC, saya ingin booking paket MCU: " . $package['title']);
-                                    $whatsapp_link = "https://api.whatsapp.com/send?phone={$whatsapp_number}&text={$whatsapp_message}";
-                                    ?>
-                                    <a href="<?php echo $whatsapp_link; ?>" target="_blank" class="btn btn-primary rounded-pill px-4 py-2">
-                                        <i class="fab fa-whatsapp me-2"></i> Booking Via WhatsApp
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                  </div>
-                <?php endforeach; ?>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#mcuCarousel" data-bs-slide="prev" style="width: 5%;">
-                <span class="carousel-control-prev-icon bg-primary rounded-circle p-3" aria-hidden="true"></span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#mcuCarousel" data-bs-slide="next" style="width: 5%;">
-                <span class="carousel-control-next-icon bg-primary rounded-circle p-3" aria-hidden="true"></span>
-              </button>
-            </div>
-        </div>
-      </section>
-      <?php endif; ?>
 
       <?php if ($vr_data): ?>
       <section class="py-5" id="about">
@@ -457,7 +412,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
          <div class="container">
              <div class="row justify-content-center mb-5">
                  <div class="col-md-8 text-center">
-                     <h2 class="section-title">FASILITAS UNGGULAN</h2>
+                     <h2 class="section-title">FASILITAS</h2>
                  </div>
              </div>
              <div class="row g-4">
@@ -555,6 +510,58 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           </div>
         </div>
       </section>
+
+      <?php if (!empty($mcu_packages_data)): ?>
+      <section class="py-5" style="background-color: #f1f7fc;">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-8 text-center">
+                    <h2 class="section-title">PAKET MEDICAL CHECK UP</h2>
+                    <p class="text-muted">Pencegahan lebih baik daripada pengobatan.</p>
+                </div>
+            </div>
+            
+            <div id="mcuCarousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <?php foreach ($mcu_packages_data as $index => $package): ?>
+                  <div class="carousel-item <?php echo ($index === 0) ? 'active' : ''; ?>">
+                    <div class="card border-0 shadow-lg overflow-hidden mx-auto" style="max-width: 900px;">
+                        <div class="row g-0">
+                            <div class="col-md-5">
+                                <img src="public/<?php echo htmlspecialchars($package['image_path']); ?>" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 300px;" alt="<?php echo htmlspecialchars($package['title']); ?>">
+                            </div>
+                            <div class="col-md-7 d-flex align-items-center bg-white">
+                                <div class="card-body p-5 text-center text-md-start">
+                                    <span class="badge bg-warning text-dark mb-2">Populer</span>
+                                    <h3 class="card-title fw-bold text-primary mb-3"><?php echo htmlspecialchars($package['title']); ?></h3>
+                                    <p class="card-text text-muted mb-4"><?php echo nl2br(htmlspecialchars($package['description'])); ?></p>
+                                    <h4 class="text-dark fw-bold mb-4">Rp <?php echo number_format($package['price'], 0, ',', '.'); ?></h4>
+                                    
+                                    <?php
+                                    $whatsapp_number = '6287760615300';
+                                    $whatsapp_message = urlencode("Halo JHC, saya ingin booking paket MCU: " . $package['title']);
+                                    $whatsapp_link = "https://api.whatsapp.com/send?phone={$whatsapp_number}&text={$whatsapp_message}";
+                                    ?>
+                                    <a href="<?php echo $whatsapp_link; ?>" target="_blank" class="btn btn-primary rounded-pill px-4 py-2">
+                                        <i class="fab fa-whatsapp me-2"></i> Booking Via WhatsApp
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#mcuCarousel" data-bs-slide="prev" style="width: 5%;">
+                <span class="carousel-control-prev-icon bg-primary rounded-circle p-3" aria-hidden="true"></span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#mcuCarousel" data-bs-slide="next" style="width: 5%;">
+                <span class="carousel-control-next-icon bg-primary rounded-circle p-3" aria-hidden="true"></span>
+              </button>
+            </div>
+        </div>
+      </section>
+      <?php endif; ?>
 
       <section class="py-5 bg-white">
          <div class="container">
@@ -709,10 +716,99 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           </div>
         </div>
       </section>
-<?php 
-if (file_exists("public/layout/public_footer.php")) {
-    require_once "public/layout/public_footer.php"; 
-} else {
-    echo '<footer class="py-4 bg-light text-center"><p class="mb-0 text-muted">&copy; '.date('Y').' Rs JHC Tasikmalaya. All rights reserved.</p></footer><script src="public/vendors/bootstrap/bootstrap.min.js"></script></body></html>';
-}
-?>
+    <?php 
+    if (file_exists("public/layout/public_footer.php")) {
+        require_once "public/layout/public_footer.php"; 
+    } else {
+        echo '<footer class="py-4 bg-light text-center"><p class="mb-0 text-muted">&copy; '.date('Y').' Rs JHC Tasikmalaya. All rights reserved.</p></footer><script src="public/vendors/bootstrap/bootstrap.min.js"></script></body></html>';
+    }
+    ?>
+
+    <div class="modal fade" id="doctorsModal" tabindex="-1" aria-hidden="true" style="z-index: 1055;">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Dokter Spesialis - <span id="modalDeptName"></span></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1); opacity: 1;"></button>
+      </div>
+      <div class="modal-body bg-light">
+        <div id="modalLoading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Sedang mengambil data dokter...</p>
+        </div>
+        <div id="modalDoctorsList" class="row g-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var modalEl = document.getElementById('doctorsModal');
+    var modalDeptName = document.getElementById('modalDeptName');
+    var modalList = document.getElementById('modalDoctorsList');
+    var modalLoading = document.getElementById('modalLoading');
+
+    // Deteksi klik tombol
+    document.querySelectorAll('.btn-view-doctors').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var deptId = this.getAttribute('data-id');
+            var deptName = this.getAttribute('data-name');
+
+            // 1. Reset Modal
+            modalDeptName.textContent = deptName;
+            modalList.innerHTML = '';
+            modalLoading.style.display = 'block';
+
+            // 2. Buka Modal (Cek Bootstrap 5 atau 4)
+            if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal !== 'undefined') {
+                try {
+                    var modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                } catch(e) { 
+                    if (typeof jQuery !== 'undefined') jQuery('#doctorsModal').modal('show');
+                }
+            } else if (typeof jQuery !== 'undefined') {
+                jQuery('#doctorsModal').modal('show');
+            }
+
+            // 3. Ambil Data API
+            fetch('public/api/get_doctors.php?dept_id=' + deptId)
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    modalLoading.style.display = 'none';
+                    if(data.length > 0) {
+                        var html = '';
+                        data.forEach(function(doc) {
+                            var photo = doc.photo_path ? 'public/' + doc.photo_path : 'public/assets/img/gallery/jane.png';
+                            html += `
+                                <div class="col-md-6">
+                                    <div class="card shadow-sm border-0 h-100">
+                                        <div class="card-body d-flex align-items-center">
+                                            <img src="${photo}" class="rounded-circle border" style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px;">
+                                            <div>
+                                                <h6 class="fw-bold mb-1 text-dark">${doc.name}</h6>
+                                                <span class="badge bg-light text-primary mb-2">${doc.specialty}</span>
+                                                <div class="small text-muted"><i class="fas fa-clock me-1"></i> Jadwal: Cek di RS</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
+                        });
+                        modalList.innerHTML = html;
+                    } else {
+                        modalList.innerHTML = '<div class="col-12 text-center text-muted py-4">Belum ada dokter terdaftar di poli ini.</div>';
+                    }
+                })
+                .catch(function(err) {
+                    console.error(err);
+                    modalLoading.style.display = 'none';
+                    modalList.innerHTML = '<div class="col-12 text-center text-danger">Gagal memuat data.</div>';
+                });
+        });
+    });
+});
+</script>
+
+</body>
+</html>

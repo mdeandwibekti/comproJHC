@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
 
@@ -239,135 +240,60 @@
             <div class="col-xl-10 px-0">
               <div class="carousel slide" id="carouselExampleDark" data-bs-ride="carousel"><a class="carousel-control-prev carousel-icon z-index-2" href="#carouselExampleDark" role="button" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span></a><a class="carousel-control-next carousel-icon z-index-2" href="#carouselExampleDark" role="button" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span></a>
                 <div class="carousel-inner">
-                  <div class="carousel-item active" data-bs-interval="10000">
+                  <?php 
+                  // Jika ada data dokter
+                  if (!empty($featured_doctors)): 
+                      // Bagi array dokter menjadi chunk (kelompok) berisi 3 dokter per slide
+                      $chunks = array_chunk($featured_doctors, 3);
+                      $is_first = true;
+
+                      foreach ($chunks as $chunk): 
+                          // Set class 'active' hanya untuk slide pertama
+                          $active_class = $is_first ? 'active' : '';
+                          $is_first = false;
+                  ?>
+                  <div class="carousel-item <?php echo $active_class; ?>" data-bs-interval="10000">
                     <div class="row h-100 m-lg-7 mx-3 mt-6 mx-md-4 my-md-7">
+                      
+                      <?php foreach ($chunk as $doctor): ?>
                       <div class="col-md-4 mb-8 mb-md-0">
                         <div class="card card-span h-100 shadow">
-                          <div class="card-body d-flex flex-column flex-center py-5"><img src="assets/img/gallery/anita.png" width="128" alt="..." />
-                            <h5 class="mt-3">Anita Deshai</h5>
-                            <p class="mb-0 fs-xxl-1">Pediatrics, Gochi Medicine</p>
-                            <p class="text-600 mb-0">Florida, United States</p>
-                            <p class="text-600 mb-4">10 years experience</p>
-                            <div class="text-center">
-                              <button class="btn btn-outline-secondary rounded-pill" type="submit">View Profile</button>
+                          <div class="card-body d-flex flex-column flex-center py-5">
+                            <?php 
+                                $photo = !empty($doctor['photo_path']) ? $doctor['photo_path'] : 'assets/img/gallery/default-doctor.png'; 
+                            ?>
+                            <img src="<?php echo htmlspecialchars($photo); ?>" width="128" style="height: 128px; object-fit: cover; border-radius: 50%;" alt="<?php echo htmlspecialchars($doctor['name']); ?>" />
+                            
+                            <h5 class="mt-3"><?php echo htmlspecialchars($doctor['name']); ?></h5>
+                            
+                            <p class="mb-0 fs-xxl-1">
+                                <?php echo htmlspecialchars($doctor['specialty']); ?>
+                                <?php if(!empty($doctor['department_name'])): ?>
+                                    , <?php echo htmlspecialchars($doctor['department_name']); ?>
+                                <?php endif; ?>
+                            </p>
+                            
+                            <div class="text-center mt-4">
+                              <button class="btn btn-outline-secondary rounded-pill" type="button">View Profile</button>
                             </div>
                           </div>
                         </div>
                       </div>
-                      <div class="col-md-4 mb-8 mb-md-0">
-                        <div class="card card-span h-100 shadow">
-                          <div class="card-body d-flex flex-column flex-center py-5"><img src="assets/img/gallery/jane.png" width="128" alt="..." />
-                            <h5 class="mt-3">Jane Flakis</h5>
-                            <p class="mb-0 fs-xxl-1">Gynaecology, Abenka Care</p>
-                            <p class="text-600 mb-0">Melbourne, Australia</p>
-                            <p class="text-600 mb-4">12 years experience</p>
-                            <div class="text-center">
-                              <button class="btn btn-outline-secondary rounded-pill" type="submit">View Profile</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-4 mb-8 mb-md-0">
-                        <div class="card card-span h-100 shadow">
-                          <div class="card-body d-flex flex-column flex-center py-5"><img src="assets/img/gallery/leo-mario.png" width="128" alt="..." />
-                            <h5 class="mt-3">Leo Mario</h5>
-                            <p class="mb-0 fs-xxl-1">Physiotherapy, FitCare</p>
-                            <p class="text-600 mb-0">London, England</p>
-                            <p class="text-600 mb-4">25 years experience</p>
-                            <div class="text-center">
-                              <button class="btn btn-secondary hover-top rounded-pill border-0" type="submit">View Profile</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <?php endforeach; ?>
+
                     </div>
                   </div>
-                  <div class="carousel-item" data-bs-interval="2000">
-                    <div class="row h-100 m-lg-7 mx-3 mt-6 mx-md-4 my-md-7">
-                      <div class="col-md-4 mb-8 mb-md-0">
-                        <div class="card card-span h-100 shadow">
-                          <div class="card-body d-flex flex-column flex-center py-5"><img src="assets/img/gallery/anita.png" width="128" alt="..." />
-                            <h5 class="mt-3">Anita Deshai</h5>
-                            <p class="mb-0 fs-xxl-1">Pediatrics, Gochi Medicine</p>
-                            <p class="text-600 mb-0">Florida, United States</p>
-                            <p class="text-600 mb-4">10 years experience</p>
-                            <div class="text-center">
-                              <button class="btn btn-outline-secondary rounded-pill" type="submit">View Profile</button>
+                  <?php endforeach; ?>
+                  
+                  <?php else: ?>
+                    <div class="carousel-item active">
+                        <div class="row h-100 m-lg-7 mx-3 mt-6 mx-md-4 my-md-7 text-center">
+                            <div class="col-12">
+                                <h5>No doctors found. Please add featured doctors from the admin panel.</h5>
                             </div>
-                          </div>
                         </div>
-                      </div>
-                      <div class="col-md-4 mb-8 mb-md-0">
-                        <div class="card card-span h-100 shadow">
-                          <div class="card-body d-flex flex-column flex-center py-5"><img src="assets/img/gallery/jane.png" width="128" alt="..." />
-                            <h5 class="mt-3">Jane Flakis</h5>
-                            <p class="mb-0 fs-xxl-1">Gynaecology, Abenka Care</p>
-                            <p class="text-600 mb-0">Melbourne, Australia</p>
-                            <p class="text-600 mb-4">12 years experience</p>
-                            <div class="text-center">
-                              <button class="btn btn-outline-secondary rounded-pill" type="submit">View Profile</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-4 mb-8 mb-md-0">
-                        <div class="card card-span h-100 shadow">
-                          <div class="card-body d-flex flex-column flex-center py-5"><img src="assets/img/gallery/leo-mario.png" width="128" alt="..." />
-                            <h5 class="mt-3">Leo Mario</h5>
-                            <p class="mb-0 fs-xxl-1">Physiotherapy, FitCare</p>
-                            <p class="text-600 mb-0">London, England</p>
-                            <p class="text-600 mb-4">25 years experience</p>
-                            <div class="text-center">
-                              <button class="btn btn-secondary hover-top rounded-pill border-0" type="submit">View Profile</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </div>
-                  </div>
-                  <div class="carousel-item">
-                    <div class="row h-100 m-lg-7 mx-3 mt-6 mx-md-4 my-md-7">
-                      <div class="col-md-4 mb-8 mb-md-0">
-                        <div class="card card-span h-100 shadow">
-                          <div class="card-body d-flex flex-column flex-center py-5"><img src="assets/img/gallery/anita.png" width="128" alt="..." />
-                            <h5 class="mt-3">Anita Deshai</h5>
-                            <p class="mb-0 fs-xxl-1">Pediatrics, Gochi Medicine</p>
-                            <p class="text-600 mb-0">Florida, United States</p>
-                            <p class="text-600 mb-4">10 years experience</p>
-                            <div class="text-center">
-                              <button class="btn btn-outline-secondary rounded-pill" type="submit">View Profile</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-4 mb-8 mb-md-0">
-                        <div class="card card-span h-100 shadow">
-                          <div class="card-body d-flex flex-column flex-center py-5"><img src="assets/img/gallery/jane.png" width="128" alt="..." />
-                            <h5 class="mt-3">Jane Flakis</h5>
-                            <p class="mb-0 fs-xxl-1">Gynaecology, Abenka Care</p>
-                            <p class="text-600 mb-0">Melbourne, Australia</p>
-                            <p class="text-600 mb-4">12 years experience</p>
-                            <div class="text-center">
-                              <button class="btn btn-outline-secondary rounded-pill" type="submit">View Profile</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-4 mb-8 mb-md-0">
-                        <div class="card card-span h-100 shadow">
-                          <div class="card-body d-flex flex-column flex-center py-5"><img src="assets/img/gallery/leo-mario.png" width="128" alt="..." />
-                            <h5 class="mt-3">Leo Mario</h5>
-                            <p class="mb-0 fs-xxl-1">Physiotherapy, FitCare</p>
-                            <p class="text-600 mb-0">London, England</p>
-                            <p class="text-600 mb-4">25 years experience</p>
-                            <div class="text-center">
-                              <button class="btn btn-secondary hover-top rounded-pill border-0" type="submit">View Profile</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <?php endif; ?>
                 </div>
               </div>
             </div>
