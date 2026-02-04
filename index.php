@@ -110,11 +110,7 @@ if ($res && $res->num_rows > 0) $vr_data = $res->fetch_assoc();
 
 $vr_about = null;
 $res = $mysqli->query("SELECT * FROM page_virtual_room WHERE id = 1");
-<<<<<<< HEAD
 if ($res && $res->num_rows > 0) $vr_about = $res->fetch_assoc();
-=======
-if ($res && $res->num_rows > 0) $vr_data = $res->fetch_assoc();
->>>>>>> 9a2bcbd36b66185331547a522fa93175c43deee5
 
 $partners_data = [];
 $partners_result = $mysqli->query("SELECT * FROM partners ORDER BY name ASC");
@@ -272,39 +268,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     }
     .form-control-modern:focus {
         background: #fff; box-shadow: 0 0 0 4px rgba(27, 113, 161, 0.1); border-color: var(--primary-color);
-    }
-
-    /* Styling untuk Tab About Us */
-    .nav-pills .nav-link {
-        background-color: #f8f9fa;
-        color: var(--jhc-navy);
-        border-bottom: 1px solid #dee2e6;
-        border-radius: 0;
-        transition: all 0.3s;
-    }
-
-    .nav-pills .nav-link:hover {
-        background-color: #e9ecef;
-        padding-left: 1.5rem !important; /* Efek geser saat hover */
-    }
-
-    .nav-pills .nav-link.active {
-        background-color: var(--jhc-red); /* Warna merah JHC */
-        color: white !important;
-        border-left: 5px solid var(--jhc-navy);
-    }
-
-    .nav-pills .nav-link i {
-        width: 25px;
-    }
-
-    .tab-content {
-        background-color: #fff;
-        border: 1px solid #e0e0e0;
-    }
-
-    .text-navy {
-        color: var(--jhc-navy);
     }
 </style>
   </head>
