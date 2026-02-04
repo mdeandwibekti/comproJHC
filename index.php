@@ -38,6 +38,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_appointment']))
     }
 }
 
+// --- FETCH DATA ABOUT US SECTIONS ---
+$about_sections = [];
+$about_sql = "SELECT * FROM about_us_sections";
+$about_result = $mysqli->query($about_sql);
+
+if ($about_result) {
+    while($row = $about_result->fetch_assoc()) {
+        // Kita simpan dalam array dengan key 'section_key' agar mudah dipanggil
+        $about_sections[$row['section_key']] = $row;
+    }
+}
+
+// Fungsi bantu untuk mengambil data aman
+function get_about_data($key, $field, $data_array) {
+    return isset($data_array[$key][$field]) ? $data_array[$key][$field] : '';
+}
+
 // --- FETCH DATA ---
 
 $settings = [];
@@ -86,6 +103,15 @@ $mcu_packages_data = [];
 $mcu_result = $mysqli->query("SELECT * FROM mcu_packages ORDER BY display_order ASC"); 
 if ($mcu_result) { while($row = $mcu_result->fetch_assoc()) { $mcu_packages_data[] = $row; } }
 
+// Virtual Room (About Us)
+$vr_data = null;
+$res = $mysqli->query("SELECT * FROM page_virtual_room WHERE id = 1");
+if ($res && $res->num_rows > 0) $vr_data = $res->fetch_assoc();
+
+$vr_about = null;
+$res = $mysqli->query("SELECT * FROM page_virtual_room WHERE id = 1");
+if ($res && $res->num_rows > 0) $vr_about = $res->fetch_assoc();
+
 $partners_data = [];
 $partners_result = $mysqli->query("SELECT * FROM partners ORDER BY name ASC");
 if ($partners_result) { while($row = $partners_result->fetch_assoc()) { $partners_data[] = $row; } }
@@ -119,15 +145,15 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
     /* Navbar */
     .navbar {
-        padding-top: 8px !important;
-        padding-bottom: 8px !important;
-        min-height: 70px; 
-        background-color: rgba(255, 255, 255, 0.95) !important;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+        min-height: 75px; 
+        background: rgba(255, 255, 255, 0.95) !important;
         backdrop-filter: blur(10px);
         box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
     }
 
-    /* Efek saat Navbar di-scroll (Jika menggunakan JS bawaan theme Anda) */
     .navbar.navbar-scrolled {
         padding: 10px 0;
         border-bottom: 3px solid var(--jhc-red);
@@ -136,11 +162,10 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
    .navbar .container {
         max-width: 1200px;
-        padding-left: 10px; /* Memberikan jarak dari pinggir kiri */
+        padding-left: 10px;
         padding-right: 1px;
     }
 
-  /* Mengatur ukuran Logo JHC */
     .navbar-brand img {
         height: 80px; 
         width: auto;  
@@ -149,7 +174,8 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     }
 
     .navbar-brand:hover img {
-        transform: scale(1.05); 
+        transform: scale(1.08);
+        filter: drop-shadow(0px 4px 8px rgba(200, 16, 46, 0.2));
     }
 
     /* Menu Animasi */
@@ -184,18 +210,16 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     }
 
     .navbar-brand:hover img {
-        transform: scale(1.1) rotate(-2deg); /* Logo membesar sedikit dan miring */
-        filter: drop-shadow(0px 4px 8px rgba(200, 16, 46, 0.3)); /* Memberikan glow merah halus */
+        transform: scale(1.1) rotate(-2deg); 
+        filter: drop-shadow(0px 4px 8px rgba(200, 16, 46, 0.3)); 
     }
 
-    /* Navbar yang berubah warna saat di-scroll */
     .navbar.navbar-scrolled {
         background: rgba(255, 255, 255, 0.95) !important;
         backdrop-filter: blur(10px);
         box-shadow: 0 4px 25px rgba(0,0,0,0.1);
     }
 
-    /* Tombol Janji Temu Interaktif */
     .btn-janji {
         background: var(--jhc-red);
         color: white !important;
@@ -266,7 +290,8 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
         <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto pt-2 pt-lg-0 font-base">
-                <li class="nav-item px-2"><a class="nav-link" href="#about">Tentang Kami</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#virtual_room">Tentang Kami</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#about">about us</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#departments">Layanan</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#doctors">Dokter</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#news">Berita</a></li>
@@ -485,7 +510,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       <?php endif; ?>
 
       <?php if ($vr_data): ?>
-      <section class="py-5" id="about">
+      <section class="py-5" id="virtual_room">
         <div class="container">
             <div class="row align-items-center gx-5">
                 <div class="col-lg-6 mb-4 mb-lg-0">
@@ -494,7 +519,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                         <?php if(!empty($vr_data['image_path_360'])): ?>
                             <img src="public/<?php echo htmlspecialchars($vr_data['image_path_360']); ?>" class="img-fluid rounded-3 shadow w-100" alt="Virtual Room">
                         <?php else: ?>
-                            <img src="public/assets/img/gallery/health-care.png" class="img-fluid rounded-3 shadow w-100" alt="About">
+                            <img src="public/assets/img/gallery/health-care.png" class="img-fluid rounded-3 shadow w-100" alt="virtual Room">
                         <?php endif; ?>
                     </div>
                 </div>
@@ -523,6 +548,119 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         </div>
       </section>
       <?php endif; ?>
+        
+     <?php if ($vr_data): ?>
+        <section class="py-5" id="about_us" style="background-color: #fff;">
+            <div class="container">
+                <div class="row justify-content-center mb-5">
+                    <div class="col-md-8 text-center">
+                        <h5 class="text-primary fw-bold text-uppercase">About us</h5>
+                        <h2 class="section-title">Mengenal Lebih Dekat RS JHC</h2>
+                        <p class="text-muted">Dedikasi kami untuk kesehatan Anda melalui visi, sejarah, dan budaya kerja yang unggul.</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-3 mb-4">
+                        <div class="nav flex-column nav-pills me-3 shadow-sm rounded overflow-hidden" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            
+                            <button class="nav-link active text-start py-3 fw-bold" id="v-pills-visi-tab" data-bs-toggle="pill" data-bs-target="#v-pills-visi" type="button" role="tab" aria-controls="v-pills-visi" aria-selected="true">
+                                <i class="fas fa-bullseye me-2 text-primary"></i> Visi & Misi
+                            </button>
+                            
+                            <button class="nav-link text-start py-3 fw-bold" id="v-pills-sejarah-tab" data-bs-toggle="pill" data-bs-target="#v-pills-sejarah" type="button" role="tab" aria-controls="v-pills-sejarah" aria-selected="false">
+                                <i class="fas fa-history me-2 text-primary"></i> Sejarah
+                            </button>
+                            
+                            <button class="nav-link text-start py-3 fw-bold" id="v-pills-salam-tab" data-bs-toggle="pill" data-bs-target="#v-pills-salam" type="button" role="tab" aria-controls="v-pills-salam" aria-selected="false">
+                                <i class="fas fa-user-tie me-2 text-primary"></i> Salam Direktur
+                            </button>
+                            
+                            <button class="nav-link text-start py-3 fw-bold" id="v-pills-budaya-tab" data-bs-toggle="pill" data-bs-target="#v-pills-budaya" type="button" role="tab" aria-controls="v-pills-budaya" aria-selected="false">
+                                <i class="fas fa-hand-holding-heart me-2 text-primary"></i> Budaya Kerja
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <div class="col-lg-9">
+                        <div class="tab-content shadow p-4 rounded bg-white border" id="v-pills-tabContent" style="min-height: 400px;">
+                            
+                            <div class="tab-pane fade show active" id="v-pills-visi" role="tabpanel" aria-labelledby="v-pills-visi-tab">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6 mb-3">
+                                        <?php $img = get_about_data('visi-misi', 'image_path', $about_sections); ?>
+                                        <img src="public/<?php echo !empty($img) ? htmlspecialchars($img) : 'assets/img/gallery/about-placeholder.jpg'; ?>" 
+                                            class="img-fluid rounded shadow-sm w-100" style="object-fit: cover; height: 300px;" alt="Visi Misi">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h3 class="fw-bold text-navy mb-3"><?php echo htmlspecialchars(get_about_data('visi-misi', 'title', $about_sections)); ?></h3>
+                                        <div class="text-secondary">
+                                            <?php echo nl2br(htmlspecialchars(get_about_data('visi-misi', 'content', $about_sections))); ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="v-pills-sejarah" role="tabpanel" aria-labelledby="v-pills-sejarah-tab">
+                                <div class="row align-items-center">
+                                    <div class="col-md-5 order-md-2 mb-3">
+                                        <?php $img = get_about_data('sejarah', 'image_path', $about_sections); ?>
+                                        <img src="public/<?php echo !empty($img) ? htmlspecialchars($img) : 'assets/img/gallery/history.jpg'; ?>" 
+                                            class="img-fluid rounded shadow-sm w-100" style="object-fit: cover; height: 300px;" alt="Sejarah">
+                                    </div>
+                                    <div class="col-md-7 order-md-1">
+                                        <h3 class="fw-bold text-navy mb-3"><?php echo htmlspecialchars(get_about_data('sejarah', 'title', $about_sections)); ?></h3>
+                                        <div class="text-secondary text-justify">
+                                            <?php echo nl2br(htmlspecialchars(get_about_data('sejarah', 'content', $about_sections))); ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="v-pills-salam" role="tabpanel" aria-labelledby="v-pills-salam-tab">
+                                <div class="text-center mb-4">
+                                    <?php $img = get_about_data('salam-direktur', 'image_path', $about_sections); ?>
+                                    <img src="public/<?php echo !empty($img) ? htmlspecialchars($img) : 'assets/img/gallery/director.jpg'; ?>" 
+                                        class="rounded-circle shadow mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Direktur">
+                                    <h3 class="fw-bold text-navy"><?php echo htmlspecialchars(get_about_data('salam-direktur', 'title', $about_sections)); ?></h3>
+                                    <hr class="w-25 mx-auto text-primary" style="height: 3px; opacity: 1;">
+                                </div>
+                                <div class="px-md-5 text-secondary fst-italic text-center">
+                                    <i class="fas fa-quote-left fa-2x text-primary opacity-25 mb-2"></i>
+                                    <p class="lead">
+                                        <?php echo nl2br(htmlspecialchars(get_about_data('salam-direktur', 'content', $about_sections))); ?>
+                                    </p>
+                                    <i class="fas fa-quote-right fa-2x text-primary opacity-25 mt-2"></i>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="v-pills-budaya" role="tabpanel" aria-labelledby="v-pills-budaya-tab">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3 class="fw-bold text-navy mb-4 border-bottom pb-2"><?php echo htmlspecialchars(get_about_data('budaya-kerja', 'title', $about_sections)); ?></h3>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="text-secondary">
+                                            <?php echo nl2br(htmlspecialchars(get_about_data('budaya-kerja', 'content', $about_sections))); ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <?php $img = get_about_data('budaya-kerja', 'image_path', $about_sections); ?>
+                                        <img src="public/<?php echo !empty($img) ? htmlspecialchars($img) : 'assets/img/gallery/culture.jpg'; ?>" 
+                                            class="img-fluid rounded shadow-sm w-100" alt="Budaya Kerja">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+      <?php endif; ?>
+
 
       <section class="py-5 bg-white" id="doctors">
          <div class="container">
@@ -770,7 +908,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             <div class="col-6 col-sm-4 col-lg-2 mb-3 order-2 order-sm-1">
               <h5 class="lh-lg fw-bold text-light mb-4 font-sans-serif">Departments</h5>
               <ul class="list-unstyled mb-md-4 mb-lg-0">
-                <?php foreach(array_slice($dept_data, 0, 5) as $d): ?>
+                <?php foreach(array_slice($layanan_data, 0, 5) as $d): ?>
                     <li class="lh-lg"><a class="text-200" href="#departments"><?php echo htmlspecialchars($d['name']); ?></a></li>
                 <?php endforeach; ?>
               </ul>
@@ -779,13 +917,14 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             <div class="col-6 col-sm-4 col-lg-2 mb-3 order-3 order-sm-2">
               <h5 class="lh-lg fw-bold text-light mb-4 font-sans-serif">Useful Links</h5>
               <ul class="list-unstyled mb-md-4 mb-lg-0">
-                <li class="lh-lg"><a class="text-200" href="#about">About Us</a></li>
+                <li class="lh-lg"><a class="text-200" href="#virtual_room">virtual</a></li>
+                <li class="lh-lg"><a class="text-200" href="#about_us">about</a></li>
                 <li class="lh-lg"><a class="text-200" href="#news">Blog</a></li>
                 <li class="lh-lg"><a class="text-200" href="#appointment">Contact</a></li>
                 <li class="lh-lg"><a class="text-200" href="#appointment">Appointment</a></li>
               </ul>
             </div>
-            
+
            <div class="col-6 col-sm-4 col-lg-3 mb-3 order-3 order-sm-2">
               <h5 class="lh-lg fw-bold text-light mb-4 font-sans-serif">Our Location</h5>
               <div class="ratio ratio-1x1" style="max-height: 200px; max-width: 250px;">
