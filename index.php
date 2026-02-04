@@ -145,15 +145,15 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
     /* Navbar */
     .navbar {
-        padding-top: 8px !important;
-        padding-bottom: 8px !important;
-        min-height: 70px; 
-        background-color: rgba(255, 255, 255, 0.95) !important;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+        min-height: 75px; 
+        background: rgba(255, 255, 255, 0.95) !important;
         backdrop-filter: blur(10px);
         box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
     }
 
-    /* Efek saat Navbar di-scroll (Jika menggunakan JS bawaan theme Anda) */
     .navbar.navbar-scrolled {
         padding: 10px 0;
         border-bottom: 3px solid var(--jhc-red);
@@ -162,11 +162,10 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
    .navbar .container {
         max-width: 1200px;
-        padding-left: 10px; /* Memberikan jarak dari pinggir kiri */
+        padding-left: 10px;
         padding-right: 1px;
     }
 
-  /* Mengatur ukuran Logo JHC */
     .navbar-brand img {
         height: 80px; 
         width: auto;  
@@ -175,7 +174,8 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     }
 
     .navbar-brand:hover img {
-        transform: scale(1.05); 
+        transform: scale(1.08);
+        filter: drop-shadow(0px 4px 8px rgba(200, 16, 46, 0.2));
     }
 
     /* Menu Animasi */
@@ -210,18 +210,16 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     }
 
     .navbar-brand:hover img {
-        transform: scale(1.1) rotate(-2deg); /* Logo membesar sedikit dan miring */
-        filter: drop-shadow(0px 4px 8px rgba(200, 16, 46, 0.3)); /* Memberikan glow merah halus */
+        transform: scale(1.1) rotate(-2deg); 
+        filter: drop-shadow(0px 4px 8px rgba(200, 16, 46, 0.3)); 
     }
 
-    /* Navbar yang berubah warna saat di-scroll */
     .navbar.navbar-scrolled {
         background: rgba(255, 255, 255, 0.95) !important;
         backdrop-filter: blur(10px);
         box-shadow: 0 4px 25px rgba(0,0,0,0.1);
     }
 
-    /* Tombol Janji Temu Interaktif */
     .btn-janji {
         background: var(--jhc-red);
         color: white !important;
@@ -270,39 +268,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     }
     .form-control-modern:focus {
         background: #fff; box-shadow: 0 0 0 4px rgba(27, 113, 161, 0.1); border-color: var(--primary-color);
-    }
-
-    /* Styling untuk Tab About Us */
-    .nav-pills .nav-link {
-        background-color: #f8f9fa;
-        color: var(--jhc-navy);
-        border-bottom: 1px solid #dee2e6;
-        border-radius: 0;
-        transition: all 0.3s;
-    }
-
-    .nav-pills .nav-link:hover {
-        background-color: #e9ecef;
-        padding-left: 1.5rem !important; /* Efek geser saat hover */
-    }
-
-    .nav-pills .nav-link.active {
-        background-color: var(--jhc-red); /* Warna merah JHC */
-        color: white !important;
-        border-left: 5px solid var(--jhc-navy);
-    }
-
-    .nav-pills .nav-link i {
-        width: 25px;
-    }
-
-    .tab-content {
-        background-color: #fff;
-        border: 1px solid #e0e0e0;
-    }
-
-    .text-navy {
-        color: var(--jhc-navy);
     }
 </style>
   </head>
