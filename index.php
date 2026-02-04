@@ -400,9 +400,11 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto pt-2 pt-lg-0 font-base">
-                <li class="nav-item px-2"><a class="nav-link" href="#about_us">Tentang Kami</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#departments">Layanan</a></li>
-                <li class="nav-item px-2"><a class="nav-link" href="#doctors">Dokter</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#virtual_room">Virtual Room</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#about_us">Tentang Kami</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#doctors">Dokter Kami</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#facilities">Fasilitas</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#news">Berita</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#appointment">Kontak</a></li>
             </ul>
@@ -1039,9 +1041,12 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             <div class="col-6 col-sm-4 col-lg-2 mb-3 order-3 order-sm-2">
               <h5 class="lh-lg fw-bold text-light mb-4 font-sans-serif">Useful Links</h5>
               <ul class="list-unstyled mb-md-4 mb-lg-0">
-                <li class="lh-lg"><a class="text-200" href="#virtual_room">virtual</a></li>
-                <li class="lh-lg"><a class="text-200" href="#about_us">about</a></li>
-                <li class="lh-lg"><a class="text-200" href="#news">Blog</a></li>
+                <li class="lh-lg"><a class="text-200" href="#departments">Layanan</a></li>
+                <li class="lh-lg"><a class="text-200" href="#virtual_room">Virtual Room</a></li>
+                <li class="lh-lg"><a class="text-200" href="#about_us">Tentang Kami</a></li>
+                <li class="lh-lg"><a class="text-200" href="#doctors">Dokter Kami</a></li>
+                <li class="lh-lg"><a class="text-200" href="#facilities">Fasilitas</a></li>
+                <li class="lh-lg"><a class="text-200" href="#news">Berita</a></li>
                 <li class="lh-lg"><a class="text-200" href="#appointment">Contact</a></li>
                 <li class="lh-lg"><a class="text-200" href="#appointment">Appointment</a></li>
               </ul>
