@@ -16,7 +16,7 @@ require_once __DIR__ . '/../../../config.php';
 $settings = [];
 $settings_result = $mysqli->query("SELECT setting_key, setting_value FROM settings2");
 while($setting = $settings_result->fetch_assoc()){
-    $settings[$setting['setting_key']] = $setting['setting_value'];
+    $settings[$setting['setting_key']] = $setting['setting_value']; 
 }
 ?>
 <!DOCTYPE html>
@@ -44,15 +44,15 @@ while($setting = $settings_result->fetch_assoc()){
                 <li class="nav-item px-2"><a class="nav-link" href="dashboard.php">Dashboard</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="applicants2.php">Applicants</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="banners2.php">Manage Banners</a></li>
-                <li class="nav-item px-2"><a class="nav-link" href="mcu_packages2.php">Manage MCU Packages</a></li>
-                <li class="nav-item px-2"><a class="nav-link" href="partners2.php">Manage Partners</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="mcu_packages.php">Manage MCU Packages</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="partners.php">Manage Partners</a></li>
                 <li class="nav-item dropdown px-2">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Settings
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="background_settings.php">Background Settings</a></li>
-                        <li><a class="dropdown-item" href="logo_settings2.php">Logo Settings</a></li>
+                        <li><a class="dropdown-item" href="logo_settings.php">Logo Settings</a></li>
                         <li><a class="dropdown-item" href="popup_settings2.php">Popup Settings</a></li>
                     </ul>
                 </li>
