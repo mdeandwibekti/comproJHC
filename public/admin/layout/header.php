@@ -27,7 +27,7 @@ while($setting = $settings_result->fetch_assoc()){
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo rtrim(BASE_URL, '/'); ?>/public/<?php echo htmlspecialchars($settings['favicon_path'] ?? 'assets/img/favicons/favicon.ico'); ?>">
     <link href="../assets/css/theme.css" rel="stylesheet" />
     <style>
-        body { padding-top: 70px; }
+        body { padding-top: 100px; }
         .wrapper{ width: 80%; padding: 20px; margin: 20px auto; }
         .card-link { text-decoration: none; color: inherit; }
         .card-link .card:hover { transform: translateY(-5px); box-shadow: 0 4px 20px rgba(0,0,0,.1); transition: all .3s ease; }
@@ -37,7 +37,7 @@ while($setting = $settings_result->fetch_assoc()){
 
 <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 bg-light border-bottom">
     <div class="container">
-        <a class="navbar-brand" href="dashboard.php"><img src="../assets/img/gallery/logo.png" width="118" alt="logo" /></a>
+        <a class="navbar-brand" href="dashboard.php"><img src="../assets/img/favicons/68dce989dbee2-jhc3-removebg-preview.png" width="118" alt="logo" /></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbarSupportedContent" aria-controls="adminNavbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"> </span></button>
         <div class="collapse navbar-collapse" id="adminNavbarSupportedContent">
             <ul class="navbar-nav ms-auto pt-2 pt-lg-0 font-base">
