@@ -110,7 +110,7 @@ if ($res && $res->num_rows > 0) $vr_data = $res->fetch_assoc();
 
 $vr_about = null;
 $res = $mysqli->query("SELECT * FROM page_virtual_room WHERE id = 1");
-if ($res && $res->num_rows > 0) $vr_data = $res->fetch_assoc();
+if ($res && $res->num_rows > 0) $vr_about = $res->fetch_assoc();
 
 $partners_data = [];
 $partners_result = $mysqli->query("SELECT * FROM partners ORDER BY name ASC");
@@ -326,7 +326,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto pt-2 pt-lg-0 font-base">
                 <li class="nav-item px-2"><a class="nav-link" href="#virtual_room">Tentang Kami</a></li>
-                <li class="nav-item px-2"><a class="nav-link" href="#about">about us</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#about_us">about us</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#departments">Layanan</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#doctors">Dokter</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#news">Berita</a></li>
