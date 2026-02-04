@@ -1,5 +1,7 @@
 <?php 
 $page_title = "Rs JHC Tasikmalaya | Home";
+$no_igd = "(0265) 3172112";
+$no_rs_wa = "6285175000375";
 
 if (file_exists("config.php")) {
     require_once "config.php";
@@ -269,38 +271,158 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     .form-control-modern:focus {
         background: #fff; box-shadow: 0 0 0 4px rgba(27, 113, 161, 0.1); border-color: var(--primary-color);
     }
+
+    .btn-igd {
+        background-color: #C8102E; /* Merah JHC */
+        color: white !important;
+        border-radius: 50px;
+        padding: 8px 18px !important;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 2px solid #C8102E;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+   .btn-igd:hover {
+        background-color: white;
+        color: #C8102E !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(200, 16, 46, 0.3);
+    }
+
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Animasi sederhana untuk icon IGD */
+    .pulse-icon {
+        animation: pulse-red 2s infinite;
+        border-radius: 50%;
+    }
+
+    .pulse-emergency {
+        animation: pulse-red 2s infinite;
+    }
+
+    @keyframes pulse-red {
+        0% { transform: scale(0.95); }
+        70% { transform: scale(1.1); }
+        100% { transform: scale(0.95); }
+    }
+
+    /* Kontainer Tombol Melayang di Kanan Bawah */
+    .floating-actions {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column; /* Menyusun ke atas */
+        gap: 15px;
+        z-index: 9999;
+    }
+
+    /* Styling Tombol IGD Melayang */
+    .btn-igd-float {
+        width: 60px;
+        height: 60px;
+        background-color: #C8102E; /* Merah JHC */
+        color: white !important;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0 4px 15px rgba(200, 16, 46, 0.4);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: 2px solid white;
+    }
+
+    .btn-igd-float:hover {
+        transform: scale(1.1) rotate(10deg);
+        background-color: #002855; /* Navy saat hover */
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Efek Denyut untuk IGD */
+    .pulse-igd {
+        animation: pulse-red-infinite 2s infinite;
+    }
+
+    @keyframes pulse-red-infinite {
+        0% { box-shadow: 0 0 0 0 rgba(200, 16, 46, 0.7); }
+        70% { box-shadow: 0 0 0 15px rgba(200, 16, 46, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(200, 16, 46, 0); }
+    }
+
+    /* Penyesuaian Tombol WA agar sejajar */
+    .btn-wa-float {
+        width: 60px;
+        height: 60px;
+        background-color: #25D366;
+        color: white !important;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: 2px solid white;
+    }
+    
+    .btn-wa-float:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+    }
 </style>
   </head>
   <body>
     <main class="main" id="top">
       
-      <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 d-block" data-navbar-on-scroll="data-navbar-on-scroll">
-    <div class="container">
-        <a class="navbar-brand" href="index.php">
-    <?php 
-    // Sesuaikan nama file dengan yang ada di folder public/assets/img/gallery/
-    $header_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/JHC_Logo.png';
-    ?>
-    <img src="public/<?php echo htmlspecialchars($header_logo); ?>" width="130" alt="JHC Logo" />
-</a>
+     <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 d-block" data-navbar-on-scroll="data-navbar-on-scroll">
+        <div class="container">
+          <a class="navbar-brand" href="index.php">
+            <?php $header_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/JHC_Logo.png'; ?>
+            <img src="public/<?php echo htmlspecialchars($header_logo); ?>" width="130" alt="JHC Logo" />
+          </a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
             <span class="navbar-toggler-icon"></span>
-        </button>
+          </button>
 
-        <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto pt-2 pt-lg-0 font-base">
-                <li class="nav-item px-2"><a class="nav-link" href="#virtual_room">Tentang Kami</a></li>
-                <li class="nav-item px-2"><a class="nav-link" href="#about">about us</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#about_us">Tentang Kami</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#departments">Layanan</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#doctors">Dokter</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#news">Berita</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#appointment">Kontak</a></li>
             </ul>
-            <a class="btn btn-janji order-1 order-lg-0 ms-lg-4" href="#appointment">Janji Temu</a>
+
+   <div class="nav-actions ms-lg-4">
+                <a class="btn btn-janji" href="#appointment">Janji Temu</a>
+            </div>
+          </div>
         </div>
-    </div>
-</nav>
+      </nav>
+
+      <div class="floating-actions">
+          <a href="tel:02653172112" class="btn-igd-float pulse-igd" title="Darurat IGD: <?php echo $no_igd; ?>">
+              <i class="fas fa-ambulance"></i>
+          </a>
+
+          <a href="https://wa.me/<?php echo $no_rs_wa; ?>" target="_blank" class="btn-wa-float" title="WhatsApp RS: 085175000375">
+              <i class="fab fa-whatsapp"></i>
+          </a>
+      </div>
 
       <section class="py-0 position-relative" id="home">
         <div class="bg-holder" style="
