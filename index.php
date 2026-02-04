@@ -461,8 +461,8 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                   <?php endforeach; ?>
                 <?php else: ?>
                     <div class="banner-item" 
-                         data-title="Pelayanan Kesehatan Terbaik" 
-                         data-description="Kami bertekad memberikan pelayanan medis profesional dan sepenuh hati untuk Anda dan keluarga.">
+                         data-title="Pusat Pelayanan Jantung Terpadu dengan Teknologi Mutakhir." 
+                         data-description="Dengan teknologi mutakhir dan tim spesialis jantung terbaik di Indonesia, kami membantu Anda pulih lebih cepat, hidup lebih lama, dan kembali beraktivitas tanpa rasa takut. Kami mendengarkan, memahami, dan memberi perawatan khusus untuk Anda, karena setiap jantung punya cerita unik yang layak diselamatkan.">
                     </div>
                 <?php endif; ?>
               </div>
