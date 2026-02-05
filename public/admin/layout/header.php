@@ -21,9 +21,6 @@ if ($settings_result) {
         $settings[$setting['setting_key']] = $setting['setting_value']; 
     }
 }
-
-// Tentukan Logo (Gunakan setting dari DB atau default)
-$admin_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/68dce989dbee2-jhc3-removebg-preview.png';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -39,16 +36,21 @@ $admin_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_pat
     
     <style>
         :root {
-            --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
-            --jhc-red-dark: #8a3033;
-            --jhc-red-light: #bd3030;
+        --jhc-red-dark: #8a3033;
+        --jhc-red-light: #bd3030;
+        --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
+        --admin-bg: #f4f7f6;
         }
 
-        body { padding-top: 90px; background-color: #f8f9fa; }
+        body { 
+        background-color: var(--admin-bg) !important; 
+        font-family: 'Inter', sans-serif;
+        }
         
+        /* Navbar dengan Gradasi Linear 90 derajat */
         .navbar-admin {
-            background: var(--jhc-gradient) !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            background-color: #a32a2e !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border: none !important;
         }
 
@@ -64,19 +66,35 @@ $admin_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_pat
         }
 
         .navbar-admin .navbar-brand img {
-            filter: brightness(0) invert(1); /* Memutihkan logo agar kontras */
+            filter: brightness(0) invert(1);
             height: 50px;
             width: auto;
         }
 
         .wrapper { 
-            width: 95%; 
-            max-width: 1200px;
-            padding: 30px; 
-            margin: 20px auto; 
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+           background: #ffffff;
+           border-radius: 20px;
+           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+           padding: 40px;
+           margin-top: 30px;
+           border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .manage-header {
+        border-left: 4px solid var(--jhc-red-dark);
+        padding-left: 20px;
+        margin-bottom: 30px;
+        }
+
+        .btn-jhc-main {
+        background: var(--jhc-gradient) !important;
+        border: none !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 10px 24px !important;
+        font-weight: 700;
+        box-shadow: 0 4px 15px rgba(138, 48, 51, 0.3);
+        transition: all 0.3s ease;
         }
 
         .btn-logout {
@@ -104,6 +122,9 @@ $admin_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_pat
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top py-2 navbar-admin">
     <div class="container">
         <a class="navbar-brand" href="dashboard.php">
+            <?php 
+            $admin_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/JHC_Logo.png';
+            ?>
             <img src="../public/<?php echo htmlspecialchars($admin_logo); ?>" alt="Logo JHC">
         </a>
 
@@ -112,33 +133,32 @@ $admin_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_pat
         </button>
 
         <div class="collapse navbar-collapse" id="adminNavbar">
-            <ul class="navbar-nav ms-auto pt-2 pt-lg-0">
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item px-2"><a class="nav-link" href="dashboard.php"><i class="fas fa-chart-line me-1"></i> Dashboard</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="applicants2.php"><i class="fas fa-users me-1"></i> Pelamar</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="banners.php"><i class="fas fa-image me-1"></i> Banner</a></li>
                 
                 <li class="nav-item dropdown px-2">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropMCU" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropMCU" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-hospital-user me-1"></i> Layanan
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="dropMCU">
+                    <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="mcu_packages.php">Paket MCU</a></li>
                         <li><a class="dropdown-item" href="partners.php">Mitra Perusahaan</a></li>
                     </ul>
                 </li>
 
                 <li class="nav-item dropdown px-2">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropSettings" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropSettings" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-cog me-1"></i> Pengaturan
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="dropSettings">
+                    <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="background_settings2.php">Background Hero</a></li>
                         <li><a class="dropdown-item" href="logo_settings.php">Logo & Favicon</a></li>
                         <li><a class="dropdown-item" href="popup_settings2.php">Popup Promo</a></li>
                     </ul>
                 </li>
             </ul>
-            
             <a class="btn btn-sm btn-logout rounded-pill px-4 ms-lg-3" href="logout.php">
                 <i class="fas fa-sign-out-alt me-1"></i> Keluar
             </a>
