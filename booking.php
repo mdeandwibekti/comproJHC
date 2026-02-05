@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <style>
         :root {
-            --rs-red: #D32F2F;
+            --rs-red: #a12a2a;
             --rs-bg: #f8f9fa;
         }
         
