@@ -97,28 +97,6 @@ if ($settings_result) {
         transition: all 0.3s ease;
         }
 
-        .btn-jhc-main:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(138, 48, 51, 0.4);
-        opacity: 0.95;
-        }
-
-        .table thead th {
-        background-color: #f8f9fa;
-        color: #6c757d;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 1px;
-        border-top: none;
-        padding: 15px;
-     }
-
-    .table tbody td {
-        padding: 15px;
-        vertical-align: middle;
-        border-bottom: 1px solid #f1f1f1;
-    }
-
         .btn-logout {
             background: #fff;
             color: var(--jhc-red-dark) !important;
