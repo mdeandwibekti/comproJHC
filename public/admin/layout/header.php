@@ -115,7 +115,7 @@ $admin_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_pat
             <ul class="navbar-nav ms-auto pt-2 pt-lg-0">
                 <li class="nav-item px-2"><a class="nav-link" href="dashboard.php"><i class="fas fa-chart-line me-1"></i> Dashboard</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="applicants2.php"><i class="fas fa-users me-1"></i> Pelamar</a></li>
-                <li class="nav-item px-2"><a class="nav-link" href="banners2.php"><i class="fas fa-image me-1"></i> Banner</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="banners.php"><i class="fas fa-image me-1"></i> Banner</a></li>
                 
                 <li class="nav-item dropdown px-2">
                     <a class="nav-link dropdown-toggle" href="#" id="dropMCU" role="button" data-bs-toggle="dropdown" aria-expanded="false">
