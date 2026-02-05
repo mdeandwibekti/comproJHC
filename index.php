@@ -114,9 +114,17 @@ $vr_about = null;
 $res = $mysqli->query("SELECT * FROM page_virtual_room WHERE id = 1");
 if ($res && $res->num_rows > 0) $vr_about = $res->fetch_assoc();
 
+// --- FETCH PARTNERS DATA ---
 $partners_data = [];
-$partners_result = $mysqli->query("SELECT * FROM partners ORDER BY name ASC");
-if ($partners_result) { while($row = $partners_result->fetch_assoc()) { $partners_data[] = $row; } }
+// Mengambil kolom id, name, logo_path, url sesuai struktur tabel di backend
+$partner_sql = "SELECT name, logo_path, url FROM partners ORDER BY name ASC";
+$partner_result = $mysqli->query($partner_sql);
+
+if ($partner_result) {
+    while($row = $partner_result->fetch_assoc()) {
+        $partners_data[] = $row;
+    }
+}
 
 $facilities_data = [];
 $fac_result = $mysqli->query("SELECT * FROM facilities ORDER BY display_order ASC");
@@ -393,6 +401,23 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         .btn-wa-float:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        
+        /* Membuat logo grayscale (hitam putih) lalu berwarna saat dihover */
+        .partner-logo {
+            filter: grayscale(100%);
+            opacity: 0.6;
+            transition: all 0.4s ease;
+            max-height: 70px; /* Membatasi tinggi agar seragam */
+            width: auto;
+            object-fit: contain;
+        }
+
+        .partner-logo:hover {
+            filter: grayscale(0%);
+            opacity: 1;
+            transform: scale(1.1); /* Efek zoom sedikit */
         }
     </style>
   </head>
@@ -1025,22 +1050,44 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         </div>
       </section>
 
-      <section class="py-5 bg-white">
-         <div class="container">
-             <div class="row justify-content-center mb-4">
-                 <div class="col-12 text-center"><h4 class="fw-bold text-secondary">MITRA ASURANSI & PERUSAHAAN</h4></div>
-             </div>
-             <div class="row justify-content-center align-items-center g-4">
-                 <?php foreach($partners_data as $partner): ?>
-                 <div class="col-4 col-md-2 text-center">
-                     <a href="<?php echo htmlspecialchars($partner['url'] ?? '#'); ?>" target="_blank" data-bs-toggle="tooltip" title="<?php echo htmlspecialchars($partner['name']); ?>">
-                         <img src="public/<?php echo htmlspecialchars($partner['logo_path']); ?>" class="img-fluid partner-logo" style="max-height: 60px; object-fit: contain;" alt="Partner">
-                     </a>
-                 </div>
-                 <?php endforeach; ?>
-             </div>
-         </div>
-      </section>
+      <section class="py-5 bg-white" id="partners">
+            <div class="container">
+                <div class="row justify-content-center mb-5">
+                    <div class="col-12 text-center">
+                        <h4 class="fw-bold text-secondary">MITRA ASURANSI & PERUSAHAAN</h4>
+                        <hr style="width: 60px; margin: 15px auto; border-top: 3px solid #C8102E; opacity: 1;">
+                    </div>
+                </div>
+
+                <div class="row justify-content-center align-items-center g-4">
+                    <?php if (!empty($partners_data)): ?>
+                        <?php foreach($partners_data as $partner): ?>
+                            <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center">
+                                <div class="p-3">
+                                    <a href="<?php echo htmlspecialchars(!empty($partner['url']) ? $partner['url'] : '#'); ?>" 
+                                    target="<?php echo !empty($partner['url']) ? '_blank' : '_self'; ?>" 
+                                    class="partner-link"
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top"
+                                    title="<?php echo htmlspecialchars($partner['name']); ?>">
+                                        
+                                        <img src="public/<?php echo htmlspecialchars($partner['logo_path']); ?>" 
+                                            class="img-fluid partner-logo" 
+                                            alt="<?php echo htmlspecialchars($partner['name']); ?>"
+                                            onerror="this.src='public/assets/img/gallery/default-partner.png';"> 
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="col-12 text-center text-muted">
+                            <p>Belum ada mitra yang ditampilkan.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </section>
+
 
       <section class="py-5" id="appointment" style="background: linear-gradient(135deg, #1B71A1 0%, #2D3B48 100%);">
         <div class="container">
