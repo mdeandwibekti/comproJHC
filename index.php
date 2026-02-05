@@ -40,36 +40,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_appointment']))
     }
 }
 
+// --- 1. AMBIL DATA DARI DATABASE ---
 $about_sections = [];
-$sql_check = "SELECT * FROM about_us_sections";
-$result_check = $mysqli->query($sql_check);
+// Pastikan tabel dan kolom sesuai database Anda
+$sql_about = "SELECT * FROM about_us_sections"; 
+$result_about = $mysqli->query($sql_about);
 
-if ($result_check && $result_check->num_rows > 0) {
-    while ($row = $result_check->fetch_assoc()) {
-        // Kita paksa key menjadi lowercase agar tidak sensitif huruf besar/kecil
+if ($result_about) {
+    while ($row = $result_about->fetch_assoc()) {
+        // Bersihkan key (huruf kecil, tanpa spasi) untuk ID HTML yang valid
         $clean_key = strtolower(trim($row['section_key']));
         $about_sections[$clean_key] = $row;
     }
-} 
-
-// Fungsi bantu ambil data (dengan nilai default jika kosong)
-function get_data_safe($key, $field, $data_array) {
-    // Cek apakah key ada
-    if (isset($data_array[$key]) && !empty($data_array[$key][$field])) {
-        return $data_array[$key][$field];
-    }
-    return null; // Return null jika tidak ada data
 }
 
-// Daftar Tab yang akan ditampilkan
-// PASTIKAN 'KEY' DI SINI SAMA DENGAN KOLOM 'section_key' DI DATABASE ANDA
-$tab_list = [
-    'visi-misi'      => ['label' => 'Visi & Misi',      'icon' => 'fa-bullseye'],
-    'sejarah'        => ['label' => 'Sejarah',          'icon' => 'fa-history'],
-    'salam-direktur' => ['label' => 'Salam Direktur',   'icon' => 'fa-user-tie'],
-    'budaya-kerja'   => ['label' => 'Budaya Kerja',     'icon' => 'fa-hand-holding-heart']
+// Konfigurasi Tab (Urutan Tetap)
+// Key array ini HARUS cocok dengan 'section_key' di database
+$tabs_config = [
+    'visi-misi'      => ['label' => 'Visi & Misi',    'icon' => 'fa-bullseye'],
+    'sejarah'        => ['label' => 'Sejarah',        'icon' => 'fa-history'],
+    'salam-direktur' => ['label' => 'Salam Direktur', 'icon' => 'fa-user-tie'],
+    'budaya-kerja'   => ['label' => 'Budaya Kerja',   'icon' => 'fa-hand-holding-heart']
 ];
-
 
 // --- FETCH DATA ---
 
@@ -435,6 +427,32 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             opacity: 1;
             transform: scale(1.1); /* Efek zoom sedikit */
         }
+
+        .partner-logo {
+        /* Mematikan grayscale agar langsung berwarna */
+        filter: grayscale(0%) !important; 
+        opacity: 1 !important;
+        
+        /* Mengatur ukuran agar lebih besar */
+        max-height: 95px; /* Sebelumnya biasanya 60px, sekarang diperbesar */
+        width: auto;      /* Lebar menyesuaikan proporsi */
+        object-fit: contain;
+        
+        /* Efek transisi halus saat disentuh */
+        transition: transform 0.3s ease;
+    }
+
+    /* Efek Zoom sedikit saat mouse diarahkan (opsional) */
+    .partner-logo:hover {
+        transform: scale(1.1); 
+    }
+    
+    /* Penyesuaian untuk layar HP agar tidak terlalu besar */
+    @media (max-width: 576px) {
+        .partner-logo {
+            max-height: 70px;
+        }
+    }
     </style>
   </head>
   <body>
@@ -786,149 +804,162 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         <div class="container">
             <div class="row align-items-center gx-5">
                 <div class="col-lg-6 mb-4 mb-lg-0">
-    <div class="position-relative">
-        <div class="bg-primary position-absolute rounded-3" style="width: 100%; height: 100%; top: 15px; left: -15px; z-index: -1;"></div>
-        <?php if(!empty($vr_data['video_url'])): 
-            // Menambahkan parameter autoplay=1 dan mute=1 agar video langsung berputar
-            $embed_url = $vr_data['video_url'];
-            $sep = (strpos($embed_url, '?') !== false) ? '&' : '?';
-            $autoplay_url = $embed_url . $sep . "autoplay=1&mute=1&loop=1&playlist=" . basename(parse_url($embed_url, PHP_URL_PATH));
-        ?>
-            <div class="ratio ratio-16x9 shadow-lg rounded-3 overflow-hidden">
-                <iframe src="<?php echo htmlspecialchars($autoplay_url); ?>" 
-                        allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <div class="position-relative">
+            <div class="bg-primary position-absolute rounded-3" style="width: 100%; height: 100%; top: 15px; left: -15px; z-index: -1;"></div>
+                <?php if(!empty($vr_data['video_url'])): 
+                        // Menambahkan parameter autoplay=1 dan mute=1 agar video langsung berputar
+                        $embed_url = $vr_data['video_url'];
+                        $sep = (strpos($embed_url, '?') !== false) ? '&' : '?';
+                        $autoplay_url = $embed_url . $sep . "autoplay=1&mute=1&loop=1&playlist=" . basename(parse_url($embed_url, PHP_URL_PATH));
+                    ?>
+                        <div class="ratio ratio-16x9 shadow-lg rounded-3 overflow-hidden">
+                            <iframe src="<?php echo htmlspecialchars($autoplay_url); ?>" 
+                                    allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    <?php else: ?>
+                        <img src="public/<?php echo htmlspecialchars($vr_data['image_path_360']); ?>" class="img-fluid rounded-3 shadow w-100" alt="Virtual Room">
+                    <?php endif; ?>
+                </div>
             </div>
-        <?php else: ?>
-            <img src="public/<?php echo htmlspecialchars($vr_data['image_path_360']); ?>" class="img-fluid rounded-3 shadow w-100" alt="Virtual Room">
-        <?php endif; ?>
-    </div>
-</div>
                 <div class="col-lg-6">
                     <h5 class="text-primary fw-bold text-uppercase">Tentang Kami</h5>
                     <h2 class="fw-bold mb-4 display-6"><?php echo htmlspecialchars($vr_data['title']); ?></h2>
                     <p class="text-secondary lead text-justify mb-4"><?php echo nl2br(htmlspecialchars($vr_data['content'])); ?></p>
-                    <div class="d-flex gap-3">
-                        <div class="d-flex align-items-center">
-                            <div class="bg-light rounded-circle p-3 text-primary me-3"><i class="fas fa-user-md fa-lg"></i></div>
-                            <div>
-                                <h6 class="fw-bold mb-0">Dokter Ahli</h6>
-                                <small class="text-muted">Berpengalaman</small>
+                        <div class="d-flex gap-3">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-circle p-3 text-primary me-3"><i class="fas fa-user-md fa-lg"></i></div>
+                                <div>
+                                    <h6 class="fw-bold mb-0">Dokter Ahli</h6>
+                                    <small class="text-muted">Berpengalaman</small>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-circle p-3 text-primary me-3"><i class="fas fa-clock fa-lg"></i></div>
+                                <div>
+                                    <h6 class="fw-bold mb-0">Layanan 24 Jam</h6>
+                                    <small class="text-muted">Selalu Siap</small>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center">
-                            <div class="bg-light rounded-circle p-3 text-primary me-3"><i class="fas fa-clock fa-lg"></i></div>
-                            <div>
-                                <h6 class="fw-bold mb-0">Layanan 24 Jam</h6>
-                                <small class="text-muted">Selalu Siap</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <?php endif; ?>
+        
+     <section class="py-5 bg-white" id="about_us">
+        <div class="container">
+            
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-8 text-center">
+                    <h5 class="text-primary fw-bold text-uppercase">TENTANG KAMI</h5>
+                    <h2 class="section-title fw-bold">Mengenal Lebih Dekat RS JHC</h2>
+                    <hr style="width: 60px; border-top: 3px solid #D32F2F; margin: 15px auto; opacity: 1;">
+                    <p class="text-muted">Dedikasi kami untuk pelayanan kesehatan terbaik bagi Anda dan keluarga.</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-3 mb-4">
+                    <div class="nav flex-column nav-pills shadow-sm rounded bg-light overflow-hidden" 
+                        id="v-pills-tab" 
+                        role="tablist" 
+                        aria-orientation="vertical">
+                        
+                        <?php 
+                        $no = 0;
+                        foreach ($tabs_config as $key => $info): 
+                            $active = ($no === 0) ? 'active' : '';
+                            $selected = ($no === 0) ? 'true' : 'false';
+                        ?>
+                            <button class="nav-link <?php echo $active; ?> text-start py-3 fw-bold border-bottom" 
+                                    id="v-pills-<?php echo $key; ?>-tab" 
+                                    data-bs-toggle="pill" 
+                                    data-bs-target="#v-pills-<?php echo $key; ?>" 
+                                    type="button" 
+                                    role="tab" 
+                                    aria-controls="v-pills-<?php echo $key; ?>" 
+                                    aria-selected="<?php echo $selected; ?>">
+                                <i class="fas <?php echo $info['icon']; ?> me-2 text-danger"></i> <?php echo $info['label']; ?>
+                            </button>
+                        <?php 
+                            $no++; 
+                        endforeach; 
+                        ?>
+                    </div>
+                </div>
+
+                <div class="col-lg-9">
+                    <div class="tab-content p-4 border rounded shadow-sm bg-white" id="v-pills-tabContent" style="min-height: 400px;">
+                        <?php 
+                        $no = 0;
+                        foreach ($tabs_config as $key => $info): 
+                            // Class 'show active' hanya untuk tab pertama
+                            $show_active = ($no === 0) ? 'show active' : '';
+                            
+                            // Cek Data
+                            $row = isset($about_sections[$key]) ? $about_sections[$key] : null;
+                            
+                            // Default Data jika database kosong
+                            $judul = ($row && !empty($row['title'])) ? $row['title'] : $info['label'];
+                            $isi   = ($row && !empty($row['content'])) ? nl2br($row['content']) : "Konten belum tersedia.";
+                            
+                            // Cek Gambar (pastikan path public benar)
+                            $img_src = ($row && !empty($row['image_path'])) ? 'public/' . $row['image_path'] : '';
+                            
+                            // Placeholder jika gambar kosong/rusak
+                            $img_display = !empty($img_src) ? $img_src : "https://via.placeholder.com/800x400/f8f9fa/dee2e6?text=No+Image";
+                        ?>
+                            
+                            <div class="tab-pane fade <?php echo $show_active; ?>" 
+                                id="v-pills-<?php echo $key; ?>" 
+                                role="tabpanel" 
+                                aria-labelledby="v-pills-<?php echo $key; ?>-tab">
+                                
+                                <?php if ($key === 'salam-direktur'): ?>
+                                    <div class="text-center">
+                                        <img src="<?php echo htmlspecialchars($img_display); ?>" 
+                                            class="rounded-circle shadow mb-3 border border-3 border-light" 
+                                            style="width: 150px; height: 150px; object-fit: cover;"
+                                            onerror="this.src='https://via.placeholder.com/150';">
+                                            
+                                        <h3 class="text-danger fw-bold"><?php echo htmlspecialchars($judul); ?></h3>
+                                        <hr class="w-25 mx-auto text-danger mb-4">
+                                        
+                                        <div class="text-muted fst-italic px-md-5">
+                                            <i class="fas fa-quote-left fa-lg text-danger opacity-25 me-2"></i>
+                                            <?php echo $isi; ?>
+                                            <i class="fas fa-quote-right fa-lg text-danger opacity-25 ms-2"></i>
+                                        </div>
+                                    </div>
+
+                                <?php else: ?>
+                                    <div class="row align-items-center">
+                                        <div class="col-md-5 mb-3 mb-md-0">
+                                            <img src="<?php echo htmlspecialchars($img_display); ?>" 
+                                                class="img-fluid rounded shadow w-100" 
+                                                style="object-fit: cover; height: 250px;"
+                                                onerror="this.src='https://via.placeholder.com/800x400/f8f9fa/dee2e6?text=No+Image';">
+                                        </div>
+                                        <div class="col-md-7">
+                                            <h3 class="text-danger fw-bold mb-3"><?php echo htmlspecialchars($judul); ?></h3>
+                                            <div class="text-secondary text-justify" style="line-height: 1.8;">
+                                                <?php echo $isi; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+
                             </div>
-                        </div>
+                        <?php 
+                            $no++; 
+                        endforeach; 
+                        ?>
                     </div>
                 </div>
             </div>
         </div>
-      </section>
-      <?php endif; ?>
-        
-     <section class="py-5" id="about_us" style="background-color: #fff;">
-            <div class="container">
-                
-                <div class="row justify-content-center mb-5">
-                    <div class="col-md-8 text-center">
-                        <h5 class="text-primary fw-bold text-uppercase">About us</h5>
-                        <h2 class="section-title">Mengenal Lebih Dekat RS JHC</h2>
-                        <p class="text-muted">Dedikasi kami untuk kesehatan Anda.</p>
-                    </div>
-                </div>
-
-                <?php if (empty($about_sections)): ?>
-                    <div class="alert alert-warning text-center">
-                        <strong>Data tidak ditemukan!</strong><br>
-                        Silakan cek tabel database <code>about_us_sections</code>. Pastikan ada isinya.
-                    </div>
-                <?php else: ?>
-
-                    <div class="row">
-                        <div class="col-lg-3 mb-4">
-                            <div class="nav flex-column nav-pills me-3 shadow-sm rounded overflow-hidden" id="v-pills-tab" role="tablist">
-                                <?php 
-                                $counter = 0;
-                                foreach ($tab_list as $key => $info): 
-                                    $active = ($counter === 0) ? 'active' : '';
-                                ?>
-                                    <button class="nav-link <?php echo $active; ?> text-start py-3 fw-bold" 
-                                            id="tab-btn-<?php echo $key; ?>" 
-                                            data-bs-toggle="pill" 
-                                            data-bs-target="#content-<?php echo $key; ?>" 
-                                            type="button" role="tab">
-                                        <i class="fas <?php echo $info['icon']; ?> me-2 text-primary"></i> <?php echo $info['label']; ?>
-                                    </button>
-                                <?php 
-                                    $counter++;
-                                endforeach; 
-                                ?>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-9">
-                            <div class="tab-content shadow p-4 rounded bg-white border" style="min-height: 400px;">
-                                <?php 
-                                $counter = 0;
-                                foreach ($tab_list as $key => $info): 
-                                    $active = ($counter === 0) ? 'show active' : '';
-                                    
-                                    // Ambil data
-                                    $title = get_data_safe($key, 'title', $about_sections);
-                                    $content = get_data_safe($key, 'content', $about_sections);
-                                    $img_db = get_data_safe($key, 'image_path', $about_sections);
-                                    
-                                    // Jika data di database kosong, pakai placeholder
-                                    if (!$title) $title = $info['label'] . " (Belum diisi)";
-                                    if (!$content) $content = "Konten untuk bagian ini belum tersedia di database admin.";
-                                    
-                                    // Fix path gambar
-                                    $img_src = !empty($img_db) ? 'public/' . $img_db : 'public/assets/img/gallery/about-placeholder.jpg';
-                                ?>
-                                    
-                                    <div class="tab-pane fade <?php echo $active; ?>" id="content-<?php echo $key; ?>" role="tabpanel">
-                                        
-                                        <?php if ($key == 'salam-direktur'): ?>
-                                            <div class="text-center mb-4">
-                                                <img src="<?php echo htmlspecialchars($img_src); ?>" class="rounded-circle shadow mb-3" style="width: 150px; height: 150px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/150';">
-                                                <h3 class="fw-bold text-navy"><?php echo htmlspecialchars($title); ?></h3>
-                                                <hr class="w-25 mx-auto text-primary" style="height: 3px; opacity: 1;">
-                                            </div>
-                                            <div class="px-md-5 text-secondary fst-italic text-center">
-                                                <i class="fas fa-quote-left fa-2x text-primary opacity-25 mb-2"></i>
-                                                <p class="lead"><?php echo nl2br(htmlspecialchars($content)); ?></p>
-                                            </div>
-
-                                        <?php else: ?>
-                                            <div class="row align-items-center">
-                                                <div class="col-md-6 mb-3">
-                                                    <img src="<?php echo htmlspecialchars($img_src); ?>" class="img-fluid rounded shadow-sm w-100" style="object-fit: cover; height: 300px;" onerror="this.src='https://via.placeholder.com/400x300';">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <h3 class="fw-bold text-navy mb-3"><?php echo htmlspecialchars($title); ?></h3>
-                                                    <div class="text-secondary">
-                                                        <?php echo nl2br(htmlspecialchars($content)); ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
-
-                                    </div>
-
-                                <?php 
-                                    $counter++;
-                                endforeach; 
-                                ?>
-                            </div>
-                        </div>
-                    </div>
-
-                <?php endif; ?>
-            </div>
-        </section>
+    </section>
 
 
       <section class="py-5 bg-white" id="doctors">
@@ -1064,42 +1095,42 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       </section>
 
       <section class="py-5 bg-white" id="partners">
-            <div class="container">
-                <div class="row justify-content-center mb-5">
-                    <div class="col-12 text-center">
-                        <h4 class="fw-bold text-secondary">MITRA ASURANSI & PERUSAHAAN</h4>
-                        <hr style="width: 60px; margin: 15px auto; border-top: 3px solid #C8102E; opacity: 1;">
-                    </div>
-                </div>
-
-                <div class="row justify-content-center align-items-center g-4">
-                    <?php if (!empty($partners_data)): ?>
-                        <?php foreach($partners_data as $partner): ?>
-                            <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center">
-                                <div class="p-3">
-                                    <a href="<?php echo htmlspecialchars(!empty($partner['url']) ? $partner['url'] : '#'); ?>" 
-                                    target="<?php echo !empty($partner['url']) ? '_blank' : '_self'; ?>" 
-                                    class="partner-link"
-                                    data-bs-toggle="tooltip" 
-                                    data-bs-placement="top"
-                                    title="<?php echo htmlspecialchars($partner['name']); ?>">
-                                        
-                                        <img src="public/<?php echo htmlspecialchars($partner['logo_path']); ?>" 
-                                            class="img-fluid partner-logo" 
-                                            alt="<?php echo htmlspecialchars($partner['name']); ?>"
-                                            onerror="this.src='public/assets/img/gallery/default-partner.png';"> 
-                                    </a>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="col-12 text-center text-muted">
-                            <p>Belum ada mitra yang ditampilkan.</p>
-                        </div>
-                    <?php endif; ?>
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-12 text-center">
+                    <h4 class="fw-bold text-secondary">MITRA ASURANSI & PERUSAHAAN</h4>
+                    <hr style="width: 60px; margin: 15px auto; border-top: 3px solid #C8102E; opacity: 1;">
                 </div>
             </div>
-        </section>
+
+            <div class="row justify-content-center align-items-center g-4">
+                <?php if (!empty($partners_data)): ?>
+                    <?php foreach($partners_data as $partner): ?>
+                        <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center">
+                            <div class="p-2">
+                                <a href="<?php echo htmlspecialchars(!empty($partner['url']) ? $partner['url'] : '#'); ?>" 
+                                target="<?php echo !empty($partner['url']) ? '_blank' : '_self'; ?>" 
+                                class="partner-link"
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top"
+                                title="<?php echo htmlspecialchars($partner['name']); ?>">
+                                    
+                                    <img src="public/<?php echo htmlspecialchars($partner['logo_path']); ?>" 
+                                        class="img-fluid partner-logo" 
+                                        alt="<?php echo htmlspecialchars($partner['name']); ?>"
+                                        onerror="this.src='public/assets/img/gallery/default-partner.png';"> 
+                                </a>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col-12 text-center text-muted">
+                        <p>Belum ada mitra yang ditampilkan.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
 
 
       <section class="py-5" id="appointment" style="background: linear-gradient(135deg, #1B71A1 0%, #2D3B48 100%);">
