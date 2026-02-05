@@ -138,251 +138,263 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     <link href="public/assets/css/theme.css" rel="stylesheet" />
     <link href="public/vendors/fontawesome/all.min.js" rel="stylesheet" />
 
-<style>
-    :root {
-        --jhc-red: #C8102E;
-        --jhc-navy: #002855;
-        --jhc-light: #F8F9FA;
-    }
+    <style>
+        :root {
+            --jhc-red: #C8102E;
+            --jhc-navy: #002855;
+            --jhc-light: #F8F9FA;
+        }
 
-    /* Navbar */
-    .navbar {
-        padding-top: 5px !important;
-        padding-bottom: 5px !important;
-        min-height: 75px; 
-        background: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
-    }
+        /* Navbar */
+        .navbar {
+            padding-top: 5px !important;
+            padding-bottom: 5px !important;
+            min-height: 75px; 
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
 
-    .navbar.navbar-scrolled {
-        padding: 10px 0;
-        border-bottom: 3px solid var(--jhc-red);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }
+        .navbar.navbar-scrolled {
+            padding: 10px 0;
+            border-bottom: 3px solid var(--jhc-red);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
 
-   .navbar .container {
-        max-width: 1200px;
-        padding-left: 10px;
-        padding-right: 1px;
-    }
+    .navbar .container {
+            max-width: 1200px;
+            padding-left: 10px;
+            padding-right: 1px;
+        }
 
-    .navbar-brand img {
-        height: 80px; 
-        width: auto;  
-        transition: transform 0.3s ease;
-        object-fit: contain;
-    }
+        .navbar-brand img {
+            height: 80px; 
+            width: auto;  
+            transition: transform 0.3s ease;
+            object-fit: contain;
+        }
 
-    .navbar-brand:hover img {
-        transform: scale(1.08);
-        filter: drop-shadow(0px 4px 8px rgba(200, 16, 46, 0.2));
-    }
+        .navbar-brand:hover img {
+            transform: scale(1.08);
+            filter: drop-shadow(0px 4px 8px rgba(200, 16, 46, 0.2));
+        }
 
-    /* Menu Animasi */
-    .nav-link {
-        color: var(--jhc-navy) !important;
-        font-weight: 700;
-        position: relative;
-        margin: 0 5px;
-    }
-    .nav-link::after {
-        content: '';
-        position: absolute;
-        width: 0;
-        height: 2px;
-        bottom: 0;
-        left: 0;
-        background-color: var(--jhc-red);
-        transition: width 0.3s ease;
-    }
-    .nav-link:hover::after {
-        width: 100%;
-    }
+        /* Menu Animasi */
+        .nav-link {
+            color: var(--jhc-navy) !important;
+            font-weight: 700;
+            position: relative;
+            margin: 0 5px;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--jhc-red);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
 
-    .navbar-nav .nav-link {
-        padding-top: 1.5rem !important;
-        padding-bottom: 1.5rem !important;
-    }
+        .navbar-nav .nav-link {
+            padding-top: 1.5rem !important;
+            padding-bottom: 1.5rem !important;
+        }
 
-    .navbar-brand img {
-        transition: all 0.3s ease-in-out;
-        filter: drop-shadow(0px 0px 0px rgba(200, 16, 46, 0));
-    }
+        .navbar-brand img {
+            transition: all 0.3s ease-in-out;
+            filter: drop-shadow(0px 0px 0px rgba(200, 16, 46, 0));
+        }
 
-    .navbar-brand:hover img {
-        transform: scale(1.1) rotate(-2deg); 
-        filter: drop-shadow(0px 4px 8px rgba(200, 16, 46, 0.3)); 
-    }
+        .navbar-brand:hover img {
+            transform: scale(1.1) rotate(-2deg); 
+            filter: drop-shadow(0px 4px 8px rgba(200, 16, 46, 0.3)); 
+        }
 
-    .navbar.navbar-scrolled {
-        background: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 25px rgba(0,0,0,0.1);
-    }
+        .navbar.navbar-scrolled {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+        }
 
-    .btn-janji {
-        background: var(--jhc-red);
-        color: white !important;
-        border-radius: 50px;
-        padding: 8px 20px;
-        font-size: 0.9rem;
-        font-weight: 700;
-        border: 2px solid var(--jhc-red);
-        transition: all 0.3s ease;
-    } 
-    .btn-janji:hover {
-        background: transparent;
-        color: var(--jhc-red) !important;
-        box-shadow: 0 5px 15px rgba(200, 16, 46, 0.3);
-    }
-    
-    .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .hover-lift:hover { transform: translateY(-10px); box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important; }
+        .modal {
+            z-index: 1060 !important;
+        }
+        .modal-backdrop {
+            z-index: 1050 !important;
+        }
+        /* Memastikan tombol berada di depan */
+        .btn-buka-detail {
+            position: relative;
+            z-index: 2;
+        }
 
-    .banner-overlay {
-    /* Ganti 0.9 dan 0.4 menjadi angka lebih kecil */
-    background: linear-gradient(to right, rgba(27, 113, 161, 0.5), rgba(45, 59, 72, 0.2));
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
-    }
-    .hero-content { position: relative; z-index: 2; }
+        .btn-janji {
+            background: var(--jhc-red);
+            color: white !important;
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border: 2px solid var(--jhc-red);
+            transition: all 0.3s ease;
+        } 
+        .btn-janji:hover {
+            background: transparent;
+            color: var(--jhc-red) !important;
+            box-shadow: 0 5px 15px rgba(200, 16, 46, 0.3);
+        }
+        
+        .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-10px); box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important; }
 
-    .doctor-card img { transition: transform 0.5s ease; }
-    .doctor-card:hover img { transform: scale(1.05); }
+        .banner-overlay {
+        /* Ganti 0.9 dan 0.4 menjadi angka lebih kecil */
+        background: linear-gradient(to right, rgba(27, 113, 161, 0.5), rgba(45, 59, 72, 0.2));
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
+        }
+        .hero-content { position: relative; z-index: 2; }
 
-    .partner-logo { filter: grayscale(100%); opacity: 0.7; transition: all 0.3s; }
-    .partner-logo:hover { filter: grayscale(0%); opacity: 1; }
+        .doctor-card img { transition: transform 0.5s ease; }
+        .doctor-card:hover img { transform: scale(1.05); }
 
-    .section-title {
-        position: relative; display: inline-block; margin-bottom: 3rem; font-weight: 800; color: var(--secondary-color);
-    }
-    .section-title::after {
-        content: ''; display: block; width: 60px; height: 4px; background: var(--primary-color); margin: 10px auto 0; border-radius: 2px;
-    }
+        .partner-logo { filter: grayscale(100%); opacity: 0.7; transition: all 0.3s; }
+        .partner-logo:hover { filter: grayscale(0%); opacity: 1; }
 
-    .news-date-badge {
-        position: absolute; top: 15px; left: 15px; background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; z-index: 10;
-    }
-    
-    .form-control-modern {
-        border-radius: 10px; padding: 15px; border: 1px solid #e0e0e0; background: #f8f9fa;
-    }
-    .form-control-modern:focus {
-        background: #fff; box-shadow: 0 0 0 4px rgba(27, 113, 161, 0.1); border-color: var(--primary-color);
-    }
+        .section-title {
+            position: relative; display: inline-block; margin-bottom: 3rem; font-weight: 800; color: var(--secondary-color);
+        }
+        .section-title::after {
+            content: ''; display: block; width: 60px; height: 4px; background: var(--primary-color); margin: 10px auto 0; border-radius: 2px;
+        }
 
-    .btn-igd {
-        background-color: #C8102E; /* Merah JHC */
-        color: white !important;
-        border-radius: 50px;
-        padding: 8px 18px !important;
-        font-weight: 700;
-        font-size: 0.8rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        border: 2px solid #C8102E;
-        transition: all 0.3s ease;
-        text-decoration: none;
-    }
+        .news-date-badge {
+            position: absolute; top: 15px; left: 15px; background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; z-index: 10;
+        }
+        
+        .form-control-modern {
+            border-radius: 10px; padding: 15px; border: 1px solid #e0e0e0; background: #f8f9fa;
+        }
+        .form-control-modern:focus {
+            background: #fff; box-shadow: 0 0 0 4px rgba(27, 113, 161, 0.1); border-color: var(--primary-color);
+        }
 
-   .btn-igd:hover {
-        background-color: white;
-        color: #C8102E !important;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(200, 16, 46, 0.3);
-    }
+        .btn-igd {
+            background-color: #C8102E; /* Merah JHC */
+            color: white !important;
+            border-radius: 50px;
+            padding: 8px 18px !important;
+            font-weight: 700;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid #C8102E;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
 
-    .nav-actions {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
+    .btn-igd:hover {
+            background-color: white;
+            color: #C8102E !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(200, 16, 46, 0.3);
+        }
 
-    /* Animasi sederhana untuk icon IGD */
-    .pulse-icon {
-        animation: pulse-red 2s infinite;
-        border-radius: 50%;
-    }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    .pulse-emergency {
-        animation: pulse-red 2s infinite;
-    }
+        /* Animasi sederhana untuk icon IGD */
+        .pulse-icon {
+            animation: pulse-red 2s infinite;
+            border-radius: 50%;
+        }
 
-    @keyframes pulse-red {
-        0% { transform: scale(0.95); }
-        70% { transform: scale(1.1); }
-        100% { transform: scale(0.95); }
-    }
+        .pulse-emergency {
+            animation: pulse-red 2s infinite;
+        }
 
-    /* Kontainer Tombol Melayang di Kanan Bawah */
-    .floating-actions {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        display: flex;
-        flex-direction: column; /* Menyusun ke atas */
-        gap: 15px;
-        z-index: 9999;
-    }
+        @keyframes pulse-red {
+            0% { transform: scale(0.95); }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(0.95); }
+        }
 
-    /* Styling Tombol IGD Melayang */
-    .btn-igd-float {
-        width: 60px;
-        height: 60px;
-        background-color: #C8102E; /* Merah JHC */
-        color: white !important;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        box-shadow: 0 4px 15px rgba(200, 16, 46, 0.4);
-        transition: all 0.3s ease;
-        text-decoration: none;
-        border: 2px solid white;
-    }
+        /* Kontainer Tombol Melayang di Kanan Bawah */
+        .floating-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column; /* Menyusun ke atas */
+            gap: 15px;
+            z-index: 9999;
+        }
 
-    .btn-igd-float:hover {
-        transform: scale(1.1) rotate(10deg);
-        background-color: #002855; /* Navy saat hover */
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-    }
+        /* Styling Tombol IGD Melayang */
+        .btn-igd-float {
+            width: 60px;
+            height: 60px;
+            background-color: #C8102E; /* Merah JHC */
+            color: white !important;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(200, 16, 46, 0.4);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: 2px solid white;
+        }
 
-    /* Efek Denyut untuk IGD */
-    .pulse-igd {
-        animation: pulse-red-infinite 2s infinite;
-    }
+        .btn-igd-float:hover {
+            transform: scale(1.1) rotate(10deg);
+            background-color: #002855; /* Navy saat hover */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
 
-    @keyframes pulse-red-infinite {
-        0% { box-shadow: 0 0 0 0 rgba(200, 16, 46, 0.7); }
-        70% { box-shadow: 0 0 0 15px rgba(200, 16, 46, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(200, 16, 46, 0); }
-    }
+        /* Efek Denyut untuk IGD */
+        .pulse-igd {
+            animation: pulse-red-infinite 2s infinite;
+        }
 
-    /* Penyesuaian Tombol WA agar sejajar */
-    .btn-wa-float {
-        width: 60px;
-        height: 60px;
-        background-color: #25D366;
-        color: white !important;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 30px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s ease;
-        text-decoration: none;
-        border: 2px solid white;
-    }
-    
-    .btn-wa-float:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-    }
-</style>
+        @keyframes pulse-red-infinite {
+            0% { box-shadow: 0 0 0 0 rgba(200, 16, 46, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(200, 16, 46, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(200, 16, 46, 0); }
+        }
+
+        /* Penyesuaian Tombol WA agar sejajar */
+        .btn-wa-float {
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            color: white !important;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: 2px solid white;
+        }
+        
+        .btn-wa-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        }
+    </style>
   </head>
   <body>
     <main class="main" id="top">
@@ -503,83 +515,178 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       </script>
 
       <section class="py-5 bg-white" id="departments">
-        <div class="container">
-            
-            <div class="row justify-content-center mb-5">
-                <div class="col-12 text-center">
-                    <h2 class="section-title">PELAYANAN KAMI</h2>
-                    <p class="text-muted">Kami menyediakan berbagai layanan unggulan dan poliklinik spesialis.</p>
-                </div>
-            </div>
-
-            <?php if (!empty($layanan_data)): ?>
-            <div class="mb-5">
-                <div class="row mb-4">
+            <div class="container">
+                <div class="row justify-content-center mb-5">
                     <div class="col-12 text-center">
-                        <h4 class="fw-bold text-primary"><i class="fas fa-star me-2"></i>LAYANAN UNGGULAN</h4>
-                        <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--accent-color); opacity: 1;">
+                        <h2 class="section-title">PELAYANAN KAMI</h2>
+                        <p class="text-muted">Kami menyediakan berbagai layanan unggulan dan poliklinik spesialis.</p>
                     </div>
                 </div>
 
-                <div class="row gx-4 gy-4 justify-content-center">
-                    <?php foreach($layanan_data as $layanan): ?>
-                    <div class="col-6 col-md-4 col-lg-3 mb-2">
-                        <div class="card h-100 border-0 shadow hover-lift text-center p-4" style="background: #f8faff;">
-                            <div class="card-body d-flex flex-column align-items-center">
-                                <div class="mb-4 d-flex justify-content-center align-items-center bg-white rounded-circle shadow-sm" style="width: 80px; height: 80px;">
-                                    <?php if(!empty($layanan['icon_path'])): ?>
-                                        <img src="public/<?php echo htmlspecialchars($layanan['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="..." />
-                                    <?php else: ?>
-                                        <i class="fas fa-star fa-2x text-warning"></i>
-                                    <?php endif; ?>
-                                </div>
-                                <h5 class="card-title fw-bold text-dark mb-3"><?php echo htmlspecialchars($layanan['name']); ?></h5>
-                                <div class="mt-auto">
-                                    <a href="#!" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">Detail Layanan</a>
+                <?php if (!empty($layanan_data)): ?>
+                <div class="mb-5">
+                    <div class="row mb-4">
+                        <div class="col-12 text-center">
+                            <h4 class="fw-bold text-primary"><i class="fas fa-star me-2"></i>LAYANAN UNGGULAN</h4>
+                            <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--accent-color); opacity: 1;">
+                        </div>
+                    </div>
+
+                    <div class="row gx-4 gy-4 justify-content-center">
+                        <?php foreach($layanan_data as $layanan): ?>
+                        <div class="col-6 col-md-4 col-lg-3 mb-2">
+                            <div class="card h-100 border-0 shadow hover-lift text-center p-4" style="background: #f8faff;">
+                                <div class="card-body d-flex flex-column align-items-center">
+                                    <div class="mb-4 d-flex justify-content-center align-items-center bg-white rounded-circle shadow-sm" style="width: 80px; height: 80px;">
+                                        <?php if(!empty($layanan['icon_path'])): ?>
+                                            <img src="public/<?php echo htmlspecialchars($layanan['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="..." />
+                                        <?php else: ?>
+                                            <i class="fas fa-star fa-2x text-warning"></i>
+                                        <?php endif; ?>
+                                    </div>
+                                    <h5 class="card-title fw-bold text-dark mb-3"><?php echo htmlspecialchars($layanan['name']); ?></h5>
+                                    <div class="mt-auto">
+                                        <a href="javascript:void(0)" 
+                                        class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm btn-buka-detail" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modalLayanan" 
+                                        data-name="<?php echo htmlspecialchars($layanan['name']); ?>" 
+                                        data-desc="<?php echo htmlspecialchars($layanan['description'] ?? ''); ?>" 
+                                        data-expertise="<?php echo htmlspecialchars($layanan['expertise'] ?? ''); ?>" 
+                                        data-education="<?php echo htmlspecialchars($layanan['education'] ?? ''); ?>" 
+                                        data-icon="public/<?php echo htmlspecialchars($layanan['icon_path']); ?>">
+                                        <i class="fas fa-calendar-check me-1"></i> Detail Layanan
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <?php endforeach; ?>
                     </div>
-                    <?php endforeach; ?>
                 </div>
-            </div>
-        <?php endif; ?>
+                <?php endif; ?>
 
-        <?php if (!empty($poliklinik_data)): ?>
-        <div class="mt-5">
-            <div class="row mb-4 pt-4">
-                <div class="col-12 text-center">
-                    <h4 class="fw-bold text-secondary"><i class="fas fa-stethoscope me-2"></i>POLIKLINIK SPESIALIS</h4>
-                    <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--secondary-color); opacity: 1;">
-                </div>
-            </div>
-
-            <div class="row gx-4 gy-4 justify-content-center">
-                <?php foreach($poliklinik_data as $poli): ?>
-                <div class="col-6 col-md-4 col-lg-3 mb-2">
-                    <div class="card h-100 border-0 shadow-sm hover-lift text-center p-4">
-                        <div class="card-body d-flex flex-column align-items-center">
-                            <div class="mb-4 d-flex justify-content-center align-items-center bg-light rounded-circle shadow-sm" style="width: 80px; height: 80px;">
-                                <?php if(!empty($poli['icon_path'])): ?>
-                                    <img src="public/<?php echo htmlspecialchars($poli['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="..." />
-                                <?php else: ?>
-                                    <i class="fas fa-heartbeat fa-2x text-primary"></i>
-                                <?php endif; ?>
-                            </div>
-                            <h5 class="card-title fw-bold text-dark mb-3"><?php echo htmlspecialchars($poli['name']); ?></h5>
-                            <div class="mt-auto">
-                                <a href="#!" class="btn btn-outline-primary btn-sm rounded-pill px-4">Jadwal Dokter</a>
+                <?php if (!empty($poliklinik_data)): ?>
+                    <div class="mt-5">
+                        <div class="row mb-4 pt-4">
+                            <div class="col-12 text-center">
+                                <h4 class="fw-bold text-secondary"><i class="fas fa-stethoscope me-2"></i>POLIKLINIK SPESIALIS</h4>
+                                <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--secondary-color); opacity: 1;">
                             </div>
                         </div>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-        <?php endif; ?>
 
+                        <div class="row gx-4 gy-4 justify-content-center">
+                            <?php foreach($poliklinik_data as $poli): ?>
+                            <div class="col-6 col-md-4 col-lg-3 mb-2">
+                                <div class="card h-100 border-0 shadow-sm hover-lift text-center p-4">
+                                    <div class="card-body d-flex flex-column align-items-center">
+                                        <div class="mb-4 d-flex justify-content-center align-items-center bg-light rounded-circle shadow-sm" style="width: 80px; height: 80px;">
+                                            <?php if(!empty($poli['icon_path'])): ?>
+                                                <img src="public/<?php echo htmlspecialchars($poli['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="..." />
+                                            <?php else: ?>
+                                                <i class="fas fa-heartbeat fa-2x text-primary"></i>
+                                            <?php endif; ?>
+                                        </div>
+                                        <h5 class="card-title fw-bold text-dark mb-3"><?php echo htmlspecialchars($poli['name']); ?></h5>
+                                        <div class="mt-auto">
+                                            <a href="javascript:void(0)" 
+                                            class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm btn-buka-detail" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#modalLayanan" 
+                                            data-name="<?php echo htmlspecialchars($poli['name']); ?>" 
+                                            data-desc="<?php echo htmlspecialchars($poli['description'] ?? ''); ?>" 
+                                            data-expertise="<?php echo htmlspecialchars($poli['expertise'] ?? ''); ?>" 
+                                            data-education="<?php echo htmlspecialchars($poli['education'] ?? ''); ?>" 
+                                            data-icon="public/<?php echo htmlspecialchars($poli['icon_path'] ?? ''); ?>">
+                                            <i class="fas fa-calendar-check me-1"></i> Detail Layanan
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
+
+        <div class="modal fade" id="modalLayanan" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                    <div class="modal-header border-0 p-4 pb-0">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 pt-0">
+                        <div class="text-center mb-4">
+                            <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle mb-3 shadow-sm" style="width: 100px; height: 100px;">
+                                <img id="m-icon" src="" style="width: 60px; height: 60px; object-fit: contain;">
+                            </div>
+                            <h3 id="m-name" class="fw-bold text-dark"></h3>
+                            <hr style="width: 50px; margin: 15px auto; border-top: 3px solid #0d6efd; opacity: 1;">
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <label class="fw-bold text-primary small text-uppercase mb-2 d-block"><i class="fas fa-info-circle me-2"></i>Tentang Layanan</label>
+                                <p id="m-desc" class="text-muted"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 bg-light rounded-3 h-100">
+                                    <label class="fw-bold text-dark small text-uppercase mb-2 d-block"><i class="fas fa-star me-2 text-warning"></i>Keahlian Khusus</label>
+                                    <div id="m-expertise" class="text-muted" style="white-space: pre-line;"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 bg-light rounded-3 h-100">
+                                    <label class="fw-bold text-dark small text-uppercase mb-2 d-block"><i class="fas fa-graduation-cap me-2 text-danger"></i>Informasi Tambahan</label>
+                                    <div id="m-education" class="text-muted" style="white-space: pre-line;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4">
+                        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+                        <a href="booking.php" class="btn btn-primary rounded-pill px-4">Buat Janji Temu</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Delegasi event klik untuk semua tombol detail
+                document.addEventListener('click', function (e) {
+                    const btn = e.target.closest('.btn-buka-detail');
+                    
+                    if (btn) {
+                        // Berhenti jika tombol tidak memiliki target modal
+                        const modalId = btn.getAttribute('data-bs-target');
+                        const modalElement = document.querySelector(modalId);
+                        
+                        if (modalElement) {
+                            // 1. Ambil data dari atribut tombol
+                            const name = btn.getAttribute('data-name');
+                            const desc = btn.getAttribute('data-desc') || 'Deskripsi tidak tersedia.';
+                            const expertise = btn.getAttribute('data-expertise') || 'Informasi belum tersedia.';
+                            const education = btn.getAttribute('data-education') || 'Informasi belum tersedia.';
+                            const icon = btn.getAttribute('data-icon');
+
+                            // 2. Isi konten Modal
+                            document.getElementById('m-name').innerText = name;
+                            document.getElementById('m-desc').innerText = desc;
+                            document.getElementById('m-expertise').innerText = expertise;
+                            document.getElementById('m-education').innerText = education;
+                            document.getElementById('m-icon').src = icon;
+
+                            // 3. Jalankan Modal secara manual
+                            const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                            modal.show();
+                        }
+                    }
+                });
+            });
+        </script>
 
       <?php if (!empty($mcu_packages_data)): ?>
       <section class="py-5" style="background-color: #f1f7fc;">

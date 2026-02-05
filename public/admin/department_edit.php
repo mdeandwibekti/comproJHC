@@ -2,7 +2,8 @@
 require_once "../../config.php";
 require_once 'layout/header.php';
 
-$name = $category = $description = $icon_path = $icon_hover_path = "";
+// Inisialisasi variabel (Ditambah $education dan $expertise)
+$name = $category = $description = $icon_path = $icon_hover_path = $education = $expertise = "";
 $display_order = 0;
 $name_err = "";
 $page_title = "Add New Department";
@@ -14,12 +15,13 @@ if (isset($_GET['id'])) {
     $page_title = "Edit Department";
     $icon_header = "fa-pen";
     
-    // Ambil data
-    $sql = "SELECT name, category, description, icon_path, icon_hover_path, display_order FROM departments WHERE id = ?";
+    // Ambil data (Ditambah kolom baru ke SELECT)
+    $sql = "SELECT name, category, description, icon_path, icon_hover_path, display_order, education, expertise FROM departments WHERE id = ?";
     if ($stmt = $mysqli->prepare($sql)) {
         $stmt->bind_param("i", $id);
         if ($stmt->execute()) {
-            $stmt->bind_result($name, $category, $description, $icon_path, $icon_hover_path, $display_order);
+            // Bind result juga ditambah sesuai urutan SELECT
+            $stmt->bind_result($name, $category, $description, $icon_path, $icon_hover_path, $display_order, $education, $expertise);
             $stmt->fetch();
         }
         $stmt->close();
@@ -32,6 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $category = trim($_POST["category"]);
     $description = trim($_POST["description"] ?? ''); 
     $display_order = trim($_POST["display_order"]);
+    $education = trim($_POST["education"] ?? ''); // Input baru
+    $expertise = trim($_POST["expertise"] ?? ''); // Input baru
     
     $icon_path = $_POST['current_icon'];
     $icon_hover_path = $_POST['current_icon_hover'];
@@ -57,17 +61,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($name)) {
         $name_err = "Please enter a name.";
     } else {
+        // Logika INSERT / UPDATE (Ditambah variabel baru)
         if (empty($id)) {
-            $sql = "INSERT INTO departments (name, category, description, icon_path, icon_hover_path, display_order) VALUES (?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO departments (name, category, description, icon_path, icon_hover_path, display_order, education, expertise) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         } else {
-            $sql = "UPDATE departments SET name = ?, category = ?, description = ?, icon_path = ?, icon_hover_path = ?, display_order = ? WHERE id = ?";
+            $sql = "UPDATE departments SET name = ?, category = ?, description = ?, icon_path = ?, icon_hover_path = ?, display_order = ?, education = ?, expertise = ? WHERE id = ?";
         }
 
         if ($stmt = $mysqli->prepare($sql)) {
             if (empty($id)) {
-                $stmt->bind_param("sssssi", $name, $category, $description, $icon_path, $icon_hover_path, $display_order);
+                // bind_param: s (string), i (integer). Urutan: 5 string, 1 int, 2 string
+                $stmt->bind_param("sssssiss", $name, $category, $description, $icon_path, $icon_hover_path, $display_order, $education, $expertise);
             } else {
-                $stmt->bind_param("sssssii", $name, $category, $description, $icon_path, $icon_hover_path, $display_order, $id);
+                // Urutan: 5 string, 1 int, 2 string, terakhir ID (int)
+                $stmt->bind_param("sssssisii", $name, $category, $description, $icon_path, $icon_hover_path, $display_order, $education, $expertise, $id);
             }
             
             if ($stmt->execute()) {
@@ -84,55 +91,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <style>
     :root { --primary-red: #D32F2F; }
-    
-    .page-header {
-        background: white; padding: 1.5rem; border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary-red);
-        margin-bottom: 2rem;
-    }
-    
-    .main-card {
-        border: none; border-radius: 12px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    }
-
-    .form-control:focus, .form-select:focus {
-        border-color: var(--primary-red);
-        box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.15);
-    }
-    
+    .page-header { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary-red); margin-bottom: 2rem; }
+    .main-card { border: none; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+    .form-control:focus, .form-select:focus { border-color: var(--primary-red); box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.15); }
     .form-label { font-weight: 600; color: #444; margin-bottom: 0.5rem; }
-    
-    .img-preview-box {
-        background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px;
-        padding: 15px; text-align: center; margin-bottom: 10px;
-        transition: all 0.3s;
-    }
-    .img-preview-box:hover { border-color: var(--primary-red); background: #fff5f5; }
+    .img-preview-box { background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px; padding: 15px; text-align: center; margin-bottom: 10px; transition: all 0.3s; }
     .img-preview-box img { max-height: 60px; object-fit: contain; }
-
-    .btn-save {
-        background-color: var(--primary-red); border: none; color: white;
-        padding: 0.6rem 2rem; border-radius: 50px; font-weight: 600; transition: 0.3s;
-    }
+    .btn-save { background-color: var(--primary-red); border: none; color: white; padding: 0.6rem 2rem; border-radius: 50px; font-weight: 600; transition: 0.3s; }
     .btn-save:hover { background-color: #b71c1c; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3); }
-    
-    .btn-cancel {
-        background-color: #eff2f5; color: #5e6278; border: none;
-        padding: 0.6rem 2rem; border-radius: 50px; font-weight: 600;
-    }
-    .btn-cancel:hover { background-color: #e9ecef; color: #333; }
+    .btn-cancel { background-color: #eff2f5; color: #5e6278; border: none; padding: 0.6rem 2rem; border-radius: 50px; font-weight: 600; }
 </style>
 
 <div class="container-fluid py-4">
     <div class="page-header">
         <h3 class="mb-1 text-dark fw-bold"><i class="fas <?php echo $icon_header; ?> me-2 text-danger"></i> <?php echo $page_title; ?></h3>
-        <p class="text-muted mb-0 small">Please fill in the form below to add or update a service.</p>
+        <p class="text-muted mb-0 small">Silakan lengkapi formulir di bawah ini untuk layanan/poliklinik.</p>
     </div>
 
     <div class="card main-card">
         <div class="card-body p-4">
-            
             <?php if(isset($db_err)): ?>
                 <div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i> <?php echo $db_err; ?></div>
             <?php endif; ?>
@@ -145,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="row mb-3">
                             <div class="col-md-8">
                                 <label class="form-label">Name <span class="text-danger">*</span></label>
-                                <input type="text" name="name" class="form-control <?php echo (!empty($name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($name); ?>" placeholder="e.g. Jantung, IGD, Medical Check Up" required>
+                                <input type="text" name="name" class="form-control <?php echo (!empty($name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($name); ?>" placeholder="Contoh: Jantung, IGD" required>
                                 <div class="invalid-feedback"><?php echo $name_err; ?></div>
                             </div>
                             <div class="col-md-4">
@@ -158,22 +135,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="4" placeholder="Brief description of the service..."><?php echo htmlspecialchars($description ?? ''); ?></textarea>
+                            <label class="form-label">Description (Brief)</label>
+                            <textarea name="description" class="form-control" rows="2"><?php echo htmlspecialchars($description ?? ''); ?></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Keahlian Khusus (Expertise)</label>
+                            <textarea name="expertise" class="form-control" rows="3" placeholder="Sebutkan keunggulan layanan ini..."><?php echo htmlspecialchars($expertise ?? ''); ?></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Pendidikan / Info Tambahan</label>
+                            <textarea name="education" class="form-control" rows="3" placeholder="Informasi tambahan seperti riwayat atau sertifikasi..."><?php echo htmlspecialchars($education ?? ''); ?></textarea>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <label class="form-label">Display Order</label>
                                 <input type="number" name="display_order" class="form-control" value="<?php echo htmlspecialchars($display_order); ?>">
-                                <div class="form-text small">Lower numbers appear first.</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-4 border-start">
                         <h6 class="text-muted fw-bold mb-3">Icon Settings</h6>
-                        
                         <div class="mb-4">
                             <label class="form-label small">Normal Icon</label>
                             <div class="img-preview-box">
@@ -188,7 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small">Hover Icon (Optional)</label>
+                            <label class="form-label small">Hover Icon</label>
                             <div class="img-preview-box">
                                 <?php if(!empty($icon_hover_path)): ?>
                                     <img src="../<?php echo htmlspecialchars($icon_hover_path); ?>" alt="Hover Icon">
@@ -203,19 +188,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <hr class="my-4">
-
                 <div class="d-flex justify-content-end gap-2">
                     <a href="departments.php" class="btn btn-cancel">Cancel</a>
-                    <button type="submit" class="btn btn-save">
-                        <i class="fas fa-save me-2"></i> Save Changes
-                    </button>
+                    <button type="submit" class="btn btn-save"><i class="fas fa-save me-2"></i> Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<?php
-$mysqli->close();
-require_once 'layout/footer.php';
-?>
+<?php $mysqli->close(); require_once 'layout/footer.php'; ?>
