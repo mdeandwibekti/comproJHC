@@ -40,22 +40,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_appointment']))
     }
 }
 
-// --- FETCH DATA ABOUT US SECTIONS ---
 $about_sections = [];
-$about_sql = "SELECT * FROM about_us_sections";
-$about_result = $mysqli->query($about_sql);
+$sql_check = "SELECT * FROM about_us_sections";
+$result_check = $mysqli->query($sql_check);
 
-if ($about_result) {
-    while($row = $about_result->fetch_assoc()) {
-        // Kita simpan dalam array dengan key 'section_key' agar mudah dipanggil
-        $about_sections[$row['section_key']] = $row;
+if ($result_check && $result_check->num_rows > 0) {
+    while ($row = $result_check->fetch_assoc()) {
+        // Kita paksa key menjadi lowercase agar tidak sensitif huruf besar/kecil
+        $clean_key = strtolower(trim($row['section_key']));
+        $about_sections[$clean_key] = $row;
     }
+} 
+
+// Fungsi bantu ambil data (dengan nilai default jika kosong)
+function get_data_safe($key, $field, $data_array) {
+    // Cek apakah key ada
+    if (isset($data_array[$key]) && !empty($data_array[$key][$field])) {
+        return $data_array[$key][$field];
+    }
+    return null; // Return null jika tidak ada data
 }
 
-// Fungsi bantu untuk mengambil data aman
-function get_about_data($key, $field, $data_array) {
-    return isset($data_array[$key][$field]) ? $data_array[$key][$field] : '';
-}
+// Daftar Tab yang akan ditampilkan
+// PASTIKAN 'KEY' DI SINI SAMA DENGAN KOLOM 'section_key' DI DATABASE ANDA
+$tab_list = [
+    'visi-misi'      => ['label' => 'Visi & Misi',      'icon' => 'fa-bullseye'],
+    'sejarah'        => ['label' => 'Sejarah',          'icon' => 'fa-history'],
+    'salam-direktur' => ['label' => 'Salam Direktur',   'icon' => 'fa-user-tie'],
+    'budaya-kerja'   => ['label' => 'Budaya Kerja',     'icon' => 'fa-hand-holding-heart']
+];
+
 
 // --- FETCH DATA ---
 
@@ -110,9 +124,6 @@ $vr_data = null;
 $res = $mysqli->query("SELECT * FROM page_virtual_room WHERE id = 1");
 if ($res && $res->num_rows > 0) $vr_data = $res->fetch_assoc();
 
-$vr_about = null;
-$res = $mysqli->query("SELECT * FROM page_virtual_room WHERE id = 1");
-if ($res && $res->num_rows > 0) $vr_about = $res->fetch_assoc();
 
 // --- FETCH PARTNERS DATA ---
 $partners_data = [];
@@ -805,117 +816,106 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       </section>
       <?php endif; ?>
         
-     <?php if ($vr_data): ?>
-        <section class="py-5" id="about_us" style="background-color: #fff;">
+     <section class="py-5" id="about_us" style="background-color: #fff;">
             <div class="container">
+                
                 <div class="row justify-content-center mb-5">
                     <div class="col-md-8 text-center">
                         <h5 class="text-primary fw-bold text-uppercase">About us</h5>
                         <h2 class="section-title">Mengenal Lebih Dekat RS JHC</h2>
-                        <p class="text-muted">Dedikasi kami untuk kesehatan Anda melalui visi, sejarah, dan budaya kerja yang unggul.</p>
+                        <p class="text-muted">Dedikasi kami untuk kesehatan Anda.</p>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-lg-3 mb-4">
-                        <div class="nav flex-column nav-pills me-3 shadow-sm rounded overflow-hidden" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                            
-                            <button class="nav-link active text-start py-3 fw-bold" id="v-pills-visi-tab" data-bs-toggle="pill" data-bs-target="#v-pills-visi" type="button" role="tab" aria-controls="v-pills-visi" aria-selected="true">
-                                <i class="fas fa-bullseye me-2 text-primary"></i> Visi & Misi
-                            </button>
-                            
-                            <button class="nav-link text-start py-3 fw-bold" id="v-pills-sejarah-tab" data-bs-toggle="pill" data-bs-target="#v-pills-sejarah" type="button" role="tab" aria-controls="v-pills-sejarah" aria-selected="false">
-                                <i class="fas fa-history me-2 text-primary"></i> Sejarah
-                            </button>
-                            
-                            <button class="nav-link text-start py-3 fw-bold" id="v-pills-salam-tab" data-bs-toggle="pill" data-bs-target="#v-pills-salam" type="button" role="tab" aria-controls="v-pills-salam" aria-selected="false">
-                                <i class="fas fa-user-tie me-2 text-primary"></i> Salam Direktur
-                            </button>
-                            
-                            <button class="nav-link text-start py-3 fw-bold" id="v-pills-budaya-tab" data-bs-toggle="pill" data-bs-target="#v-pills-budaya" type="button" role="tab" aria-controls="v-pills-budaya" aria-selected="false">
-                                <i class="fas fa-hand-holding-heart me-2 text-primary"></i> Budaya Kerja
-                            </button>
+                <?php if (empty($about_sections)): ?>
+                    <div class="alert alert-warning text-center">
+                        <strong>Data tidak ditemukan!</strong><br>
+                        Silakan cek tabel database <code>about_us_sections</code>. Pastikan ada isinya.
+                    </div>
+                <?php else: ?>
 
+                    <div class="row">
+                        <div class="col-lg-3 mb-4">
+                            <div class="nav flex-column nav-pills me-3 shadow-sm rounded overflow-hidden" id="v-pills-tab" role="tablist">
+                                <?php 
+                                $counter = 0;
+                                foreach ($tab_list as $key => $info): 
+                                    $active = ($counter === 0) ? 'active' : '';
+                                ?>
+                                    <button class="nav-link <?php echo $active; ?> text-start py-3 fw-bold" 
+                                            id="tab-btn-<?php echo $key; ?>" 
+                                            data-bs-toggle="pill" 
+                                            data-bs-target="#content-<?php echo $key; ?>" 
+                                            type="button" role="tab">
+                                        <i class="fas <?php echo $info['icon']; ?> me-2 text-primary"></i> <?php echo $info['label']; ?>
+                                    </button>
+                                <?php 
+                                    $counter++;
+                                endforeach; 
+                                ?>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-9">
+                            <div class="tab-content shadow p-4 rounded bg-white border" style="min-height: 400px;">
+                                <?php 
+                                $counter = 0;
+                                foreach ($tab_list as $key => $info): 
+                                    $active = ($counter === 0) ? 'show active' : '';
+                                    
+                                    // Ambil data
+                                    $title = get_data_safe($key, 'title', $about_sections);
+                                    $content = get_data_safe($key, 'content', $about_sections);
+                                    $img_db = get_data_safe($key, 'image_path', $about_sections);
+                                    
+                                    // Jika data di database kosong, pakai placeholder
+                                    if (!$title) $title = $info['label'] . " (Belum diisi)";
+                                    if (!$content) $content = "Konten untuk bagian ini belum tersedia di database admin.";
+                                    
+                                    // Fix path gambar
+                                    $img_src = !empty($img_db) ? 'public/' . $img_db : 'public/assets/img/gallery/about-placeholder.jpg';
+                                ?>
+                                    
+                                    <div class="tab-pane fade <?php echo $active; ?>" id="content-<?php echo $key; ?>" role="tabpanel">
+                                        
+                                        <?php if ($key == 'salam-direktur'): ?>
+                                            <div class="text-center mb-4">
+                                                <img src="<?php echo htmlspecialchars($img_src); ?>" class="rounded-circle shadow mb-3" style="width: 150px; height: 150px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/150';">
+                                                <h3 class="fw-bold text-navy"><?php echo htmlspecialchars($title); ?></h3>
+                                                <hr class="w-25 mx-auto text-primary" style="height: 3px; opacity: 1;">
+                                            </div>
+                                            <div class="px-md-5 text-secondary fst-italic text-center">
+                                                <i class="fas fa-quote-left fa-2x text-primary opacity-25 mb-2"></i>
+                                                <p class="lead"><?php echo nl2br(htmlspecialchars($content)); ?></p>
+                                            </div>
+
+                                        <?php else: ?>
+                                            <div class="row align-items-center">
+                                                <div class="col-md-6 mb-3">
+                                                    <img src="<?php echo htmlspecialchars($img_src); ?>" class="img-fluid rounded shadow-sm w-100" style="object-fit: cover; height: 300px;" onerror="this.src='https://via.placeholder.com/400x300';">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h3 class="fw-bold text-navy mb-3"><?php echo htmlspecialchars($title); ?></h3>
+                                                    <div class="text-secondary">
+                                                        <?php echo nl2br(htmlspecialchars($content)); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+
+                                    </div>
+
+                                <?php 
+                                    $counter++;
+                                endforeach; 
+                                ?>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-lg-9">
-                        <div class="tab-content shadow p-4 rounded bg-white border" id="v-pills-tabContent" style="min-height: 400px;">
-                            
-                            <div class="tab-pane fade show active" id="v-pills-visi" role="tabpanel" aria-labelledby="v-pills-visi-tab">
-                                <div class="row align-items-center">
-                                    <div class="col-md-6 mb-3">
-                                        <?php $img = get_about_data('visi-misi', 'image_path', $about_sections); ?>
-                                        <img src="public/<?php echo !empty($img) ? htmlspecialchars($img) : 'assets/img/gallery/about-placeholder.jpg'; ?>" 
-                                            class="img-fluid rounded shadow-sm w-100" style="object-fit: cover; height: 300px;" alt="Visi Misi">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h3 class="fw-bold text-navy mb-3"><?php echo htmlspecialchars(get_about_data('visi-misi', 'title', $about_sections)); ?></h3>
-                                        <div class="text-secondary">
-                                            <?php echo nl2br(htmlspecialchars(get_about_data('visi-misi', 'content', $about_sections))); ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="tab-pane fade" id="v-pills-sejarah" role="tabpanel" aria-labelledby="v-pills-sejarah-tab">
-                                <div class="row align-items-center">
-                                    <div class="col-md-5 order-md-2 mb-3">
-                                        <?php $img = get_about_data('sejarah', 'image_path', $about_sections); ?>
-                                        <img src="public/<?php echo !empty($img) ? htmlspecialchars($img) : 'assets/img/gallery/history.jpg'; ?>" 
-                                            class="img-fluid rounded shadow-sm w-100" style="object-fit: cover; height: 300px;" alt="Sejarah">
-                                    </div>
-                                    <div class="col-md-7 order-md-1">
-                                        <h3 class="fw-bold text-navy mb-3"><?php echo htmlspecialchars(get_about_data('sejarah', 'title', $about_sections)); ?></h3>
-                                        <div class="text-secondary text-justify">
-                                            <?php echo nl2br(htmlspecialchars(get_about_data('sejarah', 'content', $about_sections))); ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="tab-pane fade" id="v-pills-salam" role="tabpanel" aria-labelledby="v-pills-salam-tab">
-                                <div class="text-center mb-4">
-                                    <?php $img = get_about_data('salam-direktur', 'image_path', $about_sections); ?>
-                                    <img src="public/<?php echo !empty($img) ? htmlspecialchars($img) : 'assets/img/gallery/director.jpg'; ?>" 
-                                        class="rounded-circle shadow mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Direktur">
-                                    <h3 class="fw-bold text-navy"><?php echo htmlspecialchars(get_about_data('salam-direktur', 'title', $about_sections)); ?></h3>
-                                    <hr class="w-25 mx-auto text-primary" style="height: 3px; opacity: 1;">
-                                </div>
-                                <div class="px-md-5 text-secondary fst-italic text-center">
-                                    <i class="fas fa-quote-left fa-2x text-primary opacity-25 mb-2"></i>
-                                    <p class="lead">
-                                        <?php echo nl2br(htmlspecialchars(get_about_data('salam-direktur', 'content', $about_sections))); ?>
-                                    </p>
-                                    <i class="fas fa-quote-right fa-2x text-primary opacity-25 mt-2"></i>
-                                </div>
-                            </div>
-
-                            <div class="tab-pane fade" id="v-pills-budaya" role="tabpanel" aria-labelledby="v-pills-budaya-tab">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <h3 class="fw-bold text-navy mb-4 border-bottom pb-2"><?php echo htmlspecialchars(get_about_data('budaya-kerja', 'title', $about_sections)); ?></h3>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="text-secondary">
-                                            <?php echo nl2br(htmlspecialchars(get_about_data('budaya-kerja', 'content', $about_sections))); ?>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <?php $img = get_about_data('budaya-kerja', 'image_path', $about_sections); ?>
-                                        <img src="public/<?php echo !empty($img) ? htmlspecialchars($img) : 'assets/img/gallery/culture.jpg'; ?>" 
-                                            class="img-fluid rounded shadow-sm w-100" alt="Budaya Kerja">
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </section>
-
-      <?php endif; ?>
 
 
       <section class="py-5 bg-white" id="doctors">
