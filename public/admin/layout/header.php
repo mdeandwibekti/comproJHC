@@ -36,18 +36,21 @@ if ($settings_result) {
     
     <style>
         :root {
-            /* Warna Gradasi Baru JHC sesuai permintaan */
-            --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
-            --jhc-red-dark: #8a3033;
-            --jhc-red-light: #bd3030;
+        --jhc-red-dark: #8a3033;
+        --jhc-red-light: #bd3030;
+        --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
+        --admin-bg: #f4f7f6;
         }
 
-        body { padding-top: 90px; background-color: #f8f9fa; }
+        body { 
+        background-color: var(--admin-bg) !important; 
+        font-family: 'Inter', sans-serif;
+        }
         
         /* Navbar dengan Gradasi Linear 90 derajat */
         .navbar-admin {
-            background: var(--jhc-gradient) !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            background-color: #a32a2e !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border: none !important;
         }
 
@@ -63,23 +66,59 @@ if ($settings_result) {
         }
 
         .navbar-admin .navbar-brand img {
-            filter: brightness(0) invert(1); /* Membuat logo hitam/gelap menjadi putih agar kontras dengan background merah */
+            filter: brightness(0) invert(1);
             height: 50px;
             width: auto;
         }
 
-        /* Styling Wrapper Konten */
         .wrapper { 
-            width: 90%; 
-            max-width: 1200px;
-            padding: 30px; 
-            margin: 20px auto; 
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+           background: #ffffff;
+           border-radius: 20px;
+           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+           padding: 40px;
+           margin-top: 30px;
+           border: 1px solid rgba(0,0,0,0.05);
         }
 
-        /* Tombol Logout Putih agar bersih */
+        .manage-header {
+        border-left: 4px solid var(--jhc-red-dark);
+        padding-left: 20px;
+        margin-bottom: 30px;
+        }
+
+        .btn-jhc-main {
+        background: var(--jhc-gradient) !important;
+        border: none !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 10px 24px !important;
+        font-weight: 700;
+        box-shadow: 0 4px 15px rgba(138, 48, 51, 0.3);
+        transition: all 0.3s ease;
+        }
+
+        .btn-jhc-main:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(138, 48, 51, 0.4);
+        opacity: 0.95;
+        }
+
+        .table thead th {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        border-top: none;
+        padding: 15px;
+     }
+
+    .table tbody td {
+        padding: 15px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
         .btn-logout {
             background: #fff;
             color: var(--jhc-red-dark) !important;

@@ -1,8 +1,7 @@
 <?php
 require_once "../../config.php";
 
-$msg = "";
-
+// --- LOGIKA PEMROSESAN POST (Harus SEBELUM require layout/header.php) ---
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $title = trim($_POST["title"]);
     $content = trim($_POST["content"]);
@@ -14,12 +13,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $upload_dir = "../assets/img/virtual_tour/";
         if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
         
-        $file_ext = pathinfo($_FILES["image_360"]["name"], PATHINFO_EXTENSION);
-        $new_name = uniqid() . "_vr." . $file_ext;
+        $file_ext = strtolower(pathinfo($_FILES["image_360"]["name"], PATHINFO_EXTENSION));
+        $new_name = uniqid('vr_') . "." . $file_ext;
         
         if (move_uploaded_file($_FILES["image_360"]["tmp_name"], $upload_dir . $new_name)) {
-            // Hapus file lama jika ada penggantian
-            if (!empty($current_img) && file_exists("../" . $current_img)) unlink("../" . $current_img);
+            // Hapus file lama jika ada penggantian untuk efisiensi storage
+            if (!empty($current_img) && file_exists("../" . $current_img)) {
+                unlink("../" . $current_img);
+            }
             $current_img = "assets/img/virtual_tour/" . $new_name;
         }
     }
@@ -36,87 +37,140 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Ambil data untuk ditampilkan di form
+// Ambil data terbaru
 $data = $mysqli->query("SELECT * FROM page_virtual_room WHERE id=1")->fetch_assoc();
 
 require_once 'layout/header.php';
 ?>
 
 <style>
-    :root { --jhc-grad: linear-gradient(90deg, #8a3033 0%, #bd3030 100%); }
-    .btn-jhc { background: var(--jhc-grad); color: white !important; border: none; border-radius: 50px; padding: 10px 30px; font-weight: 700; transition: 0.3s; }
-    .btn-jhc:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(138, 48, 51, 0.4); }
-    .preview-box { border: 2px dashed #ddd; border-radius: 10px; padding: 15px; background: #f9f9f9; }
-    .instruction-box { background-color: #fff5f5; border-left: 4px solid #bd3030; padding: 15px; border-radius: 4px; margin-top: 10px; }
-    .instruction-box code { background: #eee; padding: 2px 5px; border-radius: 3px; color: #bd3030; font-size: 0.9em; word-break: break-all; }
+    :root { 
+        --jhc-red-dark: #8a3033;
+        --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
+    }
+
+    /* Wrapper Neumorphism sesuai standar admin JHC */
+    .admin-wrapper {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        padding: 40px;
+        margin-top: 20px;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .manage-header {
+        border-left: 5px solid var(--jhc-red-dark);
+        padding-left: 20px;
+        margin-bottom: 30px;
+    }
+
+    /* Tombol Utama Gradasi JHC */
+    .btn-jhc-save { 
+        background: var(--jhc-gradient) !important; 
+        color: white !important; 
+        border-radius: 12px !important; 
+        padding: 12px 35px !important; 
+        font-weight: 700; 
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(138, 48, 51, 0.3);
+        transition: 0.3s; 
+    }
+    .btn-jhc-save:hover { transform: translateY(-2px); opacity: 0.95; }
+
+    .preview-container { 
+        background: #fdfdfd; 
+        border: 2px dashed #ddd; 
+        border-radius: 15px; 
+        padding: 20px; 
+    }
+
+    .instruction-box { 
+        background-color: #fef8f8; 
+        border-left: 4px solid var(--jhc-red-dark); 
+        padding: 15px; 
+        border-radius: 8px; 
+    }
+    
+    .form-label { font-weight: 700; color: #444; font-size: 0.85rem; text-transform: uppercase; }
+    .form-control:focus { border-color: var(--jhc-red-dark); box-shadow: 0 0 0 0.25rem rgba(138, 48, 51, 0.1); }
 </style>
 
 <div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold">Manage Virtual Room</h3>
-        <button type="submit" form="mainForm" class="btn btn-jhc"><i class="fas fa-save me-2"></i> Simpan Perubahan</button>
-    </div>
+    <div class="admin-wrapper">
+        <div class="d-flex justify-content-between align-items-center manage-header">
+            <div>
+                <h3 class="fw-bold mb-1 text-dark">Virtual Room Settings</h3>
+                <p class="text-muted small mb-0">Kelola konten tur virtual dan video pengenalan fasilitas Rumah Sakit JHC.</p>
+            </div>
+            <button type="submit" form="vrForm" class="btn btn-jhc-save">
+                <i class="fas fa-save me-2"></i> Simpan Perubahan
+            </button>
+        </div>
 
-    <?php if(isset($_GET['status'])) echo '<div class="alert alert-success shadow-sm border-0 border-start border-success border-4">Data Virtual Room berhasil diperbarui!</div>'; ?>
+        <?php if(isset($_GET['status']) && $_GET['status'] == 'updated'): ?>
+            <div class="alert alert-success border-0 shadow-sm border-start border-success border-4 mb-4">
+                <i class="fas fa-check-circle me-2"></i> Konten Virtual Room berhasil diperbarui!
+            </div>
+        <?php endif; ?>
 
-    <form id="mainForm" action="virtual_room.php" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="current_image_360" value="<?= $data['image_path_360']; ?>">
-        
-        <div class="row g-4">
-            <div class="col-md-7">
-                <div class="card border-0 shadow-sm p-4">
+        <form id="vrForm" action="virtual_room.php" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="current_image_360" value="<?= $data['image_path_360']; ?>">
+            
+            <div class="row g-5">
+                <div class="col-lg-7">
                     <div class="mb-4">
-                        <label class="form-label fw-bold text-muted">Judul Utama</label>
-                        <input type="text" name="title" class="form-control" value="<?= htmlspecialchars($data['title']); ?>" required>
+                        <label class="form-label">Judul Halaman</label>
+                        <input type="text" name="title" class="form-control form-control-lg" value="<?= htmlspecialchars($data['title']); ?>" placeholder="Contoh: Jelajahi Fasilitas JHC secara Virtual" required>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold text-muted">YouTube Embed Link</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light"><i class="fab fa-youtube text-danger"></i></span>
-                            <input type="text" name="video_url" class="form-control" value="<?= htmlspecialchars($data['video_url']); ?>" placeholder="https://www.youtube.com/embed/...">
+                        <label class="form-label text-danger"><i class="fab fa-youtube me-1"></i> YouTube Embed Link</label>
+                        <div class="input-group mb-2">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-link text-muted"></i></span>
+                            <input type="text" name="video_url" class="form-control form-control-lg border-start-0" value="<?= htmlspecialchars($data['video_url']); ?>" placeholder="https://www.youtube.com/embed/XYZ123">
                         </div>
                         
-                        <div class="instruction-box mt-3">
-                            <p class="mb-2 small fw-bold text-dark"><i class="fas fa-info-circle me-1"></i> Penting:</p>
+                        <div class="instruction-box mt-3 shadow-sm">
+                            <p class="mb-2 small fw-bold text-dark"><i class="fas fa-lightbulb me-1 text-warning"></i> Panduan Link Video:</p>
                             <ul class="mb-0 small text-muted ps-3">
-                                <li>Wajib menggunakan format <code>/embed/</code> agar video dapat diputar otomatis di halaman utama.</li>
-                                <li>Contoh format benar:<br><code>https://www.youtube.com/embed/jEEGbQE1sns</code></li>
+                                <li>Pastikan link mengandung kata <strong>/embed/</strong>.</li>
+                                <li>Cara mendapatkan: Klik "Share" di YouTube > Pilih "Embed" > Ambil bagian link di dalam tanda petik <code>src="..."</code>.</li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="mb-0">
-                        <label class="form-label fw-bold text-muted">Deskripsi Konten</label>
-                        <textarea name="content" class="form-control" rows="8"><?= htmlspecialchars($data['content']); ?></textarea>
+                        <label class="form-label">Deskripsi / Kata Pengantar</label>
+                        <textarea name="content" class="form-control" rows="10" placeholder="Tuliskan penjelasan singkat mengenai fasilitas yang ditampilkan..."><?= htmlspecialchars($data['content']); ?></textarea>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="card bg-light border-0 rounded-4 p-4">
+                        <label class="form-label mb-3">Preview Media Aktif</label>
+                        <div class="preview-container text-center mb-4">
+                            <?php if(!empty($data['video_url'])): ?>
+                                <div class="ratio ratio-16x9 rounded shadow-sm overflow-hidden mb-3">
+                                    <iframe src="<?= $data['video_url']; ?>" frameborder="0" allowfullscreen></iframe>
+                                </div>
+                                <span class="badge bg-danger px-3 py-2 rounded-pill"><i class="fas fa-play-circle me-1"></i> Video YouTube</span>
+                            <?php else: ?>
+                                <img src="../<?= $data['image_path_360']; ?>" class="img-fluid rounded shadow-sm mb-3" style="max-height: 200px;">
+                                <br><span class="badge bg-secondary px-3 py-2 rounded-pill"><i class="fas fa-image me-1"></i> Foto Statis Aktif</span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="mb-0">
+                            <label class="form-label small">Ganti Gambar Statis (Fallback)</label>
+                            <input type="file" name="image_360" class="form-control shadow-sm">
+                            <div class="form-text x-small mt-2 text-muted">Gambar ini muncul jika URL video kosong. Rekomendasi: Lanskap (1920x1080px).</div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-5">
-                <div class="card border-0 shadow-sm p-4 h-100">
-                    <label class="form-label fw-bold text-muted mb-3">Preview Media Saat Ini</label>
-                    <div class="preview-box text-center mb-4">
-                        <?php if(!empty($data['video_url'])): ?>
-                            <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm mb-2">
-                                <iframe src="<?= $data['video_url']; ?>" frameborder="0"></iframe>
-                            </div>
-                            <span class="badge bg-primary px-3 py-2 rounded-pill"><i class="fas fa-video me-1"></i> Video Aktif</span>
-                        <?php else: ?>
-                            <img src="../<?= $data['image_path_360']; ?>" class="img-fluid rounded shadow-sm mb-2" style="max-height: 180px;">
-                            <br><span class="badge bg-secondary px-3 py-2 rounded-pill"><i class="fas fa-image me-1"></i> Gambar Aktif (Fallback)</span>
-                        <?php endif; ?>
-                    </div>
-
-                    <div class="mb-0">
-                        <label class="form-label fw-bold text-muted">Ganti Gambar Fallback (Jika Video Kosong)</label>
-                        <input type="file" name="image_360" class="form-control">
-                        <p class="form-text text-muted small mt-2">Format: JPG, PNG, JPEG. Rekomendasi rasio 16:9.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 
 <?php require_once 'layout/footer.php'; ?>

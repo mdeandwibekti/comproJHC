@@ -4,117 +4,131 @@
 
 <style>
     :root {
-        --primary-red: #D32F2F; /* Merah Rumah Sakit yang Profesional */
-        --light-red: #ffebee;
-        --dark-text: #333;
-        --grey-bg: #f8f9fa;
+        /* Warna Gradasi JHC Sesuai Gambar Referensi */
+        --jhc-red-dark: #8a3033;
+        --jhc-red-light: #bd3030;
+        --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
+        --admin-bg: #f4f7f6;
     }
 
     body {
-        background-color: var(--grey-bg);
+        background-color: var(--admin-bg) !important;
     }
 
-    /* Welcome Section */
+    /* Welcome Section bergaya Neumorphism */
     .welcome-banner {
         background: white;
-        border-left: 5px solid var(--primary-red);
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        margin-bottom: 2rem;
-    }
-
-    .welcome-banner h1 {
-        font-weight: 300;
-        color: var(--dark-text);
-        margin-bottom: 0;
-    }
-
-    .welcome-banner b {
-        color: var(--primary-red);
-        font-weight: 700;
-    }
-
-    /* Dashboard Cards */
-    .dashboard-card {
-        border: none;
-        border-radius: 10px;
-        background: white;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        box-shadow: 0 3px 6px rgba(0,0,0,0.05);
-        height: 100%;
-        overflow: hidden;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        margin-bottom: 3rem;
         position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.03);
     }
 
-    /* Red accent line on the left */
-    .dashboard-card::before {
+    .welcome-banner::before {
         content: '';
         position: absolute;
         left: 0;
         top: 0;
         height: 100%;
-        width: 4px;
-        background-color: var(--primary-red);
-        transition: width 0.3s ease;
+        width: 6px;
+        background: var(--jhc-gradient);
     }
 
-    .dashboard-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(211, 47, 47, 0.15);
-    }
-
-    /* Efek hover full block merah (opsional, agar lebih 'bold') */
-    .dashboard-card:hover::before {
-        width: 100%;
-        opacity: 0.05; /* Memberi tint merah tipis pada background saat hover */
-    }
-
-    .card-body {
-        padding: 1.5rem;
-        position: relative;
-        z-index: 2;
-    }
-
-    .icon-box {
-        width: 50px;
-        height: 50px;
-        background-color: var(--light-red);
-        color: var(--primary-red);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .dashboard-card:hover .icon-box {
-        background-color: var(--primary-red);
-        color: white;
-        transform: rotateY(180deg);
-    }
-
-    .card-title {
-        font-weight: 700;
+    .welcome-banner h1 {
+        font-weight: 300;
         color: #2c3e50;
         margin-bottom: 0.5rem;
     }
 
+    .welcome-banner b {
+        color: var(--jhc-red-dark);
+        font-weight: 800;
+    }
+
+    /* Dashboard Grid Cards */
+    .dashboard-card {
+        border: none;
+        border-radius: 18px;
+        background: #ffffff;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.04);
+        height: 100%;
+        border: 1px solid rgba(0,0,0,0.02);
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(138, 48, 51, 0.1);
+        border-color: rgba(138, 48, 51, 0.2);
+    }
+
+    .card-body {
+        padding: 2rem 1.5rem;
+        text-align: center;
+    }
+
+    /* Icon Box dengan Gradasi Baru */
+    .icon-box {
+        width: 70px;
+        height: 70px;
+        background: #f8f9fa;
+        color: var(--jhc-red-dark);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin: 0 auto 1.5rem auto;
+        transition: all 0.4s ease;
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+    }
+
+    .dashboard-card:hover .icon-box {
+        background: var(--jhc-gradient);
+        color: white;
+        transform: rotateY(10deg) scale(1.1);
+        box-shadow: 0 8px 20px rgba(138, 48, 51, 0.3);
+    }
+
+    .card-title {
+        font-weight: 700;
+        color: #34495e;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+    }
+
     .card-text {
-        font-size: 0.9rem;
-        color: #6c757d;
-        line-height: 1.5;
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        line-height: 1.6;
+    }
+
+    .section-divider {
+        font-weight: 800;
+        color: #95a5a6;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 0.8rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .section-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #eee;
+        margin-left: 15px;
     }
 
     .card-link {
-        text-decoration: none;
-        color: inherit;
-    }
-    
-    .card-link:hover {
-        text-decoration: none;
+        text-decoration: none !important;
+        display: block;
+        height: 100%;
     }
 </style>
 
@@ -122,164 +136,124 @@
     
     <div class="welcome-banner d-flex align-items-center justify-content-between">
         <div>
-            <h1>Hi, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b></h1>
-            <p class="text-muted mb-0 mt-2">Welcome to your Hospital Administration Panel.</p>
+            <h1>Halo, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b></h1>
+            <p class="text-muted mb-0">Selamat datang kembali di Panel Administrasi RS JHC Tasikmalaya.</p>
         </div>
-        <div class="d-none d-md-block">
-            <i class="fas fa-heartbeat fa-3x" style="color: var(--light-red);"></i>
+        <div class="d-none d-md-block opacity-25">
+            <i class="fas fa-heartbeat fa-4x text-danger"></i>
         </div>
     </div>
     
-    <h4 class="mb-4 text-secondary font-weight-bold border-bottom pb-2">Manage Content</h4>
+    <div class="section-divider">Manajemen Konten Utama</div>
     
-    <div class="row g-4"> <div class="col-md-6 col-lg-4 mb-4">
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
             <a href="about_us.php" class="card-link">
                 <div class="dashboard-card">
                     <div class="card-body">
-                        <div class="icon-box">
-                            <i class="fas fa-hospital"></i>
-                        </div>
-                        <h5 class="card-title">About Us Page</h5>
-                        <p class="card-text">Edit the vision, mission, history, and main content of the hospital profile.</p>
+                        <div class="icon-box"><i class="fas fa-hospital-user"></i></div>
+                        <h5 class="card-title">Tentang Kami</h5>
+                        <p class="card-text">Kelola visi, misi, sejarah, dan profil utama rumah sakit secara dinamis.</p>
                     </div>
                 </div>
             </a>
         </div>
 
-        <div class="col-md-6 col-lg-4 mb-4">
+        <div class="col-md-6 col-lg-4">
             <a href="departments.php" class="card-link">
                 <div class="dashboard-card">
                     <div class="card-body">
-                        <div class="icon-box">
-                            <i class="fas fa-clinic-medical"></i>
-                        </div>
-                        <h5 class="card-title">Departments</h5>
-                        <p class="card-text">Manage medical specialties, polyclinics, and service units.</p>
+                        <div class="icon-box"><i class="fas fa-clinic-medical"></i></div>
+                        <h5 class="card-title">Layanan & Poli</h5>
+                        <p class="card-text">Atur spesialisasi medis, poliklinik, dan unit layanan unggulan JHC.</p>
                     </div>
                 </div>
             </a>
         </div>
 
-        <div class="col-md-6 col-lg-4 mb-4">
+        <div class="col-md-6 col-lg-4">
             <a href="doctors.php" class="card-link">
                 <div class="dashboard-card">
                     <div class="card-body">
-                        <div class="icon-box">
-                            <i class="fas fa-user-md"></i>
-                        </div>
-                        <h5 class="card-title">Doctors</h5>
-                        <p class="card-text">Update doctor profiles, schedules, and specialty assignments.</p>
+                        <div class="icon-box"><i class="fas fa-user-md"></i></div>
+                        <h5 class="card-title">Tim Dokter</h5>
+                        <p class="card-text">Update profil dokter spesialis, jadwal praktik, dan keahlian medis.</p>
                     </div>
                 </div>
             </a>
         </div>
 
-        <div class="col-md-6 col-lg-4 mb-4">
-            <a href="facilities.php" class="card-link">
-                <div class="dashboard-card">
-                    <div class="card-body">
-                        <div class="icon-box">
-                            <i class="fas fa-procedures"></i>
-                        </div>
-                        <h5 class="card-title">Facilities</h5>
-                        <p class="card-text">Manage list of rooms, medical equipment, and patient amenities.</p>
-                    </div>
-                </div>
-            </a>
-        </div>
+        <div class="section-divider mt-5">Interaksi & Publikasi</div>
 
-        <div class="col-md-6 col-lg-4 mb-4">
-            <a href="careers.php" class="card-link">
-                <div class="dashboard-card">
-                    <div class="card-body">
-                        <div class="icon-box">
-                            <i class="fas fa-briefcase"></i>
-                        </div>
-                        <h5 class="card-title">Careers</h5>
-                        <p class="card-text">Post job openings and manage recruitment information.</p>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6 col-lg-4 mb-4">
-            <a href="virtual_room.php" class="card-link">
-                <div class="dashboard-card">
-                    <div class="card-body">
-                        <div class="icon-box">
-                            <i class="fas fa-vr-cardboard"></i>
-                        </div>
-                        <h5 class="card-title">Virtual Room</h5>
-                        <p class="card-text">Edit the virtual tour content and 360-degree views.</p>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6 col-lg-4 mb-4">
+        <div class="col-md-6 col-lg-4">
             <a href="appointments.php" class="card-link">
-                <div class="dashboard-card" style="border-left-color: #ff9800;"> <div class="card-body">
-                        <div class="icon-box" style="color: #ff9800; background-color: #fff3e0;">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <h5 class="card-title">Appointments</h5>
-                        <p class="card-text">View and manage patient appointment requests.</p>
+                <div class="dashboard-card">
+                    <div class="card-body">
+                        <div class="icon-box" style="color: #f39c12;"><i class="fas fa-calendar-check"></i></div>
+                        <h5 class="card-title">Janji Temu</h5>
+                        <p class="card-text">Pantau dan kelola permintaan konsultasi dari calon pasien secara real-time.</p>
                     </div>
                 </div>
             </a>
         </div>
 
-        <div class="col-md-6 col-lg-4 mb-4">
+        <div class="col-md-6 col-lg-4">
             <a href="news.php" class="card-link">
                 <div class="dashboard-card">
                     <div class="card-body">
-                        <div class="icon-box">
-                            <i class="fas fa-newspaper"></i>
-                        </div>
-                        <h5 class="card-title">News & Articles</h5>
-                        <p class="card-text">Publish health articles, hospital news, and announcements.</p>
+                        <div class="icon-box"><i class="fas fa-newspaper"></i></div>
+                        <h5 class="card-title">Berita & Artikel</h5>
+                        <p class="card-text">Publikasikan edukasi kesehatan, berita RS, dan pengumuman terbaru.</p>
                     </div>
                 </div>
             </a>
         </div>
 
-        <div class="col-md-6 col-lg-4 mb-4">
-            <a href="news_settings.php" class="card-link">
+        <div class="col-md-6 col-lg-4">
+            <a href="careers.php" class="card-link">
                 <div class="dashboard-card">
                     <div class="card-body">
-                        <div class="icon-box">
-                            <i class="fas fa-sliders-h"></i>
-                        </div>
-                        <h5 class="card-title">News Settings</h5>
-                        <p class="card-text">Configure layout and header images for the news section.</p>
+                        <div class="icon-box"><i class="fas fa-briefcase"></i></div>
+                        <h5 class="card-title">Karir & Rekrutmen</h5>
+                        <p class="card-text">Buka lowongan pekerjaan baru dan kelola data pelamar yang masuk.</p>
                     </div>
                 </div>
             </a>
         </div>
 
-        <div class="col-md-6 col-lg-4 mb-4">
+        <div class="section-divider mt-5">Pengaturan Sistem</div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="virtual_room.php" class="card-link">
+                <div class="dashboard-card">
+                    <div class="card-body">
+                        <div class="icon-box"><i class="fas fa-vr-cardboard"></i></div>
+                        <h5 class="card-title">Virtual Room</h5>
+                        <p class="card-text">Edit konten tur virtual dan tampilan video 360 derajat fasilitas RS.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
             <a href="contact_settings.php" class="card-link">
                 <div class="dashboard-card">
                     <div class="card-body">
-                        <div class="icon-box">
-                            <i class="fas fa-address-book"></i>
-                        </div>
-                        <h5 class="card-title">Contact Info</h5>
-                        <p class="card-text">Update hospital address, emergency numbers, and email.</p>
+                        <div class="icon-box"><i class="fas fa-address-book"></i></div>
+                        <h5 class="card-title">Info Kontak</h5>
+                        <p class="card-text">Update alamat, nomor darurat IGD, dan email resmi operasional.</p>
                     </div>
                 </div>
             </a>
         </div>
 
-        <div class="col-md-6 col-lg-4 mb-4">
+        <div class="col-md-6 col-lg-4">
             <a href="logo_settings.php" class="card-link">
                 <div class="dashboard-card">
                     <div class="card-body">
-                        <div class="icon-box">
-                            <i class="fas fa-image"></i>
-                        </div>
-                        <h5 class="card-title">Logo Settings</h5>
-                        <p class="card-text">Update the main hospital branding logos (Header/Footer).</p>
+                        <div class="icon-box"><i class="fas fa-image"></i></div>
+                        <h5 class="card-title">Logo & Branding</h5>
+                        <p class="card-text">Ganti logo utama (Header/Footer) dan favicon website rumah sakit.</p>
                     </div>
                 </div>
             </a>
