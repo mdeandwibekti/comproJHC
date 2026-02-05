@@ -477,7 +477,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                 <li class="nav-item px-2"><a class="nav-link" href="#doctors">Dokter Kami</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#facilities">Fasilitas</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#news">Berita</a></li>
-                <li class="nav-item px-2"><a class="nav-link" href="#appointment">Kontak</a></li>
+                <li class="nav-item px-2"><a class="nav-link" href="#appointment">Kontak kami</a></li>
             </ul>
 
    <div class="nav-actions ms-lg-4">
