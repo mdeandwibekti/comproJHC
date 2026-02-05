@@ -2,8 +2,8 @@
 require_once "../../config.php";
 require_once 'layout/header.php';
 
-// Inisialisasi variabel (Ditambah $education dan $expertise)
-$name = $category = $description = $icon_path = $icon_hover_path = $education = $expertise = "";
+// Inisialisasi variabel (Disesuaikan dengan database asli)
+$name = $category = $description = $icon_path = $icon_hover_path = "";
 $display_order = 0;
 $name_err = "";
 $page_title = "Add New Department";
@@ -15,13 +15,12 @@ if (isset($_GET['id'])) {
     $page_title = "Edit Department";
     $icon_header = "fa-pen";
     
-    // Ambil data (Ditambah kolom baru ke SELECT)
-    $sql = "SELECT name, category, description, icon_path, icon_hover_path, display_order, education, expertise FROM departments WHERE id = ?";
+    // Query diperbaiki: Menghapus kolom 'education' dan 'expertise' yang tidak ada
+    $sql = "SELECT name, category, description, icon_path, icon_hover_path, display_order FROM departments WHERE id = ?";
     if ($stmt = $mysqli->prepare($sql)) {
         $stmt->bind_param("i", $id);
         if ($stmt->execute()) {
-            // Bind result juga ditambah sesuai urutan SELECT
-            $stmt->bind_result($name, $category, $description, $icon_path, $icon_hover_path, $display_order, $education, $expertise);
+            $stmt->bind_result($name, $category, $description, $icon_path, $icon_hover_path, $display_order);
             $stmt->fetch();
         }
         $stmt->close();
@@ -34,8 +33,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $category = trim($_POST["category"]);
     $description = trim($_POST["description"] ?? ''); 
     $display_order = trim($_POST["display_order"]);
-    $education = trim($_POST["education"] ?? ''); // Input baru
-    $expertise = trim($_POST["expertise"] ?? ''); // Input baru
     
     $icon_path = $_POST['current_icon'];
     $icon_hover_path = $_POST['current_icon_hover'];
@@ -61,20 +58,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($name)) {
         $name_err = "Please enter a name.";
     } else {
-        // Logika INSERT / UPDATE (Ditambah variabel baru)
+        // Logika SQL diperbaiki: Menghapus kolom yang tidak ada
         if (empty($id)) {
-            $sql = "INSERT INTO departments (name, category, description, icon_path, icon_hover_path, display_order, education, expertise) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO departments (name, category, description, icon_path, icon_hover_path, display_order) VALUES (?, ?, ?, ?, ?, ?)";
         } else {
-            $sql = "UPDATE departments SET name = ?, category = ?, description = ?, icon_path = ?, icon_hover_path = ?, display_order = ?, education = ?, expertise = ? WHERE id = ?";
+            $sql = "UPDATE departments SET name = ?, category = ?, description = ?, icon_path = ?, icon_hover_path = ?, display_order = ? WHERE id = ?";
         }
 
         if ($stmt = $mysqli->prepare($sql)) {
             if (empty($id)) {
-                // bind_param: s (string), i (integer). Urutan: 5 string, 1 int, 2 string
-                $stmt->bind_param("sssssiss", $name, $category, $description, $icon_path, $icon_hover_path, $display_order, $education, $expertise);
+                $stmt->bind_param("sssssi", $name, $category, $description, $icon_path, $icon_hover_path, $display_order);
             } else {
-                // Urutan: 5 string, 1 int, 2 string, terakhir ID (int)
-                $stmt->bind_param("sssssisii", $name, $category, $description, $icon_path, $icon_hover_path, $display_order, $education, $expertise, $id);
+                $stmt->bind_param("sssssii", $name, $category, $description, $icon_path, $icon_hover_path, $display_order, $id);
             }
             
             if ($stmt->execute()) {
@@ -90,22 +85,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <style>
-    :root { --primary-red: #D32F2F; }
-    .page-header { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary-red); margin-bottom: 2rem; }
+    :root { 
+        --jhc-red-dark: #8a3033;
+        --jhc-red-light: #bd3030;
+        --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
+    }
+    .page-header { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--jhc-red-dark); margin-bottom: 2rem; }
     .main-card { border: none; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-    .form-control:focus, .form-select:focus { border-color: var(--primary-red); box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.15); }
-    .form-label { font-weight: 600; color: #444; margin-bottom: 0.5rem; }
-    .img-preview-box { background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px; padding: 15px; text-align: center; margin-bottom: 10px; transition: all 0.3s; }
+    .btn-save { background: var(--jhc-gradient); border: none; color: white; padding: 0.6rem 2rem; border-radius: 50px; font-weight: 600; transition: 0.3s; }
+    .btn-save:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(138, 48, 51, 0.3); }
+    .img-preview-box { background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px; padding: 15px; text-align: center; margin-bottom: 10px; }
     .img-preview-box img { max-height: 60px; object-fit: contain; }
-    .btn-save { background-color: var(--primary-red); border: none; color: white; padding: 0.6rem 2rem; border-radius: 50px; font-weight: 600; transition: 0.3s; }
-    .btn-save:hover { background-color: #b71c1c; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3); }
-    .btn-cancel { background-color: #eff2f5; color: #5e6278; border: none; padding: 0.6rem 2rem; border-radius: 50px; font-weight: 600; }
 </style>
 
 <div class="container-fluid py-4">
     <div class="page-header">
-        <h3 class="mb-1 text-dark fw-bold"><i class="fas <?php echo $icon_header; ?> me-2 text-danger"></i> <?php echo $page_title; ?></h3>
-        <p class="text-muted mb-0 small">Silakan lengkapi formulir di bawah ini untuk layanan/poliklinik.</p>
+        <h3 class="mb-1 text-dark fw-bold"><i class="fas <?php echo $icon_header; ?> me-2" style="color: var(--jhc-red-dark);"></i> <?php echo $page_title; ?></h3>
+        <p class="text-muted mb-0 small">Kelola informasi layanan atau poliklinik rumah sakit.</p>
     </div>
 
     <div class="card main-card">
@@ -121,12 +117,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="col-md-8">
                         <div class="row mb-3">
                             <div class="col-md-8">
-                                <label class="form-label">Name <span class="text-danger">*</span></label>
-                                <input type="text" name="name" class="form-control <?php echo (!empty($name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($name); ?>" placeholder="Contoh: Jantung, IGD" required>
+                                <label class="form-label fw-bold">Nama Layanan/Poli <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control <?php echo (!empty($name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($name); ?>" required>
                                 <div class="invalid-feedback"><?php echo $name_err; ?></div>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Category</label>
+                                <label class="form-label fw-bold">Kategori</label>
                                 <select name="category" class="form-select">
                                     <option value="Poliklinik" <?php echo ($category == 'Poliklinik') ? 'selected' : ''; ?>>Poliklinik</option>
                                     <option value="Layanan" <?php echo ($category == 'Layanan') ? 'selected' : ''; ?>>Layanan Unggulan</option>
@@ -135,37 +131,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Description (Brief)</label>
-                            <textarea name="description" class="form-control" rows="2"><?php echo htmlspecialchars($description ?? ''); ?></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Keahlian Khusus (Expertise)</label>
-                            <textarea name="expertise" class="form-control" rows="3" placeholder="Sebutkan keunggulan layanan ini..."><?php echo htmlspecialchars($expertise ?? ''); ?></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Pendidikan / Info Tambahan</label>
-                            <textarea name="education" class="form-control" rows="3" placeholder="Informasi tambahan seperti riwayat atau sertifikasi..."><?php echo htmlspecialchars($education ?? ''); ?></textarea>
+                            <label class="form-label fw-bold">Deskripsi</label>
+                            <textarea name="description" class="form-control" rows="5" placeholder="Tuliskan deskripsi layanan di sini..."><?php echo htmlspecialchars($description ?? ''); ?></textarea>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <label class="form-label">Display Order</label>
+                                <label class="form-label fw-bold">Urutan Tampilan</label>
                                 <input type="number" name="display_order" class="form-control" value="<?php echo htmlspecialchars($display_order); ?>">
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-4 border-start">
-                        <h6 class="text-muted fw-bold mb-3">Icon Settings</h6>
+                        <h6 class="text-muted fw-bold mb-3 text-uppercase small">Pengaturan Ikon</h6>
                         <div class="mb-4">
-                            <label class="form-label small">Normal Icon</label>
+                            <label class="form-label small">Ikon Normal</label>
                             <div class="img-preview-box">
                                 <?php if(!empty($icon_path)): ?>
                                     <img src="../<?php echo htmlspecialchars($icon_path); ?>" alt="Icon">
                                 <?php else: ?>
-                                    <span class="text-muted small"><i class="fas fa-image fa-2x mb-2"></i><br>No icon</span>
+                                    <i class="fas fa-image fa-2x text-muted opacity-25"></i>
                                 <?php endif; ?>
                             </div>
                             <input type="hidden" name="current_icon" value="<?php echo htmlspecialchars($icon_path); ?>">
@@ -173,12 +159,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small">Hover Icon</label>
+                            <label class="form-label small">Ikon Hover (Opsional)</label>
                             <div class="img-preview-box">
                                 <?php if(!empty($icon_hover_path)): ?>
                                     <img src="../<?php echo htmlspecialchars($icon_hover_path); ?>" alt="Hover Icon">
                                 <?php else: ?>
-                                    <span class="text-muted small"><i class="fas fa-mouse-pointer fa-2x mb-2"></i><br>No hover icon</span>
+                                    <i class="fas fa-mouse-pointer fa-2x text-muted opacity-25"></i>
                                 <?php endif; ?>
                             </div>
                             <input type="hidden" name="current_icon_hover" value="<?php echo htmlspecialchars($icon_hover_path); ?>">
@@ -189,8 +175,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <hr class="my-4">
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="departments.php" class="btn btn-cancel">Cancel</a>
-                    <button type="submit" class="btn btn-save"><i class="fas fa-save me-2"></i> Save Changes</button>
+                    <a href="departments.php" class="btn btn-light px-4 rounded-pill fw-bold">Batal</a>
+                    <button type="submit" class="btn btn-save"><i class="fas fa-save me-2"></i> Simpan Perubahan</button>
                 </div>
             </form>
         </div>

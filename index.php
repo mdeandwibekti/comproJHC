@@ -148,9 +148,10 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
     <style>
         :root {
-            --jhc-red: #C8102E;
+            --jhc-red-dark: #8a3033;
+            --jhc-red-light: #bd3030;
+            --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
             --jhc-navy: #002855;
-            --jhc-light: #F8F9FA;
         }
 
         /* Navbar */
@@ -170,7 +171,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
 
-    .navbar .container {
+        .navbar .container {
             max-width: 1200px;
             padding-left: 10px;
             padding-right: 1px;
@@ -205,8 +206,13 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             background-color: var(--jhc-red);
             transition: width 0.3s ease;
         }
+
+        .nav-link:hover {
+        color: var(--jhc-red-light) !important;
+        }
+
         .nav-link:hover::after {
-            width: 100%;
+            background-color: var(--jhc-red-dark);
         }
 
         .navbar-nav .nav-link {
@@ -243,7 +249,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
 
         .btn-janji {
-            background: var(--jhc-red);
+            background: var(--jhc-gradient);
             color: white !important;
             border-radius: 50px;
             padding: 8px 20px;
@@ -262,8 +268,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         .hover-lift:hover { transform: translateY(-10px); box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important; }
 
         .banner-overlay {
-        /* Ganti 0.9 dan 0.4 menjadi angka lebih kecil */
-        background: linear-gradient(to right, rgba(27, 113, 161, 0.5), rgba(45, 59, 72, 0.2));
         position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
         }
         .hero-content { position: relative; z-index: 2; }
@@ -279,6 +283,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
         .section-title::after {
             content: ''; display: block; width: 60px; height: 4px; background: var(--primary-color); margin: 10px auto 0; border-radius: 2px;
+            background: var(--jhc-gradient);
         }
 
         .news-date-badge {
@@ -351,7 +356,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         .btn-igd-float {
             width: 60px;
             height: 60px;
-            background-color: #C8102E; /* Merah JHC */
+            background: var(--jhc-gradient) !important;
             color: white !important;
             border-radius: 50%;
             display: flex;
@@ -770,15 +775,23 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         <div class="container">
             <div class="row align-items-center gx-5">
                 <div class="col-lg-6 mb-4 mb-lg-0">
-                    <div class="position-relative">
-                        <div class="bg-primary position-absolute rounded-3" style="width: 100%; height: 100%; top: 15px; left: -15px; z-index: -1;"></div>
-                        <?php if(!empty($vr_data['image_path_360'])): ?>
-                            <img src="public/<?php echo htmlspecialchars($vr_data['image_path_360']); ?>" class="img-fluid rounded-3 shadow w-100" alt="Virtual Room">
-                        <?php else: ?>
-                            <img src="public/assets/img/gallery/health-care.png" class="img-fluid rounded-3 shadow w-100" alt="virtual Room">
-                        <?php endif; ?>
-                    </div>
-                </div>
+    <div class="position-relative">
+        <div class="bg-primary position-absolute rounded-3" style="width: 100%; height: 100%; top: 15px; left: -15px; z-index: -1;"></div>
+        <?php if(!empty($vr_data['video_url'])): 
+            // Menambahkan parameter autoplay=1 dan mute=1 agar video langsung berputar
+            $embed_url = $vr_data['video_url'];
+            $sep = (strpos($embed_url, '?') !== false) ? '&' : '?';
+            $autoplay_url = $embed_url . $sep . "autoplay=1&mute=1&loop=1&playlist=" . basename(parse_url($embed_url, PHP_URL_PATH));
+        ?>
+            <div class="ratio ratio-16x9 shadow-lg rounded-3 overflow-hidden">
+                <iframe src="<?php echo htmlspecialchars($autoplay_url); ?>" 
+                        allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        <?php else: ?>
+            <img src="public/<?php echo htmlspecialchars($vr_data['image_path_360']); ?>" class="img-fluid rounded-3 shadow w-100" alt="Virtual Room">
+        <?php endif; ?>
+    </div>
+</div>
                 <div class="col-lg-6">
                     <h5 class="text-primary fw-bold text-uppercase">Tentang Kami</h5>
                     <h2 class="fw-bold mb-4 display-6"><?php echo htmlspecialchars($vr_data['title']); ?></h2>

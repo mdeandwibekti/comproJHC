@@ -1,145 +1,120 @@
 <?php
 require_once "../../config.php";
-require_once 'layout/header.php';
 
-$title = $content = $image_path_360 = "";
-$title_err = $content_err = $image_path_360_err = "";
+$msg = "";
 
-// Ambil data saat ini (agar form tidak kosong saat pertama dibuka)
-$sql = "SELECT title, content, image_path_360 FROM page_virtual_room WHERE id = 1";
-$result = $mysqli->query($sql);
-if($result && $result->num_rows == 1){
-    $row = $result->fetch_assoc();
-    $title = $row['title'];
-    $content = $row['content'];
-    $image_path_360 = $row['image_path_360'];
-} else {
-    // Jika data id=1 belum ada, buat default dummy (opsional, tapi lebih baik insert via SQL dulu)
-    $title = "Virtual Room Default";
-    $content = "Content goes here...";
-}
-
-// Proses Form Submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $title = trim($_POST["title"]);
+    $content = trim($_POST["content"]);
+    $video_url = trim($_POST["video_url"]);
+    $current_img = $_POST["current_image_360"];
     
-    // Validasi Title
-    if (empty(trim($_POST["title"]))) {
-        $title_err = "Please enter a title.";
-    } else {
-        $title = trim($_POST["title"]);
-    }
-
-    // Validasi Content
-    if (empty(trim($_POST["content"]))) {
-        $content_err = "Please enter content.";
-    } else {
-        $content = trim($_POST["content"]);
-    }
-
-    // Ambil path gambar lama
-    $image_path_360 = trim($_POST["current_image_360"]);
-
-    // Handle Upload Gambar Baru
+    // Logika Upload File
     if (isset($_FILES["image_360"]) && $_FILES["image_360"]["error"] == 0) {
-        $allowed = ["jpg" => "image/jpeg", "jpeg" => "image/jpeg", "png" => "image/png"];
-        $filename = $_FILES["image_360"]["name"];
-        $filetype = $_FILES["image_360"]["type"];
-        $filesize = $_FILES["image_360"]["size"];
-
-        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $upload_dir = "../assets/img/virtual_tour/";
+        if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
         
-        // Cek ekstensi file
-        if (!array_key_exists($ext, $allowed)) {
-            $image_path_360_err = "Error: Please select a valid image format (JPG, JPEG, PNG).";
-        }
-
-        // Cek ukuran file (Max 10MB)
-        $maxsize = 10 * 1024 * 1024; 
-        if ($filesize > $maxsize) {
-            $image_path_360_err = "Error: File size is larger than the allowed limit (10MB).";
-        }
-
-        if (empty($image_path_360_err)) {
-            // Rename file agar unik
-            $new_filename = uniqid() . "_360." . $ext;
-            $upload_dir = "../assets/img/virtual_tour/";
-            
-            // Buat folder jika belum ada
-            if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
-            }
-            
-            $upload_path = $upload_dir . $new_filename;
-
-            if (move_uploaded_file($_FILES["image_360"]["tmp_name"], $upload_path)) {
-                // Path untuk database
-                $image_path_360 = "assets/img/virtual_tour/" . $new_filename;
-            } else {
-                $image_path_360_err = "Error: There was a problem uploading your file. Please try again.";
-            }
+        $file_ext = pathinfo($_FILES["image_360"]["name"], PATHINFO_EXTENSION);
+        $new_name = uniqid() . "_vr." . $file_ext;
+        
+        if (move_uploaded_file($_FILES["image_360"]["tmp_name"], $upload_dir . $new_name)) {
+            // Hapus file lama jika ada penggantian
+            if (!empty($current_img) && file_exists("../" . $current_img)) unlink("../" . $current_img);
+            $current_img = "assets/img/virtual_tour/" . $new_name;
         }
     }
 
-    // Update Database jika tidak ada error
-    if (empty($title_err) && empty($content_err) && empty($image_path_360_err)) {
-        // Gunakan tabel 'page_virtual_room' (bukan page_virtual_room2)
-        $sql = "UPDATE page_virtual_room SET title = ?, content = ?, image_path_360 = ? WHERE id = 1";
-        
-        if ($stmt = $mysqli->prepare($sql)) {
-            $stmt->bind_param("sss", $title, $content, $image_path_360);
-            
-            if ($stmt->execute()) {
-                // Redirect ke file yang benar (virtual_room.php)
-                header("location: virtual_room.php?saved=true");
-                exit();
-            } else {
-                echo "Oops! Something went wrong. Please try again later. Database error: " . $stmt->error;
-            }
-            $stmt->close();
-        } else {
-            echo "Oops! Something went wrong. Please try again later. Failed to prepare statement: " . $mysqli->error;
+    // Eksekusi Update ke Database
+    $sql = "UPDATE page_virtual_room SET title=?, content=?, video_url=?, image_path_360=? WHERE id=1";
+    if ($stmt = $mysqli->prepare($sql)) {
+        $stmt->bind_param("ssss", $title, $content, $video_url, $current_img);
+        if ($stmt->execute()) {
+            header("location: virtual_room.php?status=updated");
+            exit();
         }
+        $stmt->close();
     }
 }
+
+// Ambil data untuk ditampilkan di form
+$data = $mysqli->query("SELECT * FROM page_virtual_room WHERE id=1")->fetch_assoc();
+
+require_once 'layout/header.php';
 ?>
 
-<div class="container-fluid">
-    <h3>Edit Virtual Room Page</h3><hr>
-    <?php if(isset($_GET['saved'])) echo "<div class='alert alert-success'>Content saved successfully.</div>"; ?>
-    
-    <form action="virtual_room.php" method="post" enctype="multipart/form-data">
+<style>
+    :root { --jhc-grad: linear-gradient(90deg, #8a3033 0%, #bd3030 100%); }
+    .btn-jhc { background: var(--jhc-grad); color: white !important; border: none; border-radius: 50px; padding: 10px 30px; font-weight: 700; transition: 0.3s; }
+    .btn-jhc:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(138, 48, 51, 0.4); }
+    .preview-box { border: 2px dashed #ddd; border-radius: 10px; padding: 15px; background: #f9f9f9; }
+    .instruction-box { background-color: #fff5f5; border-left: 4px solid #bd3030; padding: 15px; border-radius: 4px; margin-top: 10px; }
+    .instruction-box code { background: #eee; padding: 2px 5px; border-radius: 3px; color: #bd3030; font-size: 0.9em; word-break: break-all; }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">Manage Virtual Room</h3>
+        <button type="submit" form="mainForm" class="btn btn-jhc"><i class="fas fa-save me-2"></i> Simpan Perubahan</button>
+    </div>
+
+    <?php if(isset($_GET['status'])) echo '<div class="alert alert-success shadow-sm border-0 border-start border-success border-4">Data Virtual Room berhasil diperbarui!</div>'; ?>
+
+    <form id="mainForm" action="virtual_room.php" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="current_image_360" value="<?= $data['image_path_360']; ?>">
         
-        <div class="form-group">
-            <label>Title</label>
-            <input type="text" name="title" class="form-control <?php echo (!empty($title_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($title); ?>">
-            <span class="invalid-feedback"><?php echo $title_err; ?></span>
-        </div>
-        
-        <div class="form-group mt-3">
-            <label>Content</label>
-            <textarea name="content" class="form-control <?php echo (!empty($content_err)) ? 'is-invalid' : ''; ?>" rows="5"><?php echo htmlspecialchars($content); ?></textarea>
-            <span class="invalid-feedback"><?php echo $content_err; ?></span>
-        </div>
-        
-        <div class="form-group mt-3">
-            <label>Current 360 Image</label><br>
-            <?php if (!empty($image_path_360)): ?>
-                <img src="../<?php echo htmlspecialchars($image_path_360); ?>" width="200" class="img-thumbnail mb-2"><br>
-            <?php else: ?>
-                <p class="text-muted">No 360 image uploaded.</p>
-            <?php endif; ?>
-            <input type="hidden" name="current_image_360" value="<?php echo htmlspecialchars($image_path_360); ?>">
-        </div>
-        
-        <div class="form-group mt-3">
-            <label>Upload New 360 Image (JPG, JPEG, PNG - Max 10MB)</label>
-            <input type="file" name="image_360" class="form-control-file <?php echo (!empty($image_path_360_err)) ? 'is-invalid' : ''; ?>">
-            <span class="invalid-feedback"><?php echo $image_path_360_err; ?></span>
-        </div>
-        
-        <div class="form-group mt-4">
-            <input type="submit" class="btn btn-primary" value="Save">
-            <a href="dashboard.php" class="btn btn-secondary">Cancel</a>
+        <div class="row g-4">
+            <div class="col-md-7">
+                <div class="card border-0 shadow-sm p-4">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-muted">Judul Utama</label>
+                        <input type="text" name="title" class="form-control" value="<?= htmlspecialchars($data['title']); ?>" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-muted">YouTube Embed Link</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="fab fa-youtube text-danger"></i></span>
+                            <input type="text" name="video_url" class="form-control" value="<?= htmlspecialchars($data['video_url']); ?>" placeholder="https://www.youtube.com/embed/...">
+                        </div>
+                        
+                        <div class="instruction-box mt-3">
+                            <p class="mb-2 small fw-bold text-dark"><i class="fas fa-info-circle me-1"></i> Penting:</p>
+                            <ul class="mb-0 small text-muted ps-3">
+                                <li>Wajib menggunakan format <code>/embed/</code> agar video dapat diputar otomatis di halaman utama.</li>
+                                <li>Contoh format benar:<br><code>https://www.youtube.com/embed/jEEGbQE1sns</code></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="form-label fw-bold text-muted">Deskripsi Konten</label>
+                        <textarea name="content" class="form-control" rows="8"><?= htmlspecialchars($data['content']); ?></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card border-0 shadow-sm p-4 h-100">
+                    <label class="form-label fw-bold text-muted mb-3">Preview Media Saat Ini</label>
+                    <div class="preview-box text-center mb-4">
+                        <?php if(!empty($data['video_url'])): ?>
+                            <div class="ratio ratio-16x9 rounded overflow-hidden shadow-sm mb-2">
+                                <iframe src="<?= $data['video_url']; ?>" frameborder="0"></iframe>
+                            </div>
+                            <span class="badge bg-primary px-3 py-2 rounded-pill"><i class="fas fa-video me-1"></i> Video Aktif</span>
+                        <?php else: ?>
+                            <img src="../<?= $data['image_path_360']; ?>" class="img-fluid rounded shadow-sm mb-2" style="max-height: 180px;">
+                            <br><span class="badge bg-secondary px-3 py-2 rounded-pill"><i class="fas fa-image me-1"></i> Gambar Aktif (Fallback)</span>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="form-label fw-bold text-muted">Ganti Gambar Fallback (Jika Video Kosong)</label>
+                        <input type="file" name="image_360" class="form-control">
+                        <p class="form-text text-muted small mt-2">Format: JPG, PNG, JPEG. Rekomendasi rasio 16:9.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </form>
 </div>
