@@ -275,9 +275,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
         .hero-content { position: relative; z-index: 2; }
 
-        .doctor-card img { transition: transform 0.5s ease; }
-        .doctor-card:hover img { transform: scale(1.05); }
-
         .partner-logo { filter: grayscale(100%); opacity: 0.7; transition: all 0.3s; }
         .partner-logo:hover { filter: grayscale(0%); opacity: 1; }
 
@@ -352,7 +349,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             display: flex;
             flex-direction: column; /* Menyusun ke atas */
             gap: 15px;
-            z-index: 9999;
+            z-index: 1030;
         }
 
         /* Styling Tombol IGD Melayang */
@@ -454,11 +451,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             }
         }
         /* Warna Identitas JHC */
-        :root {
-            --jhc-blue: #1B71A1;
-            --jhc-dark: #2D3B48;
-        }
-
+        
         /* Animasi Kartu di Index */
         #career-cta .card {
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -530,6 +523,96 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+
+        /* 1. Efek Muncul Saat Hover pada Card */
+        .doctor-card {
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: 1px solid rgba(0,0,0,0.05) !important;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* 2. Animasi Gambar Dokter */
+        .doctor-card img {
+            transition: transform 0.5s ease;
+        }
+
+        .doctor-card:hover img {
+            transform: scale(1.08); /* Gambar sedikit membesar saat hover */
+        }
+
+        /* 3. Animasi Modal (Smooth Fade & Slide) */
+        .modal.fade .modal-dialog {
+            transition: transform 0.3s ease-out;
+            transform: translateY(20px); /* Mulai sedikit dari bawah */
+        }
+
+        .modal.show .modal-dialog {
+            transform: translateY(0);
+        }
+
+        /* 4. Efek Glassmorphism pada Modal Body */
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+        }
+
+        /* 5. Animasi Loading Gambar Modal */
+        #mdl-img {
+            opacity: 0;
+            animation: fadeInCircle 0.6s forwards;
+            animation-delay: 0.2s;
+        }
+
+        @keyframes fadeInCircle {
+            from { opacity: 0; transform: scale(0.8) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* 6. Animasi Teks Detail di Dalam Modal */
+        #mdl-name, #mdl-specialty, #mdl-desc {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideUpText 0.5s forwards;
+        }
+
+        #mdl-name { animation-delay: 0.3s; }
+        #mdl-specialty { animation-delay: 0.4s; }
+        #mdl-desc { animation-delay: 0.5s; }
+
+        @keyframes slideUpText {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 7. Gaya Tombol Agar Menarik */
+        .btn-detail-dokter {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-detail-dokter::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+            z-index: -1;
+        }
+
+        .btn-detail-dokter:hover::after {
+            width: 200%;
+            height: 200%;
         }
     </style>
   </head>
@@ -647,7 +730,28 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                 }, 6000);
             }
         });
-      </script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const detailButtons = document.querySelectorAll('.btn-detail-dokter');
+            
+            detailButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Ambil data dari atribut tombol
+                    const name = this.getAttribute('data-name');
+                    const specialty = this.getAttribute('data-specialty');
+                    const desc = this.getAttribute('data-desc');
+                    const img = this.getAttribute('data-img');
+                    
+                    // Masukkan ke dalam elemen modal
+                    document.getElementById('mdl-name').innerText = name;
+                    document.getElementById('mdl-specialty').innerText = specialty;
+                    document.getElementById('mdl-desc').innerText = desc;
+                    document.getElementById('mdl-img').src = img;
+                });
+            });
+        });
+        </script>
+      
 
       <section class="py-5 bg-white" id="departments">
             <div class="container">
@@ -1039,32 +1143,72 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
 
       <section class="py-5 bg-white" id="doctors">
-         <div class="container">
-             <div class="row justify-content-center mb-5">
-                 <div class="col-md-8 text-center">
-                     <h2 class="section-title">TIM DOKTER KAMI</h2>
-                     <p class="text-muted">Ditangani langsung oleh dokter spesialis yang berpengalaman di bidangnya.</p>
-                 </div>
-             </div>
-             
-             <div class="row g-4 justify-content-center">
-                 <?php foreach($doctors_data as $doc): ?>
-                 <div class="col-sm-6 col-lg-3">
-                     <div class="card h-100 border-0 shadow-sm hover-lift doctor-card text-center">
-                         <div class="card-body p-4">
-                             <div class="mx-auto mb-4 position-relative" style="width: 140px; height: 140px;">
-                                 <img src="public/<?php echo htmlspecialchars(!empty($doc['photo_path']) ? $doc['photo_path'] : 'assets/img/gallery/jane.png'); ?>" class="w-100 h-100 rounded-circle border border-4 border-light shadow-sm" style="object-fit: cover;" alt="Doctor">
-                             </div>
-                             <h5 class="fw-bold text-dark mb-1"><?php echo htmlspecialchars($doc['name']); ?></h5>
-                             <p class="text-primary small fw-bold text-uppercase mb-3"><?php echo htmlspecialchars($doc['specialty']); ?></p>
-                             <a href="#" class="btn btn-outline-primary btn-sm rounded-pill px-4">Lihat Profil</a>
-                         </div>
-                     </div>
-                 </div>
-                 <?php endforeach; ?>
-             </div>
-         </div>
-      </section>
+            <div class="container">
+                <div class="row justify-content-center mb-5">
+                    <div class="col-md-8 text-center">
+                        <h2 class="section-title">TIM DOKTER KAMI</h2>
+                        <p class="text-muted">Ditangani langsung oleh dokter spesialis yang berpengalaman di bidangnya.</p>
+                    </div>
+                </div>
+                
+                <div class="row g-4 justify-content-center">
+                    <?php foreach($doctors_data as $doc): ?>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card h-100 border-0 shadow-sm hover-lift doctor-card text-center">
+                            <div class="card-body p-4">
+                                <div class="mx-auto mb-4" style="width: 140px; height: 140px;">
+                                    <img src="public/<?php echo htmlspecialchars(!empty($doc['photo_path']) ? $doc['photo_path'] : 'assets/img/gallery/jane.png'); ?>" 
+                                        class="w-100 h-100 rounded-circle border border-4 border-light shadow-sm" 
+                                        style="object-fit: cover;" alt="Doctor">
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1"><?php echo htmlspecialchars($doc['name']); ?></h5>
+                                <p class="text-primary small fw-bold text-uppercase mb-3"><?php echo htmlspecialchars($doc['specialty']); ?></p>
+                                
+                                <button type="button" 
+                                        class="btn btn-outline-primary btn-sm rounded-pill px-4 btn-detail-dokter" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modalDetailDokter"
+                                        data-name="<?php echo htmlspecialchars($doc['name']); ?>"
+                                        data-specialty="<?php echo htmlspecialchars($doc['specialty']); ?>"
+                                        data-desc="<?php echo htmlspecialchars($doc['description'] ?? 'Profil profesional dokter di JHC.'); ?>"
+                                        data-img="public/<?php echo htmlspecialchars(!empty($doc['photo_path']) ? $doc['photo_path'] : 'assets/img/gallery/jane.png'); ?>">
+                                    Lihat Profil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+
+<div class="modal fade" id="modalDetailDokter" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <img id="mdl-img" src="" class="rounded-circle mb-3 border border-4 border-white shadow" 
+                     style="width: 120px; height: 120px; object-fit: cover; margin-top: -60px;">
+                
+                <h4 id="mdl-name" class="fw-bold text-dark mb-1"></h4>
+                <p id="mdl-specialty" class="text-primary small fw-bold text-uppercase mb-4"></p>
+                
+                <div class="text-start border-top pt-3">
+                    <h6 class="fw-bold small text-muted text-uppercase mb-2">Tentang Dokter:</h6>
+                    <p id="mdl-desc" class="small text-secondary"></p>
+                </div>
+                
+                <div class="d-grid mt-4">
+                    <a href="https://wa.me/628123456789" class="btn btn-success rounded-pill">
+                        <i class="fab fa-whatsapp me-2"></i>Konsultasi Sekarang
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
       <?php if (!empty($facilities_data)): ?>
       <section class="py-5" id="facilities" style="background-color: #F8FDFF;">
