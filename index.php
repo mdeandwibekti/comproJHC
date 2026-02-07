@@ -736,17 +736,26 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             
             detailButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    // Ambil data dari atribut tombol
+                    // 1. Ambil data dari atribut tombol detail
                     const name = this.getAttribute('data-name');
                     const specialty = this.getAttribute('data-specialty');
-                    const desc = this.getAttribute('data-desc');
+                    const desc = this.getAttribute('data-desc') || "Tidak ada deskripsi tersedia.";
                     const img = this.getAttribute('data-img');
                     
-                    // Masukkan ke dalam elemen modal
+                    // 2. Masukkan ke dalam elemen modal (Teks & Gambar)
                     document.getElementById('mdl-name').innerText = name;
                     document.getElementById('mdl-specialty').innerText = specialty;
                     document.getElementById('mdl-desc').innerText = desc;
                     document.getElementById('mdl-img').src = img;
+
+                    // 3. Update Link Booking secara dinamis
+                    // encodeURIComponent digunakan agar karakter spesial (spasi, titik) aman di URL
+                    const bookingUrl = `booking.php?dokter=${encodeURIComponent(name)}&spesialis=${encodeURIComponent(specialty)}`;
+                    
+                    const bookBtn = document.getElementById('mdl-book-link');
+                    if(bookBtn) {
+                        bookBtn.href = bookingUrl;
+                    }
                 });
             });
         });
@@ -1182,33 +1191,33 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             </div>
         </section>
 
-<div class="modal fade" id="modalDetailDokter" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-            <div class="modal-header border-0 pb-0">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4 text-center">
-                <img id="mdl-img" src="" class="rounded-circle mb-3 border border-4 border-white shadow" 
-                     style="width: 120px; height: 120px; object-fit: cover; margin-top: -60px;">
-                
-                <h4 id="mdl-name" class="fw-bold text-dark mb-1"></h4>
-                <p id="mdl-specialty" class="text-primary small fw-bold text-uppercase mb-4"></p>
-                
-                <div class="text-start border-top pt-3">
-                    <h6 class="fw-bold small text-muted text-uppercase mb-2">Tentang Dokter:</h6>
-                    <p id="mdl-desc" class="small text-secondary"></p>
-                </div>
-                
-                <div class="d-grid mt-4">
-                    <a href="https://wa.me/628123456789" class="btn btn-success rounded-pill">
-                        <i class="fab fa-whatsapp me-2"></i>Konsultasi Sekarang
-                    </a>
+        <div class="modal fade" id="modalDetailDokter" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                    <div class="modal-header border-0 pb-0">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                        <img id="mdl-img" src="" class="rounded-circle mb-3 border border-4 border-white shadow" 
+                            style="width: 120px; height: 120px; object-fit: cover; margin-top: -60px;">
+                        
+                        <h4 id="mdl-name" class="fw-bold text-dark mb-1"></h4>
+                        <p id="mdl-specialty" class="text-primary small fw-bold text-uppercase mb-4"></p>
+                        
+                        <div class="text-start border-top pt-3">
+                            <h6 class="fw-bold small text-muted text-uppercase mb-2">Tentang Dokter:</h6>
+                            <p id="mdl-desc" class="small text-secondary"></p>
+                        </div>
+                        
+                        <div class="d-grid mt-4">
+                            <a id="mdl-book-link" href="booking.php" class="btn btn-danger rounded-pill shadow-sm py-2 fw-bold">
+                                <i class="fas fa-calendar-check me-2"></i>Buat Janji Temu
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
       <?php if (!empty($facilities_data)): ?>
       <section class="py-5" id="facilities" style="background-color: #F8FDFF;">

@@ -1,5 +1,5 @@
 <?php
-// Cek lokasi file config (sesuaikan dengan struktur folder Anda)
+// Cek lokasi file config
 if (file_exists("config.php")) {
     require_once "config.php";
 } elseif (file_exists("../config.php")) {
@@ -9,32 +9,39 @@ if (file_exists("config.php")) {
 $success_msg = "";
 $error_msg = "";
 
-// Proses Form saat Submit
+// --- LOGIKA MENANGKAP DATA DARI MODAL ---
+$nama_dokter_url = isset($_GET['dokter']) ? $_GET['dokter'] : '';
+$spesialis_url = isset($_GET['spesialis']) ? $_GET['spesialis'] : '';
+
+// Jika ada data dokter, buat pesan default
+$default_message = "";
+if (!empty($nama_dokter_url)) {
+    $default_message = "Halo, saya ingin membuat janji temu dengan " . htmlspecialchars($nama_dokter_url) . " (" . htmlspecialchars($spesialis_url) . ").";
+}
+
+// --- PROSES FORM SAAT SUBMIT ---
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = trim($_POST['name']);
     $phone = trim($_POST['phone']);
     $email = trim($_POST['email']);
     $message = trim($_POST['message']);
+    $category = isset($_POST['category']) ? $_POST['category'] : 'Umum';
     
-    // Kategori (Opsional: Digabung ke pesan agar admin tahu tujuannya)
-    $category = $_POST['category'];
     $final_message = "[Kategori: $category] " . $message;
 
-    // Validasi Sederhana
     if (empty($name) || empty($phone) || empty($message)) {
         $error_msg = "Nama, Nomor Telepon, dan Pesan wajib diisi.";
     } else {
-        // Query Insert ke tabel appointments
-        // Asumsi kolom: name, email, phone, message, status (default 'new'), submission_date (NOW)
+        // Query Insert
         $sql = "INSERT INTO appointments (name, email, phone, message, status, submission_date) VALUES (?, ?, ?, ?, 'new', NOW())";
         
         if ($stmt = $mysqli->prepare($sql)) {
             $stmt->bind_param("ssss", $name, $email, $phone, $final_message);
             
             if ($stmt->execute()) {
-                $success_msg = "Janji temu berhasil dibuat! Tim kami akan segera menghubungi Anda.";
-                // Reset form variable agar kosong
-                $name = $phone = $email = $message = "";
+                $success_msg = "Janji temu berhasil dibuat! Tim kami akan segera menghubungi Anda melalui WhatsApp atau Telepon.";
+                // Kosongkan pesan setelah sukses
+                $default_message = ""; 
             } else {
                 $error_msg = "Terjadi kesalahan sistem: " . $stmt->error;
             }
@@ -68,14 +75,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: var(--rs-bg);
         }
 
-        /* Navbar Sederhana */
         .navbar-rs {
             background-color: white;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             border-bottom: 3px solid var(--rs-red);
         }
 
-        /* Card Form */
         .booking-card {
             border: none;
             border-radius: 15px;
@@ -88,11 +93,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: white;
             padding: 30px;
             text-align: center;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--rs-red);
-            box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.15);
         }
 
         .btn-submit {
@@ -128,22 +128,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </nav>
 
-    <div class="container" style="margin-top: 100px; margin-bottom: 50px;">
+    <div class="container" style="margin-top: 120px; margin-bottom: 50px;">
         <div class="row justify-content-center">
             
             <div class="col-lg-4 mb-4 d-none d-lg-block">
                 <div class="h-100 p-4 bg-white rounded-3 shadow-sm border-start border-5 border-danger">
-                    <h4 class="fw-bold mb-4 text-dark">Mengapa Booking Online?</h4>
-                    <ul class="list-unstyled">
-                        <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Tanpa antre pendaftaran.</li>
-                        <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Konfirmasi via WhatsApp/Email.</li>
-                        <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Pilih jadwal sesuai keinginan.</li>
+                    <h4 class="fw-bold mb-4 text-dark">Informasi Layanan</h4>
+                    <p class="text-muted small">Pendaftaran online memudahkan Anda mendapatkan nomor antrean lebih awal tanpa harus menunggu lama di rumah sakit.</p>
+                    <ul class="list-unstyled mt-4">
+                        <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Verifikasi data cepat</li>
+                        <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Konfirmasi via WhatsApp</li>
+                        <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Berlaku untuk Umum & Asuransi</li>
                     </ul>
                     <hr>
                     <div class="contact-info mt-4">
                         <p class="mb-2"><i class="fas fa-phone-alt"></i> (0265) 123-4567</p>
-                        <p class="mb-2"><i class="fas fa-envelope"></i> info@jhc-tasikmalaya.com</p>
-                        <p><i class="fas fa-map-marker-alt"></i> Tasikmalaya, Jawa Barat</p>
+                        <p class="mb-2"><i class="fas fa-clock"></i> Layanan 24 Jam</p>
                     </div>
                 </div>
             </div>
@@ -152,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="card booking-card">
                     <div class="booking-header">
                         <h3 class="mb-1 fw-bold">Formulir Janji Temu</h3>
-                        <p class="mb-0 opacity-75">Silakan isi data diri Anda dengan benar.</p>
+                        <p class="mb-0 opacity-75">Lengkapi form di bawah untuk membuat reservasi.</p>
                     </div>
                     <div class="card-body p-4 p-md-5">
                         
@@ -173,40 +173,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <form action="booking.php" method="POST">
                             <div class="row g-3">
                                 <div class="col-md-12">
-                                    <label class="form-label fw-bold small text-muted">Nama Lengkap</label>
-                                    <input type="text" name="name" class="form-control" placeholder="Sesuai KTP" required>
+                                    <label class="form-label fw-bold small text-muted">Nama Lengkap Pasien</label>
+                                    <input type="text" name="name" class="form-control" placeholder="Nama sesuai KTP" required>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold small text-muted">Nomor WhatsApp / HP</label>
-                                    <input type="number" name="phone" class="form-control" placeholder="08xxxxxxxx" required>
+                                    <label class="form-label fw-bold small text-muted">Nomor WhatsApp</label>
+                                    <input type="number" name="phone" class="form-control" placeholder="08xxxxxxxxxx" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold small text-muted">Alamat Email</label>
-                                    <input type="email" name="email" class="form-control" placeholder="contoh@email.com">
+                                    <label class="form-label fw-bold small text-muted">Email (Opsional)</label>
+                                    <input type="email" name="email" class="form-control" placeholder="alamat@email.com">
                                 </div>
 
                                 <div class="col-md-12">
-                                    <label class="form-label fw-bold small text-muted">Layanan yang Dibutuhkan</label>
+                                    <label class="form-label fw-bold small text-muted">Poliklinik Tujuan</label>
                                     <select name="category" class="form-select" required>
-                                        <option value="" selected disabled>Pilih Layanan</option>
+                                        <option value="" disabled <?php echo empty($nama_dokter_url) ? 'selected' : ''; ?>>Pilih Poliklinik</option>
                                         <option value="Poli Umum">Poli Umum</option>
+                                        <option value="Poli Jantung">Poli Jantung</option>
                                         <option value="Poli Gigi">Poli Gigi</option>
-                                        <option value="Poli Kandungan">Poli Kandungan (Obgyn)</option>
+                                        <option value="Poli Kandungan">Poli Kandungan</option>
                                         <option value="Poli Anak">Poli Anak</option>
-                                        <option value="Medical Check Up">Medical Check Up (MCU)</option>
-                                        <option value="Lainnya">Lainnya</option>
+                                        <option value="Poli Penyakit Dalam">Poli Penyakit Dalam</option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-12">
-                                    <label class="form-label fw-bold small text-muted">Keluhan / Pesan Tambahan</label>
-                                    <textarea name="message" class="form-control" rows="4" placeholder="Jelaskan keluhan singkat atau jadwal yang diinginkan..." required></textarea>
+                                    <label class="form-label fw-bold small text-muted">Detail Keluhan / Pesan</label>
+                                    <textarea name="message" class="form-control" rows="5" placeholder="Tuliskan keluhan singkat Anda..." required><?php echo $default_message; ?></textarea>
                                 </div>
 
                                 <div class="col-12 mt-4">
                                     <button type="submit" class="btn btn-primary btn-submit shadow-lg">
-                                        <i class="fas fa-paper-plane me-2"></i> Kirim Permintaan
+                                        <i class="fas fa-paper-plane me-2"></i> Konfirmasi Janji Temu
                                     </button>
                                 </div>
                             </div>
