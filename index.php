@@ -1248,47 +1248,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       </section>
       <?php endif; ?>
 
-      <?php if (!empty($careers_data)): ?>
-      <section class="py-5 bg-white" id="careers">
-         <div class="container">
-             <div class="row justify-content-center mb-5">
-                 <div class="col-md-8 text-center">
-                     <h2 class="section-title">BERGABUNG BERSAMA KAMI</h2>
-                     <p class="text-muted">Karir dan peluang kerja terbaru di JHC Tasikmalaya.</p>
-                 </div>
-             </div>
-             
-             <div class="row justify-content-center">
-                 <div class="col-lg-10">
-                     <?php foreach($careers_data as $job): ?>
-                     <div class="card mb-3 border-0 shadow-sm hover-lift">
-                         <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-center">
-                             <div class="mb-3 mb-md-0">
-                                 <h5 class="fw-bold text-primary mb-1"><?php echo htmlspecialchars($job['job_title']); ?></h5>
-                                 <div class="text-muted small">
-                                     <i class="fas fa-map-marker-alt me-2"></i><?php echo htmlspecialchars($job['location']); ?>
-                                     <?php if (!empty($job['end_date'])): ?>
-                                        <span class="mx-2">•</span> <span class="text-danger">Deadline: <?php echo date('d M Y', strtotime($job['end_date'])); ?></span>
-                                     <?php endif; ?>
-                                 </div>
-                             </div>
-                             <button class="btn btn-primary rounded-pill px-4" type="button" data-bs-toggle="collapse" data-bs-target="#jobDesc<?php echo $job['id']; ?>">Detail</button>
-                         </div>
-                         <div class="collapse" id="jobDesc<?php echo $job['id']; ?>">
-                             <div class="card-footer bg-light border-0 p-4">
-                                 <h6>Deskripsi Pekerjaan:</h6>
-                                 <p class="small text-secondary mb-3"><?php echo nl2br(htmlspecialchars($job['description'])); ?></p>
-                                 <a href="#" class="btn btn-sm btn-outline-primary">Kirim Lamaran</a>
-                             </div>
-                         </div>
-                     </div>
-                     <?php endforeach; ?>
-                 </div>
-             </div>
-         </div>
-      </section>
-      <?php endif; ?>
-
       <section class="py-5" id="news" style="background-color: #f9f9f9;">
         <div class="container">
           <div class="row justify-content-center mb-5">
