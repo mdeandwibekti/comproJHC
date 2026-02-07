@@ -20,7 +20,6 @@ $result = $mysqli->query($sql);
         --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
     }
 
-    /* Card Wrapper bergaya Neumorphism */
     .main-wrapper {
         background: #ffffff;
         border-radius: 20px;
@@ -67,6 +66,8 @@ $result = $mysqli->query($sql);
         font-size: 0.8rem;
         font-weight: 600;
         transition: 0.3s;
+        padding: 5px 15px;
+        text-decoration: none;
     }
     .btn-download-cv:hover {
         background: var(--jhc-gradient);
@@ -81,7 +82,7 @@ $result = $mysqli->query($sql);
     <div class="main-wrapper">
         <div class="page-header-jhc">
             <h3 class="fw-bold mb-1 text-dark">Daftar Pelamar Pekerjaan</h3>
-            <p class="text-muted small mb-0">Tinjau dan kelola berkas lamaran yang masuk.</p>
+            <p class="text-muted small mb-0">Tinjau CV, ubah status rekrutmen, atau hapus data pelamar.</p>
         </div>
 
         <div id="status-update-message"></div>
@@ -95,7 +96,7 @@ $result = $mysqli->query($sql);
                         <th>Kontak</th>
                         <th class="text-center">Berkas</th>
                         <th class="text-center">Status</th>
-                        <th>Tanggal</th>
+                        <th>Tanggal Masuk</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -114,15 +115,14 @@ $result = $mysqli->query($sql);
                                     <div class="small"><i class="fas fa-phone-alt me-1 text-muted"></i> <?= htmlspecialchars($row['phone']); ?></div>
                                     <div class="small text-muted"><?= htmlspecialchars($row['email']); ?></div>
                                 </td>
+                                
                                 <td class="text-center">
-                                    <?php 
-                                        $file_path = "../../" . $row['cv_path']; 
-                                        // Jika admin ada di folder admin/ langsung, gunakan ../ saja
-                                    ?>
+                                    <?php $file_path = "../../" . $row['cv_path']; ?>
                                     <a href="<?= $file_path; ?>" target="_blank" class="btn btn-sm btn-download-cv">
                                         <i class="fas fa-file-pdf me-1"></i> Lihat CV
                                     </a>
                                 </td>
+
                                 <td class="text-center">
                                     <?php 
                                         $status = $row['status'];
@@ -132,23 +132,32 @@ $result = $mysqli->query($sql);
                                     ?>
                                     <span class="badge-status <?= $cls; ?>"><?= htmlspecialchars($status); ?></span>
                                 </td>
+                                
                                 <td class="text-muted small"><?= date('d/m/y H:i', strtotime($row['applied_at'])); ?></td>
+                                
                                 <td class="text-center">
-                                    <?php if ($row['status'] == 'Pending'): ?>
-                                        <div class="d-flex gap-1 justify-content-center">
+                                    <div class="d-flex gap-1 justify-content-center">
+                                        <?php if ($row['status'] == 'Pending'): ?>
                                             <button class="btn btn-sm btn-success btn-action-jhc update-status-btn" 
-                                                data-id="<?= $row['id']; ?>" data-status="Diterima">Terima</button>
+                                                    data-id="<?= $row['id']; ?>" data-status="Diterima" title="Terima Pelamar">
+                                                <i class="fas fa-check"></i>
+                                            </button>
                                             <button class="btn btn-sm btn-danger btn-action-jhc update-status-btn" 
-                                                data-id="<?= $row['id']; ?>" data-status="Ditolak">Tolak</button>
-                                        </div>
-                                    <?php else: ?>
-                                        <span class="text-muted small italic">Selesai</span>
-                                    <?php endif; ?>
+                                                    data-id="<?= $row['id']; ?>" data-status="Ditolak" title="Tolak Pelamar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        <?php endif; ?>
+                                        
+                                        <button class="btn btn-sm btn-outline-secondary btn-action-jhc delete-applicant-btn" 
+                                                data-id="<?= $row['id']; ?>" title="Hapus Permanen">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
-                        <tr><td colspan="7" class="text-center py-5 text-muted">Belum ada pelamar.</td></tr>
+                        <tr><td colspan="7" class="text-center py-5 text-muted">Belum ada pelamar yang masuk.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -158,14 +167,16 @@ $result = $mysqli->query($sql);
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const buttons = document.querySelectorAll('.update-status-btn');
-    buttons.forEach(button => {
+    
+    // LOGIKA UPDATE STATUS (TERIMA/TOLAK)
+    const statusButtons = document.querySelectorAll('.update-status-btn');
+    statusButtons.forEach(button => {
         button.addEventListener('click', function() {
             const applicantId = this.dataset.id;
             const newStatus = this.dataset.status;
             const messageDiv = document.getElementById('status-update-message');
             
-            if (confirm(`Apakah Anda yakin ingin mengubah status pelamar ini menjadi "${newStatus}"?`)) {
+            if (confirm(`Ubah status pelamar menjadi "${newStatus}"?`)) {
                 const formData = new FormData();
                 formData.append('applicant_id', applicantId);
                 formData.append('status', newStatus);
@@ -180,12 +191,40 @@ document.addEventListener('DOMContentLoaded', function() {
                         messageDiv.innerHTML = `<div class="alert alert-success border-0 shadow-sm mb-4"><i class="fas fa-check-circle me-2"></i> ${data.message}</div>`;
                         setTimeout(() => window.location.reload(), 800);
                     } else {
-                        messageDiv.innerHTML = `<div class="alert alert-danger border-0 shadow-sm mb-4"><i class="fas fa-exclamation-circle me-2"></i> ${data.message}</div>`;
+                        alert('Gagal: ' + data.message);
                     }
                 })
-                .catch(error => {
-                    messageDiv.innerHTML = `<div class="alert alert-danger border-0 shadow-sm mb-4">Gagal terhubung ke server.</div>`;
-                });
+                .catch(err => alert('Terjadi kesalahan koneksi.'));
+            }
+        });
+    });
+
+    // LOGIKA HAPUS PELAMAR
+    const deleteButtons = document.querySelectorAll('.delete-applicant-btn');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const applicantId = this.dataset.id;
+            const messageDiv = document.getElementById('status-update-message');
+            
+            if (confirm('Hapus data pelamar ini secara permanen? File CV juga akan dihapus dari server.')) {
+                const formData = new FormData();
+                formData.append('applicant_id', applicantId);
+
+                fetch('../api/delete_applicant.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        messageDiv.innerHTML = `<div class="alert alert-success border-0 shadow-sm mb-4"><i class="fas fa-trash me-2"></i> ${data.message}</div>`;
+                        this.closest('tr').style.opacity = '0.3'; // Efek visual terhapus
+                        setTimeout(() => window.location.reload(), 800);
+                    } else {
+                        alert('Gagal menghapus: ' + data.message);
+                    }
+                })
+                .catch(err => alert('Terjadi kesalahan koneksi server.'));
             }
         });
     });
