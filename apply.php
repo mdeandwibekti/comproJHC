@@ -17,86 +17,201 @@ if ($job_id) {
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Lamar Posisi <?= htmlspecialchars($job_name); ?> - JHC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lamar Posisi <?= htmlspecialchars($job_name); ?> - RS JHC</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #f4f7f9; }
-        .apply-container { max-width: 800px; margin: 50px auto; }
-        .form-control-modern { border-radius: 10px; padding: 12px; border: 1px solid #dee2e6; }
-        .btn-jhc { background: linear-gradient(90deg, #8a3033 0%, #bd3030 100%); border: none; color: white; }
-        .btn-jhc:hover { opacity: 0.9; color: white; }
+        :root {
+            --jhc-red-dark: #8a3033;
+            --jhc-red-light: #bd3030;
+            --jhc-gradient: linear-gradient(135deg, #8a3033 0%, #bd3030 100%);
+        }
+
+        body { 
+            background: #f8f9fa; 
+            font-family: 'Inter', sans-serif;
+            color: #333;
+        }
+
+        /* Header Accent */
+        .top-accent {
+            height: 6px;
+            background: var(--jhc-gradient);
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .apply-container { max-width: 850px; margin: 60px auto; }
+
+        .card-apply {
+            border: none;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .form-control-modern { 
+            border-radius: 12px; 
+            padding: 12px 15px; 
+            border: 1px solid #e0e0e0;
+            background-color: #fcfcfc;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-modern:focus {
+            border-color: var(--jhc-red-light);
+            box-shadow: 0 0 0 4px rgba(189, 48, 48, 0.1);
+            background-color: #fff;
+        }
+
+        .btn-jhc { 
+            background: var(--jhc-gradient); 
+            border: none; 
+            color: white; 
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-jhc:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(138, 48, 51, 0.3);
+            color: white;
+            opacity: 0.95;
+        }
+
+        .job-badge {
+            display: inline-block;
+            background: rgba(138, 48, 51, 0.1);
+            color: var(--jhc-red-dark);
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            position: relative;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-weight: 800;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 4px;
+            background: var(--jhc-gradient);
+            border-radius: 10px;
+        }
+
+        .upload-box {
+            border: 2px dashed #e0e0e0;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            background: #fafafa;
+        }
     </style>
 </head>
 <body>
 
-<div class="container apply-container">
-    <a href="career.php" class="btn btn-link text-decoration-none mb-3 text-muted">
-        <i class="fas fa-chevron-left me-2"></i> Kembali
+<div class="top-accent"></div>
+
+<div class="container apply-container px-3">
+    <a href="career.php" class="btn btn-link text-decoration-none mb-4 text-muted fw-bold">
+        <i class="fas fa-arrow-left me-2"></i> Kembali ke Lowongan
     </a>
     
-    <div class="card border-0 shadow-lg rounded-4">
-        <div class="card-body p-5">
-            <h3 class="fw-bold mb-1" style="color: #8a3033;">Lamar Posisi:</h3>
-            <h4 class="mb-4 text-dark"><?= htmlspecialchars($job_name); ?></h4>
-            <hr>
+    <div class="card card-apply">
+        <div class="card-body p-4 p-md-5">
+            <div class="text-center mb-5">
+                <span class="job-badge">Formulir Rekrutmen JHC</span>
+                <h2 class="section-title text-center mx-auto d-table">Lamar Posisi <?= htmlspecialchars($job_name); ?></h2>
+                <p class="text-muted small">Silakan lengkapi data diri Anda dengan benar untuk proses verifikasi.</p>
+            </div>
 
-            <form action="process_career.php" method="POST" enctype="multipart/form-data" class="row g-3">
-                <input type="hidden" name="job_id" value="<?= $job_id; ?>">
+            <form action="process_career.php" method="POST" enctype="multipart/form-data">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold"><i class="fas fa-user me-2"></i>Nama Lengkap</label>
+                        <input type="text" name="name" class="form-control form-control-modern" placeholder="Masukkan nama sesuai KTP" required>
+                    </div>
 
-                <div class="col-md-6">
-                    <label class="form-label fw-bold small">Nama Lengkap</label>
-                    <input type="text" name="name" class="form-control form-control-modern" required>
-                </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold"><i class="fab fa-whatsapp me-2"></i>No. WhatsApp Aktif</label>
+                        <input type="text" name="phone" class="form-control form-control-modern" placeholder="Contoh: 08123456789" required>
+                    </div>
 
-                <div class="col-md-6">
-                    <label class="form-label fw-bold small">No. WhatsApp</label>
-                    <input type="text" name="phone" class="form-control form-control-modern" placeholder="08..." required>
-                </div>
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold"><i class="fas fa-envelope me-2"></i>Alamat Email</label>
+                        <input type="email" name="email" class="form-control form-control-modern" placeholder="nama@email.com" required>
+                    </div>
 
-                <div class="col-md-12">
-                    <label class="form-label fw-bold small">Email</label>
-                    <input type="email" name="email" class="form-control form-control-modern" required>
-                </div>
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold"><i class="fas fa-graduation-cap me-2"></i>Pendidikan Terakhir</label>
+                        <input type="text" name="education" class="form-control form-control-modern" placeholder="Contoh: Profesi Ners / D3 Rekam Medis" required>
+                    </div>
 
-                <div class="col-md-12">
-                    <label class="form-label fw-bold small">Pendidikan Terakhir</label>
-                    <input type="text" name="education" class="form-control form-control-modern" placeholder="Contoh: S1 Keperawatan" required>
-                </div>
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold"><i class="fas fa-map-marker-alt me-2"></i>Alamat Domisili</label>
+                        <textarea name="address" class="form-control form-control-modern" rows="3" placeholder="Alamat lengkap saat ini..." required></textarea>
+                    </div>
 
-                <div class="col-md-12">
-                    <label class="form-label fw-bold small">Alamat Lengkap</label>
-                    <textarea name="address" class="form-control form-control-modern" rows="3" required></textarea>
-                </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold"><i class="fas fa-file-pdf me-2"></i>Curriculum Vitae (CV)</label>
+                        <div class="upload-box">
+                            <input type="file" name="cv_file" class="form-control form-control-modern mb-2" accept=".pdf" required>
+                            <div class="text-muted" style="font-size: 0.75rem;">
+                                format file <b>.PDF</b> dengan ukuran maksimal <b>2MB</b>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="col-12">
-                    <label class="form-label fw-bold small">Upload CV (PDF, Maks 2MB)</label>
-                    <input type="file" name="cv_file" class="form-control form-control-modern" accept=".pdf" required>
-                </div>
-
-                <div class="col-md-12">
-                    <label class="form-label fw-bold small text-secondary">Posisi yang Dilamar</label>
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold"><i class="fas fa-briefcase me-2"></i>Konfirmasi Lowongan</label>
+                        <?php if (!empty($job_id)): ?>
+                            <div class="form-control-modern bg-light d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span><?= htmlspecialchars($job_name); ?></span>
+                            </div>
+                            <input type="hidden" name="job_id" value="<?= $job_id; ?>">
+                        <?php else: ?>
+                            <select name="job_id" class="form-select form-control-modern" required>
+                                <option value="">-- Pilih Posisi yang Ingin Dilamar --</option>
+                                <?php 
+                                $q_jobs = $mysqli->query("SELECT id, job_title FROM careers WHERE status = 'Open'");
+                                while($j = $q_jobs->fetch_assoc()):
+                                ?>
+                                    <option value="<?= $j['id']; ?>"><?= $j['job_title']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        <?php endif; ?>
+                    </div>
                     
-                    <?php if (!empty($job_id)): ?>
-                        <input type="text" class="form-control form-control-modern bg-light" value="<?= htmlspecialchars($job_name); ?>" readonly>
-                        <input type="hidden" name="job_id" value="<?= $job_id; ?>">
-                    <?php else: ?>
-                        <select name="job_id" class="form-select form-control-modern" required>
-                            <option value="">-- Pilih Posisi --</option>
-                            <?php 
-                            $q_jobs = $mysqli->query("SELECT id, job_title FROM careers WHERE status = 'Open'");
-                            while($j = $q_jobs->fetch_assoc()):
-                            ?>
-                                <option value="<?= $j['id']; ?>"><?= $j['job_title']; ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    <?php endif; ?>
-                </div>
-                
-                <div class="col-12 mt-4">
-                    <button type="submit" name="submit_application" class="btn btn-jhc w-100 py-3 rounded-pill fw-bold shadow">
-                        Kirim Lamaran <i class="fas fa-paper-plane ms-2"></i>
-                    </button>
+                    <div class="col-12 mt-5">
+                        <button type="submit" name="submit_application" class="btn btn-jhc w-100 rounded-pill fw-bold shadow-lg">
+                            KIRIM LAMARAN SEKARANG <i class="fas fa-paper-plane ms-2"></i>
+                        </button>
+                        <p class="text-center text-muted mt-3" style="font-size: 0.75rem;">
+                            Dengan menekan tombol di atas, Anda menyatakan bahwa data yang diisi adalah benar dan dapat dipertanggungjawabkan.
+                        </p>
+                    </div>
                 </div>
             </form>
         </div>
