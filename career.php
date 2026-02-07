@@ -28,6 +28,16 @@ if ($mysqli->connect_error) {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        /* Tombol Kembali ke Dashboard Floating */
+        .top-nav-admin {
+            background: white;
+            padding: 10px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
         /* Hero Header */
         .career-header {
             background: var(--jhc-gradient);
@@ -99,12 +109,28 @@ if ($mysqli->connect_error) {
             align-items: center;
             justify-content: center;
             width: 100%;
+            text-decoration: none;
         }
 
         .btn-apply:hover {
             color: white;
             opacity: 0.9;
             box-shadow: 0 8px 15px rgba(138, 48, 51, 0.3);
+        }
+
+        .btn-dashboard {
+            background: white;
+            color: var(--jhc-red-dark);
+            border: 2px solid var(--jhc-red-dark);
+            font-weight: 700;
+            border-radius: 50px;
+            padding: 8px 20px;
+            transition: 0.3s;
+        }
+
+        .btn-dashboard:hover {
+            background: var(--jhc-red-dark);
+            color: white;
         }
 
         .badge-status {
@@ -118,7 +144,6 @@ if ($mysqli->connect_error) {
             margin-bottom: 10px;
         }
 
-        /* Empty State */
         .empty-state {
             padding: 100px 0;
             color: #b2bec3;
@@ -126,6 +151,17 @@ if ($mysqli->connect_error) {
     </style>
 </head>
 <body>
+
+<div class="top-nav-admin">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand text-dark fw-bold" href="index.php" style="text-decoration: none;">
+            <i class="fas fa-hospital text-danger me-2"></i> RS JHC
+        </a>
+        <a href="index.php" class="btn btn-dashboard btn-sm">
+            <i class="fas fa-th-large me-2"></i>Dashboard
+        </a>
+    </div>
+</div>
 
 <div class="career-header text-center">
     <div class="container">
