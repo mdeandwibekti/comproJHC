@@ -315,7 +315,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             text-decoration: none;
         }
 
-    .btn-igd:hover {
+        .btn-igd:hover {
             background-color: white;
             color: #C8102E !important;
             transform: translateY(-2px);
@@ -440,19 +440,97 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         
         /* Efek transisi halus saat disentuh */
         transition: transform 0.3s ease;
-    }
-
-    /* Efek Zoom sedikit saat mouse diarahkan (opsional) */
-    .partner-logo:hover {
-        transform: scale(1.1); 
-    }
-    
-    /* Penyesuaian untuk layar HP agar tidak terlalu besar */
-    @media (max-width: 576px) {
-        .partner-logo {
-            max-height: 70px;
         }
-    }
+
+        /* Efek Zoom sedikit saat mouse diarahkan (opsional) */
+        .partner-logo:hover {
+            transform: scale(1.1); 
+        }
+        
+        /* Penyesuaian untuk layar HP agar tidak terlalu besar */
+        @media (max-width: 576px) {
+            .partner-logo {
+                max-height: 70px;
+            }
+        }
+        /* Warna Identitas JHC */
+        :root {
+            --jhc-blue: #1B71A1;
+            --jhc-dark: #2D3B48;
+        }
+
+        /* Animasi Kartu di Index */
+        #career-cta .card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #career-cta .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+        }
+
+        .btn-career-animate:hover {
+            background-color: #155a82;
+            padding-left: 3rem !important; /* Efek bergeser sedikit */
+            letter-spacing: 1px;
+        }
+
+        /* Style Khusus Form di apply.php agar seragam */
+        .form-control-modern {
+            border: 2px solid #f1f3f5;
+            border-radius: 12px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-modern:focus {
+            border-color: var(--jhc-blue);
+            box-shadow: 0 0 0 0.25rem rgba(27, 113, 161, 0.1);
+            background-color: #fff;
+        }
+
+        /* Pastikan tombol berada di lapisan atas dan kursor berubah */
+        .btn-primary {
+            position: relative;
+            z-index: 10;
+            cursor: pointer !important;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(27, 113, 161, 0.3) !important;
+        }
+
+        /* Animasi klik */
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Style Tombol Apply Job di Navbar */
+        .btn-janji {
+            background-color: #1B71A1;
+            color: white !important;
+            transition: all 0.3s ease;
+            border: 2px solid #1B71A1;
+        }
+
+        .btn-janji:hover {
+            background-color: white;
+            color: #1B71A1 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(27, 113, 161, 0.2);
+        }
+
+        /* Transisi halus saat pindah halaman */
+        body {
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
   </head>
   <body>
@@ -477,11 +555,10 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                 <li class="nav-item px-2"><a class="nav-link" href="#doctors">Dokter Kami</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#facilities">Fasilitas</a></li>
                 <li class="nav-item px-2"><a class="nav-link" href="#news">Berita</a></li>
-                <li class="nav-item px-2"><a class="nav-link" href="#appointment">Kontak kami</a></li>
             </ul>
 
-   <div class="nav-actions ms-lg-4">
-                <a class="btn btn-janji" href="#appointment">Janji Temu</a>
+            <div class="nav-actions ms-lg-4">
+                <a class="btn btn-janji px-4 rounded-pill fw-bold" href="career.php">Apply Job</a>
             </div>
           </div>
         </div>
@@ -516,7 +593,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
               <h1 class="fw-bold text-white display-4 mb-4" id="banner-title"></h1>
               <p class="fs-1 mb-5 text-white lead" id="banner-description"></p>
               <div class="d-flex gap-3 justify-content-center justify-content-md-start">
-                  <a class="btn btn-lg btn-light text-primary fw-bold rounded-pill px-5 shadow-lg" href="#appointment" role="button">Buat Janji Temu</a>
                   <a class="btn btn-lg btn-outline-light rounded-pill px-5" href="#doctors" role="button">Lihat Dokter</a>
               </div>
             </div>
@@ -1133,77 +1209,53 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     </section>
 
 
-      <section class="py-5" id="appointment" style="background: linear-gradient(135deg, #1B71A1 0%, #2D3B48 100%);">
-        <div class="container">
-          <div class="row align-items-center">
-            <div class="col-lg-5 mb-5 mb-lg-0 text-white">
-                <h2 class="fw-bold display-6 mb-3">Butuh Bantuan Medis?</h2>
-                <p class="lead mb-4 opacity-75">Isi formulir di samping untuk membuat janji temu atau konsultasi dengan tim medis kami.</p>
-                
-                <div class="d-flex align-items-center mb-3">
-                    <div class="bg-white text-primary rounded-circle p-3 me-3"><i class="fas fa-phone-alt"></i></div>
-                    <div>
-                        <h6 class="mb-0 text-white">Hubungi Kami</h6>
-                        <p class="mb-0 fw-bold fs-5">0265 123 4567</p>
+      <section class="py-5" id="career-cta" style="background: linear-gradient(135deg, #1B71A1 0%, #2D3B48 100%);">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 mb-5 mb-lg-0 text-white">
+                        <h2 class="fw-bold display-6 mb-3">Ingin Bergabung Bersama Kami?</h2>
+                        <p class="lead mb-4 opacity-75">JHC Tasikmalaya terus berkembang dan mencari talenta terbaik untuk memberikan layanan medis yang unggul bagi masyarakat.</p>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-white text-primary rounded-circle p-3 me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-white">Lingkungan Kerja Profesional</h6>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-white text-primary rounded-circle p-3 me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-white">Pengembangan Karir Berkelanjutan</h6>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="d-flex align-items-center">
-                    <div class="bg-white text-primary rounded-circle p-3 me-3"><i class="fas fa-envelope"></i></div>
-                    <div>
-                        <h6 class="mb-0 text-white">Email</h6>
-                        <p class="mb-0 fw-bold">info@jhc-tasikmalaya.com</p>
+                    
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                            <div class="card-body p-5 text-center">
+                                <div class="mb-4">
+                                    <i class="fas fa-briefcase fa-4x text-primary opacity-25"></i>
+                                </div>
+                                <h3 class="fw-bold text-dark mb-3">Lihat Peluang Karir</h3>
+                                <p class="text-muted mb-4">Temukan posisi yang sesuai dengan keahlian Anda dan kirimkan lamaran secara online melalui sistem kami.</p>
+                                
+                                <a href="./career.php" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow-sm w-100">
+                                    Cari Lowongan Kerja <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                                
+                                <div class="mt-4 pt-3 border-top">
+                                    <small class="text-muted">Butuh bantuan? <a href="mailto:info@jhc-tasikmalaya.com" class="text-primary text-decoration-none">Hubungi HRD kami</a></small>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-lg-7">
-              <div class="card border-0 shadow-lg rounded-3">
-                  <div class="card-body p-5">
-                      <h4 class="fw-bold text-primary mb-4">Formulir Janji Temu</h4>
-                      
-                      <?php if ($appointment_status): ?>
-                        <div class="alert alert-<?php echo $appointment_status; ?> alert-dismissible fade show" role="alert">
-                          <?php echo $appointment_message; ?>
-                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                      <?php endif; ?>
-
-                      <form class="row g-3" id="appointment-form" method="POST" action="index.php#appointment">
-                        <div class="col-md-6">
-                          <label class="form-label small fw-bold text-muted">Nama Lengkap</label>
-                          <input class="form-control form-control-modern" name="name" type="text" required />
-                        </div>
-                        <div class="col-md-6">
-                          <label class="form-label small fw-bold text-muted">No. WhatsApp</label>
-                          <input class="form-control form-control-modern" name="phone" type="text" required />
-                        </div>
-                        <div class="col-md-6">
-                          <label class="form-label small fw-bold text-muted">Email (Opsional)</label>
-                          <input class="form-control form-control-modern" name="email" type="email" />
-                        </div>
-                        <div class="col-md-6">
-                          <label class="form-label small fw-bold text-muted">Kategori</label>
-                          <select class="form-select form-control-modern" name="category">
-                            <option value="Jadwal Dokter">Jadwal Dokter</option>
-                            <option value="Layanan Medis">Layanan Medis</option>
-                            <option value="Keluhan">Keluhan / Saran</option>
-                            <option value="Lainnya">Lainnya</option>
-                          </select>
-                        </div>
-                        <div class="col-12">
-                          <label class="form-label small fw-bold text-muted">Pesan / Keluhan</label>
-                          <textarea class="form-control form-control-modern" name="message" rows="4" required></textarea>
-                        </div>
-                        <div class="col-12 mt-4">
-                          <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm" type="submit" name="submit_appointment">Kirim Pesan Sekarang <i class="fas fa-paper-plane ms-2"></i></button>
-                        </div>
-                      </form>
-                  </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
 
       <footer class="py-0 bg-primary">
         <div class="bg-holder opacity-25" style="background-image:url(public/assets/img/gallery/dot-bg.png);background-position:top left;margin-top:-3.125rem;background-size:auto;"></div>
@@ -1245,7 +1297,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                 <li class="lh-lg"><a class="text-200" href="#doctors">Dokter Kami</a></li>
                 <li class="lh-lg"><a class="text-200" href="#facilities">Fasilitas</a></li>
                 <li class="lh-lg"><a class="text-200" href="#news">Berita</a></li>
-                <li class="lh-lg"><a class="text-200" href="#appointment">Contact</a></li>
                 <li class="lh-lg"><a class="text-200" href="#appointment">Appointment</a></li>
               </ul>
             </div>

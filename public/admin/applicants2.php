@@ -2,8 +2,14 @@
 require_once '../../config.php';
 require_once 'layout/header.php';
 
-// Ambil data pelamar dengan join ke tabel careers
-$sql = "SELECT a.*, c.job_title FROM applicants a JOIN careers c ON a.job_id = c.id ORDER BY a.applied_at DESC";
+// Pastikan koneksi database ada
+if (!$mysqli) { die("Koneksi database hilang."); }
+
+// Ambil data pelamar dengan JOIN ke tabel careers agar nama posisi muncul
+$sql = "SELECT a.*, c.job_title 
+        FROM applicants a 
+        LEFT JOIN careers c ON a.job_id = c.id 
+        ORDER BY a.applied_at DESC";
 $result = $mysqli->query($sql);
 ?>
 
@@ -75,7 +81,7 @@ $result = $mysqli->query($sql);
     <div class="main-wrapper">
         <div class="page-header-jhc">
             <h3 class="fw-bold mb-1 text-dark">Daftar Pelamar Pekerjaan</h3>
-            <p class="text-muted small mb-0">Tinjau dan kelola berkas lamaran yang masuk dari halaman Karir.</p>
+            <p class="text-muted small mb-0">Tinjau dan kelola berkas lamaran yang masuk.</p>
         </div>
 
         <div id="status-update-message"></div>
@@ -85,11 +91,11 @@ $result = $mysqli->query($sql);
                 <thead>
                     <tr>
                         <th>Nama Pelamar</th>
-                        <th>Posisi Dilamar</th>
-                        <th>Kontak & Email</th>
-                        <th class="text-center">CV</th>
+                        <th>Posisi</th>
+                        <th>Kontak</th>
+                        <th class="text-center">Berkas</th>
                         <th class="text-center">Status</th>
-                        <th>Tanggal Daftar</th>
+                        <th>Tanggal</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -99,16 +105,22 @@ $result = $mysqli->query($sql);
                             <tr>
                                 <td>
                                     <div class="fw-bold text-dark"><?= htmlspecialchars($row['name']); ?></div>
-                                    <div class="text-muted x-small"><?= htmlspecialchars($row['education']); ?></div>
+                                    <div class="text-muted small"><?= htmlspecialchars($row['education']); ?></div>
                                 </td>
-                                <td class="fw-semibold text-primary"><?= htmlspecialchars($row['job_title']); ?></td>
+                                <td class="fw-semibold text-primary">
+                                    <?= htmlspecialchars($row['job_title'] ?? 'Posisi Terhapus'); ?>
+                                </td>
                                 <td>
                                     <div class="small"><i class="fas fa-phone-alt me-1 text-muted"></i> <?= htmlspecialchars($row['phone']); ?></div>
                                     <div class="small text-muted"><?= htmlspecialchars($row['email']); ?></div>
                                 </td>
                                 <td class="text-center">
-                                    <a href="../<?= htmlspecialchars($row['cv_path']); ?>" target="_blank" class="btn btn-sm btn-download-cv">
-                                        <i class="fas fa-file-download me-1"></i> Lihat CV
+                                    <?php 
+                                        $file_path = "../../" . $row['cv_path']; 
+                                        // Jika admin ada di folder admin/ langsung, gunakan ../ saja
+                                    ?>
+                                    <a href="<?= $file_path; ?>" target="_blank" class="btn btn-sm btn-download-cv">
+                                        <i class="fas fa-file-pdf me-1"></i> Lihat CV
                                     </a>
                                 </td>
                                 <td class="text-center">
@@ -120,7 +132,7 @@ $result = $mysqli->query($sql);
                                     ?>
                                     <span class="badge-status <?= $cls; ?>"><?= htmlspecialchars($status); ?></span>
                                 </td>
-                                <td class="text-muted small"><?= date('d M Y, H:i', strtotime($row['applied_at'])); ?></td>
+                                <td class="text-muted small"><?= date('d/m/y H:i', strtotime($row['applied_at'])); ?></td>
                                 <td class="text-center">
                                     <?php if ($row['status'] == 'Pending'): ?>
                                         <div class="d-flex gap-1 justify-content-center">
@@ -130,13 +142,13 @@ $result = $mysqli->query($sql);
                                                 data-id="<?= $row['id']; ?>" data-status="Ditolak">Tolak</button>
                                         </div>
                                     <?php else: ?>
-                                        <span class="text-muted small">Sudah Diproses</span>
+                                        <span class="text-muted small italic">Selesai</span>
                                     <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
-                        <tr><td colspan="7" class="text-center py-5 text-muted">Belum ada pelamar pekerjaan.</td></tr>
+                        <tr><td colspan="7" class="text-center py-5 text-muted">Belum ada pelamar.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
