@@ -198,6 +198,18 @@
         </div>
 
         <div class="col-md-6 col-lg-4">
+            <a href="facilities.php" class="card-link">
+                <div class="dashboard-card">
+                    <div class="card-body">
+                        <div class="icon-box" style="color: #f39c12;"><i class="fas fa-building"></i></div>
+                        <h5 class="card-title">Fasilitas</h5>
+                        <p class="card-text">Kelola informasi dan tampilan fasilitas medis yang tersedia di rumah sakit.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
             <a href="news.php" class="card-link">
                 <div class="dashboard-card">
                     <div class="card-body">
@@ -246,6 +258,7 @@
                 </div>
             </a>
         </div>
+        
 
         <div class="col-md-6 col-lg-4">
             <a href="logo_settings.php" class="card-link">
