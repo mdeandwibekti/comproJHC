@@ -1011,7 +1011,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                 </div>
             </div>
                 <div class="col-lg-6">
-                    <h5 class="text-primary fw-bold text-uppercase">Tentang Kami</h5>
                     <h2 class="fw-bold mb-4 display-6"><?php echo htmlspecialchars($vr_data['title']); ?></h2>
                     <p class="text-secondary lead text-justify mb-4"><?php echo nl2br(htmlspecialchars($vr_data['content'])); ?></p>
                         <div class="d-flex gap-3">
