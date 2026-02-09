@@ -316,10 +316,10 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
         /* ==================== HERO SECTION ==================== */
         .hero-section {
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
+            width: 100%;
+            height: 100vh; /* Tinggi penuh layar */
+            margin: 0;
+            padding: 0;
             overflow: hidden;
         }
 
@@ -340,7 +340,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(0, 40, 85, 0.85), rgba(138, 48, 51, 0.75));
+            background: rgba(0, 0, 0, 0.5); /* Gelapkan background agar teks putih terbaca */
             z-index: 1;
         }
 
@@ -389,6 +389,11 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             margin-bottom: 35px;
             text-shadow: 1px 2px 6px rgba(0, 0, 0, 0.4);
             transition: opacity 0.5s ease;
+        }
+
+        #banner-title, #banner-description {
+            transition: opacity 0.5s ease-in-out;
+            opacity: 1;
         }
 
         .btn-hero {
@@ -502,6 +507,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         .doctor-card:hover img {
             transform: scale(1.12);
         }
+        
 
         /* ==================== MODALS ==================== */
         .modal-content {
@@ -527,19 +533,20 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
 
         /* ==================== PARTNERS ==================== */
+        /* Menghapus efek abu-abu pada logo partner */
         .partner-logo {
-            max-height: 85px;
+            filter: none !important;      /* Menghapus filter grayscale */
+            -webkit-filter: none !important; 
+            opacity: 1 !important;        /* Memastikan logo tidak transparan */
+            transition: transform 0.3s ease;
+            max-height: 80px;             /* Menjaga ukuran tetap rapi */
             width: auto;
             object-fit: contain;
-            transition: var(--transition-smooth);
-            opacity: 0.75;
-            filter: grayscale(100%);
         }
 
+        /* Opsional: Memberikan efek sedikit membesar saat kursor di atasnya */
         .partner-logo:hover {
-            opacity: 1;
-            filter: grayscale(0%);
-            transform: scale(1.15);
+            transform: scale(1.1);
         }
 
         /* ==================== NEWS ==================== */
@@ -741,43 +748,54 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       </div>
 
       <!-- ==================== HERO SECTION ==================== -->
-      <section class="hero-section" id="home">
-        <div class="bg-holder" style="background-image:url(public/<?php echo htmlspecialchars($settings['hero_background_path'] ?? 'assets/img/gallery/JHC2.jpg'); ?>);"></div>
-        <div class="banner-overlay"></div>
-        
-        <div class="container hero-content">
-          <div class="row align-items-center min-vh-100">
-            <div class="col-lg-8 text-center text-lg-start">
-              <span class="hero-badge">
-                <i class="fas fa-heart-pulse me-2"></i>Selamat Datang di JHC Tasikmalaya
-              </span>
-              <h1 class="text-white fw-bold" id="banner-title"></h1>
-              <p class="text-white lead" id="banner-description"></p>
-              <div class="d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap mt-4">
-                <a class="btn btn-light btn-hero text-primary" href="#departments">
-                  <i class="fas fa-hospital me-2"></i>Layanan Kami
-                </a>
-              </div>
-            </div>
-            
-            <div id="banner-slider" style="display:none;">
-              <?php if (!empty($banners_data)): ?>
-                <?php foreach ($banners_data as $banner): ?>
-                  <div class="banner-item" 
-                       data-title="<?php echo htmlspecialchars($banner['title']); ?>" 
-                       data-description="<?php echo htmlspecialchars($banner['description']); ?>">
-                  </div>
-                <?php endforeach; ?>
-              <?php else: ?>
-                <div class="banner-item" 
-                     data-title="Pusat Pelayanan Jantung Terpadu dengan Teknologi Mutakhir" 
-                     data-description="Dengan teknologi mutakhir dan tim spesialis jantung terbaik di Indonesia, kami membantu Anda pulih lebih cepat, hidup lebih lama, dan kembali beraktivitas tanpa rasa takut.">
+      <section class="hero-section p-0" id="home">
+            <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <?php foreach ($banners_data as $index => $banner): ?>
+                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $index; ?>" class="<?= $index === 0 ? 'active' : ''; ?>"></button>
+                    <?php endforeach; ?>
                 </div>
-              <?php endif; ?>
+
+                <div class="carousel-inner">
+                    <?php if (!empty($banners_data)): ?>
+                        <?php foreach ($banners_data as $index => $banner): ?>
+                            <div class="carousel-item <?= $index === 0 ? 'active' : ''; ?>">
+                                <div class="bg-holder" style="background-image:url(public/<?= htmlspecialchars($banner['image_path']); ?>);"></div>
+                                <div class="banner-overlay"></div>
+                                
+                                <div class="container hero-content">
+                                    <div class="row align-items-center min-vh-100">
+                                        <div class="col-lg-8 text-center text-lg-start">
+                                            <span class="hero-badge animate__animated animate__fadeInDown">
+                                                <i class="fas fa-heart-pulse me-2"></i>Selamat Datang di JHC Tasikmalaya
+                                            </span>
+                                            <h1 class="text-white fw-bold display-3 animate__animated animate__fadeInLeft">
+                                                <?= htmlspecialchars($banner['title']); ?>
+                                            </h1>
+                                            <p class="text-white lead fs-4 animate__animated animate__fadeInLeft animate__delay-1s">
+                                                <?= htmlspecialchars($banner['description']); ?>
+                                            </p>
+                                            <div class="mt-4 animate__animated animate__fadeInUp animate__delay-2s">
+                                                <a class="btn btn-light btn-lg px-5 py-3 rounded-pill text-primary fw-bold" href="#departments">
+                                                    <i class="fas fa-hospital me-2"></i>Layanan Kami
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
             </div>
-          </div>
-        </div>
-      </section>
+        </section>
 
       <!-- ==================== SERVICES SECTION ==================== -->
       <section class="py-5 bg-white" id="departments">
@@ -1460,34 +1478,51 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     <!-- ==================== SCRIPTS ==================== -->
     <script src="public/vendors/bootstrap/bootstrap.min.js"></script>
     <script>
-      // Banner Slider
       document.addEventListener('DOMContentLoaded', function() {
         const bannerItems = document.querySelectorAll('.banner-item');
-        const bannerTitle = document.getElementById('banner-title');
-        const bannerDescription = document.getElementById('banner-description');
+        const titleElement = document.getElementById('banner-title');
+        const descElement = document.getElementById('banner-description');
+        const bgHolder = document.querySelector('.bg-holder'); // Target background
+        
         let currentIndex = 0;
 
         function updateBanner() {
-          if(bannerItems.length === 0) return;
-          
-          bannerTitle.style.opacity = 0;
-          bannerDescription.style.opacity = 0;
-          
-          setTimeout(() => {
-            bannerTitle.textContent = bannerItems[currentIndex].dataset.title;
-            bannerDescription.textContent = bannerItems[currentIndex].dataset.description;
-            bannerTitle.style.opacity = 1;
-            bannerDescription.style.opacity = 1;
-          }, 500);
+            if (bannerItems.length === 0) return;
+
+            const item = bannerItems[currentIndex];
+            const title = item.getAttribute('data-title');
+            const desc = item.getAttribute('data-description');
+            const image = item.getAttribute('data-image'); // Ambil path gambar
+
+            // Efek transisi halus
+            titleElement.style.opacity = 0;
+            descElement.style.opacity = 0;
+            bgHolder.style.opacity = 0.8; // Sedikit pudar saat ganti
+
+            setTimeout(() => {
+                // Update Teks
+                titleElement.innerText = title;
+                descElement.innerText = desc;
+
+                // Update Gambar Background
+                bgHolder.style.backgroundImage = `url('${image}')`;
+
+                // Kembalikan Opacity
+                titleElement.style.opacity = 1;
+                descElement.style.opacity = 1;
+                bgHolder.style.opacity = 1;
+            }, 500);
+
+            currentIndex = (currentIndex + 1) % bannerItems.length;
         }
 
-        if(bannerItems.length > 0) {
-          updateBanner();
-          setInterval(() => {
-            currentIndex = (currentIndex + 1) % bannerItems.length;
             updateBanner();
-          }, 6000);
-        }
+            setInterval(updateBanner, 5000); // Ganti setiap 5 detik
+
+
+            // Set interval perpindahan (misal: setiap 5 detik)
+            setInterval(updateBanner, 5000);
+
 
         // Navbar Scroll Effect
         window.addEventListener('scroll', function() {
@@ -1575,7 +1610,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             }
           });
         });
-      });
+    });
     </script>
   </body>
 </html>
