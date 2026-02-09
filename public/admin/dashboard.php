@@ -236,26 +236,6 @@
         </div>
 
         <div class="col-md-6 col-lg-4">
-            <a href="manage_careers.php" class="card-link">
-                <div class="dashboard-card">
-                    <div class="card-body">
-                        <div class="icon-box" style="background: rgba(138, 48, 51, 0.05);">
-                            <i class="fas fa-briefcase"></i>
-                        </div>
-                        <h5 class="card-title">Manajemen Karir</h5>
-                        <p class="card-text">Kelola postingan lowongan kerja, kualifikasi medis, dan pantau status rekrutmen aktif.</p>
-                        
-                        <div class="mt-3">
-                            <span class="badge bg-light text-dark border-0 shadow-sm p-2 px-3" style="border-radius: 50px; font-size: 0.7rem;">
-                                <i class="fas fa-cog me-1 text-danger"></i> Sistem CRUD Aktif
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
             <a href="contact_settings.php" class="card-link">
                 <div class="dashboard-card">
                     <div class="card-body">
