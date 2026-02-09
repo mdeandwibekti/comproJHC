@@ -189,7 +189,7 @@ $page_title_text = empty($id) ? "Tambah Dokter Baru" : "Edit Profil Dokter";
                         <?php else: ?>
                             <div class="py-5 text-muted">
                                 <i class="fas fa-user-circle fa-5x opacity-25 mb-3"></i><br>
-                                <span class="small">Belum ada foto</span>
+                                <span class="small">Belum ada foto dokter</span>
                             </div>
                         <?php endif; ?>
                     </div>

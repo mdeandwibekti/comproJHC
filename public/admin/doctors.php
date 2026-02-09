@@ -100,7 +100,7 @@ require_once 'layout/header.php';
     <div class="main-wrapper">
         <div class="page-header-jhc d-flex justify-content-between align-items-center">
             <div>
-                <h3 class="fw-bold mb-1 text-dark">Manajemen Dokter</h3>
+                <h3 class="fw-bold mb-1 text-dark">Manage Dokter</h3>
                 <p class="text-muted small mb-0">Kelola profil dokter, spesialisasi, dan jadwal praktik RS JHC.</p>
             </div>
             <a href="doctor_edit.php" class="btn btn-jhc-main"><i class="fas fa-plus me-2"></i> Tambah Dokter</a>
