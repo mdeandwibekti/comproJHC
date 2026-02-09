@@ -754,9 +754,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
               <h1 class="text-white fw-bold" id="banner-title"></h1>
               <p class="text-white lead" id="banner-description"></p>
               <div class="d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap mt-4">
-                <a class="btn btn-outline-light btn-hero" href="#doctors">
-                  <i class="fas fa-user-doctor me-2"></i>Lihat Dokter
-                </a>
                 <a class="btn btn-light btn-hero text-primary" href="#departments">
                   <i class="fas fa-hospital me-2"></i>Layanan Kami
                 </a>
