@@ -1204,9 +1204,8 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       <div class="modal fade" id="modalDetailDokter" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title fw-bold">Profil Dokter</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header bg-dark"> <h5 class="modal-title fw-bold text-white">Profil Dokter</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4 text-center">
               <img id="mdl-img" src="" class="rounded-circle mb-4 border border-4 border-light shadow-lg" 
