@@ -133,7 +133,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
     <title><?php echo $page_title; ?></title>
 
     <?php 
@@ -142,6 +142,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     <link rel="shortcut icon" type="image/x-icon" href="public/<?php echo htmlspecialchars($favicon); ?>">
     <link href="public/assets/css/theme.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
 
     <style>
         :root {
@@ -174,10 +175,10 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             to { opacity: 1; }
         }
 
-        /* ==================== NAVBAR ==================== */
+        /* ==================== NAVBAR - IMPROVED ==================== */
         .navbar {
-            padding: 12px 0;
-            min-height: 85px;
+            padding: 0.75rem 0;
+            min-height: 80px;
             background: rgba(255, 255, 255, 0.98) !important;
             backdrop-filter: blur(15px);
             box-shadow: var(--shadow-sm);
@@ -185,22 +186,27 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
 
         .navbar.navbar-scrolled {
-            padding: 8px 0;
+            padding: 0.5rem 0;
+            min-height: 70px;
             box-shadow: var(--shadow-md);
             border-bottom: 3px solid var(--jhc-red);
         }
 
         .navbar .container {
-            max-width: 1400px;
-            padding: 0 20px;
+            max-width: 1320px;
+            padding: 0 1.25rem;
         }
 
         .navbar-brand img {
-            height: 75px;
+            height: 65px;
             width: auto;
             transition: var(--transition-smooth);
             object-fit: contain;
             filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+        }
+
+        .navbar.navbar-scrolled .navbar-brand img {
+            height: 55px;
         }
 
         .navbar-brand:hover img {
@@ -211,10 +217,10 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         .nav-link {
             color: var(--jhc-navy) !important;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             position: relative;
-            margin: 0 10px;
-            padding: 10px 15px !important;
+            margin: 0 0.5rem;
+            padding: 0.625rem 0.875rem !important;
             transition: var(--transition-smooth);
         }
 
@@ -243,12 +249,13 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             background: var(--jhc-gradient);
             color: white !important;
             border-radius: 50px;
-            padding: 10px 28px;
-            font-size: 0.9rem;
+            padding: 0.625rem 1.75rem;
+            font-size: 0.875rem;
             font-weight: 700;
             border: 2px solid transparent;
             transition: var(--transition-smooth);
             box-shadow: 0 4px 15px rgba(200, 16, 46, 0.2);
+            white-space: nowrap;
         }
 
         .btn-janji:hover {
@@ -259,25 +266,25 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             box-shadow: 0 6px 20px rgba(200, 16, 46, 0.3);
         }
 
-        /* ==================== FLOATING BUTTONS ==================== */
+        /* ==================== FLOATING BUTTONS - IMPROVED ==================== */
         .floating-actions {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: 20px;
+            right: 20px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
             z-index: 1030;
         }
 
         .btn-igd-float, .btn-wa-float {
-            width: 60px;
-            height: 60px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 24px;
             box-shadow: var(--shadow-lg);
             transition: var(--transition-smooth);
             text-decoration: none;
@@ -291,7 +298,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
 
         .btn-igd-float:hover {
-            transform: scale(1.15) rotate(10deg);
+            transform: scale(1.12) rotate(8deg);
             box-shadow: 0 8px 35px rgba(200, 16, 46, 0.4);
         }
 
@@ -310,26 +317,27 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
 
         .btn-wa-float:hover {
-            transform: scale(1.15);
+            transform: scale(1.12);
             box-shadow: 0 8px 35px rgba(37, 211, 102, 0.4);
         }
 
-        /* ==================== HERO SECTION ==================== */
+        /* ==================== HERO SECTION - FIXED ==================== */
         .hero-section {
             width: 100%;
             height: 100vh;
+            min-height: 600px;
+            max-height: 900px;
             margin: 0;
             padding: 0;
             overflow: hidden;
             position: relative;
-            background-color: #000; /* Fallback warna hitam saat gambar loading */
+            background-color: #000;
         }
 
-        /* Memastikan Carousel mengikuti tinggi layar */
         #heroCarousel, 
         .carousel-inner, 
         .carousel-item {
-            height: 100vh;
+            height: 100%;
             width: 100%;
         }
 
@@ -340,67 +348,74 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             width: 100%;
             height: 100%;
             background-size: cover;
-            background-position: center center; /* Pastikan center agar gambar tidak terpotong aneh */
+            background-position: center center;
             background-repeat: no-repeat;
-            transition: transform 0.8s ease-in-out; /* Efek zoom halus saat slide */
+            transition: transform 8s ease-in-out;
         }
 
-        /* Overlay diperbaiki agar teks lebih mudah dibaca */
+        .carousel-item.active .bg-holder {
+            animation: zoomIn 15s ease-in-out;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
         .banner-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /* Menggunakan linear gradient dari kiri ke kanan agar teks di kiri lebih menonjol */
-            background: linear-gradient(90deg, rgba(0, 20, 40, 0.8) 0%, rgba(138, 48, 51, 0.4) 100%);
+            background: linear-gradient(90deg, rgba(0, 20, 40, 0.85) 0%, rgba(138, 48, 51, 0.45) 100%);
             z-index: 1;
         }
 
         .hero-content {
             position: relative;
             z-index: 2;
-            /* Memastikan konten berada di tengah secara vertikal sudah ditangani min-vh-100 di HTML */
+            height: 100%;
         }
 
         .hero-badge {
-            display: inline-flex; /* Gunakan flex agar ikon & teks sejajar sempurna */
+            display: inline-flex;
             align-items: center;
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: white !important;
-            padding: 10px 24px;
+            padding: 0.625rem 1.5rem;
             border-radius: 50px;
             font-weight: 600;
-            font-size: 0.85rem;
-            margin-bottom: 24px;
+            font-size: 0.8rem;
+            margin-bottom: 1.5rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* Memperbaiki Tipografi Slider */
         .carousel-item h1 {
-            font-size: clamp(2rem, 6vw, 4rem); /* Responsif otomatis */
+            font-size: clamp(2rem, 5vw, 3.5rem);
             color: white !important;
             text-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5);
-            line-height: 1.1;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
         }
 
         .carousel-item p {
-            font-size: clamp(1rem, 2vw, 1.25rem);
-            max-width: 700px; /* Batasi lebar agar tidak terlalu panjang ke samping */
-            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: clamp(1rem, 2vw, 1.125rem);
+            max-width: 650px;
+            color: rgba(255, 255, 255, 0.95) !important;
             text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.5);
+            line-height: 1.7;
         }
 
-        /* Perbaikan Tombol Hero */
         .btn-hero {
             display: inline-flex;
             align-items: center;
-            padding: 14px 32px;
-            font-size: 1rem;
+            padding: 0.875rem 2rem;
+            font-size: 0.95rem;
             font-weight: 700;
             border-radius: 50px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -414,31 +429,44 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         .btn-hero:hover {
             transform: translateY(-3px);
             background: white;
-            color: #8a3033 !important; /* Gunakan warna merah JHC saat hover */
+            color: #8a3033 !important;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
-        /* ==================== SECTIONS ==================== */
+        /* ==================== SECTIONS - IMPROVED ==================== */
+        section {
+            padding: 5rem 0;
+        }
+
+        .section-subtitle {
+            color: var(--jhc-red);
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            margin-bottom: 0.75rem;
+        }
+
         .section-title {
             position: relative;
             display: inline-block;
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
             font-weight: 800;
-            color: #002855; /* Pastikan variabel navy didefinisikan atau gunakan hex */
-            margin-bottom: 20px;
+            color: var(--jhc-navy);
+            margin-bottom: 1.25rem;
         }
 
         .section-title::after {
             content: '';
             display: block;
-            width: 60px; /* Ukuran lebih proporsional */
+            width: 60px;
             height: 4px;
-            background: linear-gradient(90deg, #8a3033, #bd3030);
-            margin: 15px auto 0;
+            background: var(--jhc-gradient);
+            margin: 1rem auto 0;
             border-radius: 10px;
         }
 
-        /* ==================== CARDS ==================== */
+        /* ==================== CARDS - IMPROVED ==================== */
         .card {
             border: none;
             transition: var(--transition-smooth);
@@ -449,43 +477,50 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
 
         .hover-lift:hover {
-            transform: translateY(-12px);
+            transform: translateY(-8px);
             box-shadow: var(--shadow-lg);
         }
 
         .service-card {
-            border-radius: 24px;
+            border-radius: 20px;
             background: white;
             box-shadow: var(--shadow-sm);
             overflow: hidden;
             height: 100%;
+            border: 2px solid transparent;
         }
 
         .service-card:hover {
-            border: 2px solid rgba(138, 48, 51, 0.15);
+            border-color: rgba(200, 16, 46, 0.2);
         }
 
         .icon-wrapper {
-            width: 95px;
-            height: 95px;
+            width: 80px;
+            height: 80px;
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: var(--shadow-sm);
-            margin: 0 auto 24px;
+            margin: 0 auto 1.25rem;
             transition: var(--transition-smooth);
         }
 
         .service-card:hover .icon-wrapper {
             background: linear-gradient(135deg, #fff5f5, #ffe5e5);
-            transform: scale(1.12) rotate(8deg);
+            transform: scale(1.1) rotate(5deg);
         }
 
-        /* ==================== DOCTORS SECTION ==================== */
+        .icon-wrapper img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        /* ==================== DOCTORS SECTION - IMPROVED ==================== */
         .doctor-card {
-            border-radius: 24px;
+            border-radius: 20px;
             overflow: hidden;
             transition: var(--transition-smooth);
             background: white;
@@ -493,7 +528,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
 
         .doctor-card:hover {
-            transform: translateY(-12px);
+            transform: translateY(-8px);
             box-shadow: var(--shadow-lg);
         }
 
@@ -502,12 +537,22 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
 
         .doctor-card:hover img {
-            transform: scale(1.12);
+            transform: scale(1.08);
         }
 
-        /* ==================== MODALS ==================== */
+        .doctor-img-wrapper {
+            width: 140px;
+            height: 140px;
+            overflow: hidden;
+            border-radius: 50%;
+            margin: 0 auto 1.25rem;
+            border: 4px solid #f8f9fa;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ==================== MODALS - IMPROVED ==================== */
         .modal-content {
-            border-radius: 24px;
+            border-radius: 20px;
             border: none;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
@@ -517,7 +562,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             background: var(--jhc-gradient);
             color: white !important;
             border: none;
-            padding: 20px 30px;
+            padding: 1.25rem 1.875rem;
         }
 
         .modal-title {
@@ -530,34 +575,68 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
 
         .modal-body {
-            padding: 30px;
+            padding: 1.875rem;
         }
 
-        /* ==================== PARTNERS ==================== */
+        /* ==================== MCU CAROUSEL - IMPROVED ==================== */
+        #mcuCarousel .carousel-control-prev-icon,
+        #mcuCarousel .carousel-control-next-icon {
+            background-color: #0066cc;
+            border-radius: 50%;
+            padding: 0.75rem;
+        }
+
+        #mcuCarousel .carousel-control-prev-icon:hover,
+        #mcuCarousel .carousel-control-next-icon:hover {
+            background-color: #0052a3;
+            transform: scale(1.1);
+        }
+
+        #mcuCarousel .carousel-indicators button {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #0066cc;
+            opacity: 0.5;
+            margin: 0 4px;
+        }
+
+        #mcuCarousel .carousel-indicators button.active {
+            opacity: 1;
+            width: 28px;
+            border-radius: 5px;
+        }
+
+        #mcuCarousel .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(37, 211, 102, 0.3) !important;
+        }
+
+        /* ==================== PARTNERS - IMPROVED ==================== */
         .partner-logo {
-            filter: none !important;      
-            -webkit-filter: none !important; 
-            opacity: 1 !important;        
+            filter: none !important;
+            -webkit-filter: none !important;
+            opacity: 1 !important;
             transition: transform 0.3s ease;
-            max-height: 80px;             
+            max-height: 70px;
             width: auto;
             object-fit: contain;
         }
 
         .partner-logo:hover {
-            transform: scale(1.1);
+            transform: scale(1.08);
         }
 
-        /* ==================== NEWS ==================== */
+        /* ==================== NEWS - IMPROVED ==================== */
         .news-date-badge {
             position: absolute;
-            top: 18px;
-            left: 18px;
+            top: 1rem;
+            left: 1rem;
             background: var(--jhc-gradient);
             color: white !important;
-            padding: 10px 20px;
+            padding: 0.5rem 1rem;
             border-radius: 50px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             z-index: 10;
             box-shadow: var(--shadow-md);
@@ -568,6 +647,8 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             font-weight: 700;
             text-decoration: none;
             transition: var(--transition-smooth);
+            display: inline-flex;
+            align-items: center;
         }
 
         .news-card-link:hover {
@@ -575,7 +656,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             transform: translateX(5px);
         }
 
-        /* ==================== FOOTER ==================== */
+        /* ==================== FOOTER - IMPROVED ==================== */
         footer {
             background: var(--jhc-gradient);
             color: white;
@@ -594,67 +675,105 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
         /* ==================== FORM CONTROLS ==================== */
         .form-control-modern {
-            border-radius: 14px;
-            padding: 16px 20px;
+            border-radius: 12px;
+            padding: 0.875rem 1.25rem;
             border: 2px solid #e9ecef;
             transition: var(--transition-smooth);
         }
 
         .form-control-modern:focus {
             background: white;
-            box-shadow: 0 0 0 5px rgba(27, 113, 161, 0.1);
+            box-shadow: 0 0 0 4px rgba(27, 113, 161, 0.1);
             border-color: var(--jhc-blue);
         }
 
         /* ==================== CAROUSEL CONTROLS ==================== */
         .carousel-control-prev,
         .carousel-control-next {
-            width: 50px;
-            height: 50px;
-            background: rgba(200, 16, 46, 0.8);
+            width: 45px;
+            height: 45px;
+            background: rgba(200, 16, 46, 0.75);
             border-radius: 50%;
             top: 50%;
             transform: translateY(-50%);
             opacity: 0.8;
+            transition: var(--transition-smooth);
         }
 
         .carousel-control-prev:hover,
         .carousel-control-next:hover {
             opacity: 1;
-            background: rgba(200, 16, 46, 1);
+            background: rgba(200, 16, 46, 0.95);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-indicators {
+            bottom: 1.5rem;
         }
 
         .carousel-indicators button {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.6);
             border: 2px solid white;
+            margin: 0 4px;
         }
 
         .carousel-indicators button.active {
             background-color: var(--jhc-red);
         }
 
-        /* ==================== RESPONSIVE ==================== */
+        /* ==================== RESPONSIVE - IMPROVED ==================== */
+        @media (max-width: 1199px) {
+            section {
+                padding: 4rem 0;
+            }
+        }
+
         @media (max-width: 991px) {
+            .navbar {
+                padding: 0.625rem 0;
+                min-height: 70px;
+            }
+
             .navbar-brand img {
-                height: 60px;
+                height: 55px;
+            }
+
+            .navbar.navbar-scrolled .navbar-brand img {
+                height: 50px;
             }
 
             .nav-link {
-                padding: 12px 18px !important;
+                padding: 0.75rem 1rem !important;
+                margin: 0;
+            }
+
+            .btn-janji {
+                margin-top: 0.5rem;
+                width: 100%;
+                text-align: center;
             }
 
             .floating-actions {
-                bottom: 20px;
-                right: 20px;
+                bottom: 15px;
+                right: 15px;
             }
 
             .btn-igd-float, .btn-wa-float {
-                width: 55px;
-                height: 55px;
+                width: 52px;
+                height: 52px;
                 font-size: 22px;
+            }
+
+            .hero-section {
+                height: 80vh;
+                min-height: 500px;
+            }
+
+            section {
+                padding: 3.5rem 0;
             }
 
             .section-title {
@@ -664,47 +783,84 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
         @media (max-width: 767px) {
             .navbar-brand img {
-                height: 55px;
+                height: 50px;
             }
 
             .hero-section {
-                min-height: 75vh;
+                height: 75vh;
+                min-height: 450px;
+            }
+
+            .carousel-item h1 {
+                font-size: 1.75rem;
+            }
+
+            .carousel-item p {
+                font-size: 0.95rem;
+            }
+
+            .btn-hero {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.875rem;
             }
 
             .partner-logo {
-                max-height: 65px;
+                max-height: 55px;
             }
 
             .floating-actions {
-                bottom: 15px;
-                right: 15px;
+                bottom: 12px;
+                right: 12px;
+                gap: 10px;
             }
 
             .btn-igd-float, .btn-wa-float {
-                width: 50px;
-                height: 50px;
+                width: 48px;
+                height: 48px;
                 font-size: 20px;
             }
 
             .icon-wrapper {
-                width: 75px;
-                height: 75px;
+                width: 70px;
+                height: 70px;
+            }
+
+            .icon-wrapper img {
+                width: 42px;
+                height: 42px;
+            }
+
+            .doctor-img-wrapper {
+                width: 120px;
+                height: 120px;
+            }
+
+            section {
+                padding: 3rem 0;
             }
         }
 
-        @media (max-width: 576px) {
+        @media (max-width: 575px) {
             .btn-janji {
-                padding: 8px 20px;
-                font-size: 0.85rem;
+                padding: 0.5rem 1.25rem;
+                font-size: 0.8rem;
             }
 
-            .col-6 {
-                padding-left: 10px;
-                padding-right: 10px;
+            .service-card {
+                margin-bottom: 1rem;
             }
 
             .section-title {
-                font-size: 1.75rem;
+                font-size: 1.625rem;
+            }
+
+            .hero-badge {
+                font-size: 0.7rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .modal-body {
+                padding: 1.25rem;
             }
         }
 
@@ -741,9 +897,34 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         html {
             scroll-behavior: smooth;
         }
+
+        /* ==================== LOADING SPINNER ==================== */
+        .spinner-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner-overlay.active {
+            display: flex;
+        }
     </style>
   </head>
   <body>
+    <!-- Loading Spinner -->
+    <div class="spinner-overlay" id="loadingSpinner">
+      <div class="spinner-border text-danger" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
     <main class="main" id="top">
       
       <!-- ==================== NAVBAR ==================== -->
@@ -754,12 +935,12 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             <img src="public/<?php echo htmlspecialchars($header_logo); ?>" alt="JHC Logo" />
           </a>
         
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
               <li class="nav-item"><a class="nav-link" href="#departments">Layanan</a></li>
               <li class="nav-item"><a class="nav-link" href="#virtual_room">Virtual Room</a></li>
               <li class="nav-item"><a class="nav-link" href="#about_us">Tentang Kami</a></li>
@@ -768,7 +949,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
               <li class="nav-item"><a class="nav-link" href="#news">Berita</a></li>
             </ul>
 
-            <div class="nav-actions ms-lg-4">
+            <div class="nav-actions ms-lg-3">
               <a class="btn btn-janji" href="career.php">
                 <i class="fas fa-briefcase me-2"></i>Apply Job
               </a>
@@ -779,21 +960,24 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
       <!-- ==================== FLOATING BUTTONS ==================== -->
       <div class="floating-actions">
-        <a href="tel:<?php echo $no_igd; ?>" class="btn-igd-float pulse-igd" title="Darurat IGD: <?php echo $no_igd; ?>">
+        <a href="tel:<?php echo $no_igd; ?>" class="btn-igd-float pulse-igd" title="Darurat IGD: <?php echo $no_igd; ?>" aria-label="Call IGD">
           <i class="fas fa-ambulance"></i>
         </a>
 
-        <a href="https://wa.me/<?php echo $no_rs_wa; ?>" target="_blank" class="btn-wa-float" title="WhatsApp RS">
+        <a href="https://wa.me/<?php echo $no_rs_wa; ?>" target="_blank" class="btn-wa-float" title="WhatsApp RS" aria-label="WhatsApp">
           <i class="fab fa-whatsapp"></i>
         </a>
       </div>
 
       <!-- ==================== HERO SECTION ==================== -->
       <section class="hero-section p-0" id="home">
-        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="7000">
             <div class="carousel-indicators">
                 <?php foreach ($banners_data as $index => $banner): ?>
-                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $index; ?>" class="<?= $index === 0 ? 'active' : ''; ?>"></button>
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $index; ?>" 
+                            class="<?= $index === 0 ? 'active' : ''; ?>" 
+                            aria-current="<?= $index === 0 ? 'true' : 'false'; ?>" 
+                            aria-label="Slide <?= $index + 1; ?>"></button>
                 <?php endforeach; ?>
             </div>
 
@@ -804,20 +988,20 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                             <div class="bg-holder" style="background-image:url(public/<?= htmlspecialchars($banner['image_path']); ?>);"></div>
                             <div class="banner-overlay"></div>
                             
-                            <div class="container hero-content">
-                                <div class="row align-items-center min-vh-100">
+                            <div class="container hero-content d-flex align-items-center">
+                                <div class="row w-100">
                                     <div class="col-lg-8 text-center text-lg-start">
                                         <span class="hero-badge animate__animated animate__fadeInDown">
                                             <i class="fas fa-heart-pulse me-2"></i>Selamat Datang di JHC Tasikmalaya
                                         </span>
-                                        <h1 class="text-white fw-bold display-3 animate__animated animate__fadeInLeft">
+                                        <h1 class="text-white fw-bold animate__animated animate__fadeInLeft">
                                             <?= htmlspecialchars($banner['title']); ?>
                                         </h1>
-                                        <p class="text-white lead fs-4 animate__animated animate__fadeInLeft animate__delay-1s">
+                                        <p class="text-white lead animate__animated animate__fadeInLeft">
                                             <?= htmlspecialchars($banner['description']); ?>
                                         </p>
-                                        <div class="mt-4 animate__animated animate__fadeInUp animate__delay-2s">
-                                            <a class="btn btn-light btn-lg px-5 py-3 rounded-pill text-primary fw-bold" href="#departments">
+                                        <div class="mt-4 animate__animated animate__fadeInUp">
+                                            <a class="btn btn-hero" href="#departments">
                                                 <i class="fas fa-hospital me-2"></i>Layanan Kami
                                             </a>
                                         </div>
@@ -831,9 +1015,11 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
             <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
             </button>
             <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
             </button>
         </div>
     </section>
@@ -843,7 +1029,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         <div class="container">
           <div class="row justify-content-center mb-5">
             <div class="col-lg-8 text-center">
-              <p class="section-subtitle mb-2">
+              <p class="section-subtitle">
                 <i class="fas fa-star me-2"></i>LAYANAN TERBAIK
               </p>
               <h2 class="section-title">Pelayanan Kami</h2>
@@ -855,21 +1041,20 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           function render_cards($data_list, $is_layanan = true) {
               foreach($data_list as $item): ?>
                   <div class="col-6 col-md-4 col-lg-3 mb-4">
-                      <div class="card service-card h-100 hover-lift text-center p-4">
-                          <div class="card-body">
+                      <div class="card service-card h-100 hover-lift text-center p-3 p-md-4">
+                          <div class="card-body p-2">
                               <div class="icon-wrapper">
                                   <?php if(!empty($item['icon_path'])): ?>
-                                      <img src="public/<?= htmlspecialchars($item['icon_path']); ?>" 
-                                           style="width: 52px; height: 52px; object-fit: contain;" alt="icon" />
+                                      <img src="public/<?= htmlspecialchars($item['icon_path']); ?>" alt="icon" />
                                   <?php else: ?>
                                       <i class="fas <?= $is_layanan ? 'fa-star text-warning' : 'fa-heartbeat text-primary' ?> fa-2x"></i>
                                   <?php endif; ?>
                               </div>
-                              <h5 class="card-title fw-bold text-dark mb-3" style="font-size: 1rem;">
+                              <h5 class="card-title fw-bold text-dark mb-3" style="font-size: clamp(0.875rem, 2vw, 1rem);">
                                   <?= htmlspecialchars($item['name']); ?>
                               </h5>
                               <a href="javascript:void(0)" 
-                                 class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm btn-buka-detail" 
+                                 class="btn btn-primary btn-sm rounded-pill px-3 py-2 shadow-sm btn-buka-detail" 
                                  data-bs-toggle="modal" 
                                  data-bs-target="#modalLayanan" 
                                  data-name="<?= htmlspecialchars($item['name']); ?>" 
@@ -892,9 +1077,9 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
               <h4 class="fw-bold text-primary text-uppercase">
                 <i class="fas fa-award me-2"></i>Layanan Unggulan
               </h4>
-              <div style="width: 90px; height: 5px; background: var(--jhc-gradient); margin: 18px auto; border-radius: 3px;"></div>
+              <div style="width: 80px; height: 4px; background: var(--jhc-gradient); margin: 1rem auto; border-radius: 3px;"></div>
             </div>
-            <div class="row gx-4">
+            <div class="row gx-3 gx-md-4">
               <?php render_cards($layanan_data, true); ?>
             </div>
           </div>
@@ -907,9 +1092,9 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
               <h4 class="fw-bold text-secondary text-uppercase">
                 <i class="fas fa-stethoscope me-2"></i>Poliklinik Spesialis
               </h4>
-              <div style="width: 90px; height: 5px; background: var(--jhc-gradient); margin: 18px auto; border-radius: 3px;"></div>
+              <div style="width: 80px; height: 4px; background: var(--jhc-gradient); margin: 1rem auto; border-radius: 3px;"></div>
             </div>
-            <div class="row gx-4">
+            <div class="row gx-3 gx-md-4">
               <?php render_cards($poliklinik_data, false); ?>
             </div>
           </div>
@@ -918,17 +1103,17 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       </section>
 
       <!-- Modal Layanan -->
-      <div class="modal fade" id="modalLayanan" tabindex="-1" aria-hidden="true">
+      <div class="modal fade" id="modalLayanan" tabindex="-1" aria-labelledby="modalLayananLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title fw-bold">Detail Layanan</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              <h5 class="modal-title fw-bold" id="modalLayananLabel">Detail Layanan</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <div class="text-center mb-4">
                 <div class="icon-wrapper mx-auto">
-                  <img id="m-icon" src="" style="width: 65px; height: 65px; object-fit: contain;" alt="Icon">
+                  <img id="m-icon" src="" alt="Icon">
                 </div>
                 <h3 id="m-name" class="fw-bold text-dark mt-3"></h3>
               </div>
@@ -941,7 +1126,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                   <p id="m-desc" class="text-muted"></p>
                 </div>
                 <div class="col-md-6">
-                  <div class="p-4 bg-light rounded-3 h-100 border-start border-warning border-4">
+                  <div class="p-3 p-md-4 bg-light rounded-3 h-100 border-start border-warning border-4">
                     <label class="fw-bold text-dark small text-uppercase mb-2 d-block">
                       <i class="fas fa-star me-2 text-warning"></i>Keahlian Khusus
                     </label>
@@ -949,7 +1134,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <div class="p-4 rounded-3 bg-light h-100 border-start border-primary border-4">
+                  <div class="p-3 p-md-4 rounded-3 bg-light h-100 border-start border-primary border-4">
                     <label class="fw-bold text-primary small text-uppercase mb-2 d-block">
                       <i class="fas fa-clock me-2"></i>Informasi Layanan
                     </label>
@@ -968,94 +1153,126 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         </div>
       </div>
 
-      <!-- ==================== MCU PACKAGES ==================== -->
-      <?php if (!empty($mcu_packages_data)): ?>
-      <section class="py-5" style="background: linear-gradient(135deg, #f1f7fc 0%, #e3f2fd 100%);">
-        <div class="container">
-          <div class="row justify-content-center mb-5">
-            <div class="col-lg-8 text-center">
-              <p class="section-subtitle mb-2">
-                <i class="fas fa-heart-pulse me-2"></i>CEGAH LEBIH BAIK
-              </p>
-              <h2 class="section-title">Paket Medical Check Up</h2>
-              <p class="text-muted mt-3">Pencegahan lebih baik daripada pengobatan. Jaga kesehatan Anda dengan pemeriksaan rutin.</p>
-            </div>
-          </div>
-          
-          <div id="mcuCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-              <?php foreach ($mcu_packages_data as $index => $package): ?>
-                <button type="button" data-bs-target="#mcuCarousel" data-bs-slide-to="<?php echo $index; ?>" 
-                        class="<?php echo ($index === 0) ? 'active' : ''; ?>"></button>
-              <?php endforeach; ?>
-            </div>
+<!-- ==================== MCU PACKAGES ==================== -->
+<?php if (!empty($mcu_packages_data)): ?>
+<section class="py-5" style="background: linear-gradient(135deg, #f8fbff 0%, #e8f4f8 100%);">
+  <div class="container">
+    <div class="row justify-content-center mb-5">
+      <div class="col-lg-8 text-center">
+        <p class="section-subtitle">
+          <i class="fas fa-heart-pulse me-2"></i>Prioritaskan Kesehatan Anda
+        </p>
+        <h2 class="section-title">Paket Medical Check Up</h2>
+        <p class="text-muted mt-3" style="font-size: 1.05rem; line-height: 1.6;">
+          Deteksi dini adalah kunci kesehatan optimal. Pilih paket pemeriksaan kesehatan yang sesuai dengan kebutuhan Anda.
+        </p>
+      </div>
+    </div>
+    
+    <div id="mcuCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+        <?php foreach ($mcu_packages_data as $index => $package): ?>
+          <button type="button" data-bs-target="#mcuCarousel" data-bs-slide-to="<?php echo $index; ?>" 
+                  class="<?php echo ($index === 0) ? 'active' : ''; ?>" 
+                  aria-current="<?php echo ($index === 0) ? 'true' : 'false'; ?>"
+                  aria-label="Slide <?php echo $index + 1; ?>"></button>
+        <?php endforeach; ?>
+      </div>
 
-            <div class="carousel-inner">
-              <?php foreach ($mcu_packages_data as $index => $package): ?>
-                <div class="carousel-item <?php echo ($index === 0) ? 'active' : ''; ?>">
-                  <div class="card border-0 shadow-lg mx-auto" style="max-width: 1000px; border-radius: 28px; overflow: hidden;">
-                    <div class="row g-0">
-                      <div class="col-md-5">
-                        <img src="public/<?php echo htmlspecialchars($package['image_path']); ?>" 
-                             class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 380px;" 
-                             alt="<?php echo htmlspecialchars($package['title']); ?>">
-                      </div>
-                      <div class="col-md-7 d-flex align-items-center bg-white">
-                        <div class="card-body p-5">
-                          <span class="badge bg-warning text-dark mb-3 px-4 py-2 rounded-pill">
-                            <i class="fas fa-fire me-1"></i>Paket Populer
-                          </span>
-                          <h3 class="fw-bold text-primary mb-3"><?php echo htmlspecialchars($package['title']); ?></h3>
-                          <p class="text-muted mb-4" style="line-height: 1.8;">
-                            <?php echo nl2br(htmlspecialchars($package['description'])); ?>
-                          </p>
-                          <div class="d-flex align-items-center mb-4">
-                            <div class="me-3">
-                              <i class="fas fa-tag fa-2x text-success"></i>
-                            </div>
-                            <div>
-                              <small class="text-muted d-block">Harga Paket</small>
-                              <h4 class="text-dark fw-bold mb-0">Rp <?php echo number_format($package['price'], 0, ',', '.'); ?></h4>
-                            </div>
-                          </div>
-                          
-                          <?php
-                          $whatsapp_number = '6287760615300';
-                          $whatsapp_message = urlencode("Halo JHC, saya ingin booking paket MCU: " . $package['title']);
-                          $whatsapp_link = "https://api.whatsapp.com/send?phone={$whatsapp_number}&text={$whatsapp_message}";
-                          ?>
-                          <a href="<?php echo $whatsapp_link; ?>" target="_blank" 
-                             class="btn btn-success rounded-pill px-5 py-3 fw-bold shadow-sm">
-                            <i class="fab fa-whatsapp me-2"></i>Booking Via WhatsApp
-                          </a>
+      <div class="carousel-inner">
+        <?php foreach ($mcu_packages_data as $index => $package): ?>
+          <div class="carousel-item <?php echo ($index === 0) ? 'active' : ''; ?>">
+            <div class="card border-0 shadow-lg mx-auto" style="max-width: 1100px; border-radius: 20px; overflow: hidden;">
+              <div class="row g-0">
+                <!-- Image Column - Full Height -->
+                <div class="col-md-5 position-relative" style="min-height: 420px;">
+                  <img src="public/<?php echo htmlspecialchars($package['image_path']); ?>" 
+                       class="position-absolute top-0 start-0 w-100 h-100" 
+                       style="object-fit: cover; object-position: center;" 
+                       alt="<?php echo htmlspecialchars($package['title']); ?>">
+                  <div class="position-absolute top-0 start-0 w-100 h-100" 
+                       style="background: linear-gradient(180deg, rgba(0,102,204,0.1) 0%, rgba(0,102,204,0.05) 100%);"></div>
+                </div>
+                
+                <!-- Content Column -->
+                <div class="col-md-7 d-flex align-items-center bg-white">
+                  <div class="card-body p-4 p-lg-5">
+                    <span class="badge mb-3 px-3 px-md-4 py-2 rounded-pill" 
+                          style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #1a1a1a; font-weight: 600; font-size: 0.8rem;">
+                      <i class="fas fa-star me-1"></i>Paket Terpopuler
+                    </span>
+                    
+                    <h3 class="fw-bold mb-3" style="color: #0066cc; font-size: clamp(1.25rem, 3vw, 1.75rem);">
+                      <?php echo htmlspecialchars($package['title']); ?>
+                    </h3>
+                    
+                    <p class="text-muted mb-4" style="line-height: 1.7; font-size: clamp(0.875rem, 2vw, 1rem);">
+                      <?php echo nl2br(htmlspecialchars($package['description'])); ?>
+                    </p>
+                    
+                    <div class="p-3 p-md-4 mb-4 rounded-3" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #0066cc;">
+                      <div class="d-flex align-items-center">
+                        <div class="me-3">
+                          <i class="fas fa-tag fa-2x" style="color: #0066cc;"></i>
+                        </div>
+                        <div>
+                          <small class="text-muted d-block mb-1" style="font-size: 0.8rem;">Investasi Kesehatan Anda</small>
+                          <h4 class="fw-bold mb-0" style="color: #1a1a1a; font-size: clamp(1.25rem, 3vw, 1.75rem);">
+                            Rp <?php echo number_format($package['price'], 0, ',', '.'); ?>
+                          </h4>
                         </div>
                       </div>
                     </div>
+                    
+                    <?php
+                    $whatsapp_number = '6287760615300';
+                    $whatsapp_message = urlencode("Halo JHC, saya tertarik dengan paket MCU: " . $package['title'] . ". Mohon informasi lebih lanjut.");
+                    $whatsapp_link = "https://api.whatsapp.com/send?phone={$whatsapp_number}&text={$whatsapp_message}";
+                    ?>
+                    
+                    <a href="<?php echo $whatsapp_link; ?>" target="_blank" 
+                       class="btn btn-success rounded-pill px-4 px-md-5 py-2 py-md-3 fw-bold shadow-sm d-inline-flex align-items-center" 
+                       style="font-size: clamp(0.875rem, 2vw, 1rem); transition: all 0.3s ease;">
+                      <i class="fab fa-whatsapp me-2" style="font-size: 1.125rem;"></i>
+                      Reservasi Via WhatsApp
+                    </a>
+                    
+                    <p class="text-muted mt-3 mb-0" style="font-size: 0.8rem;">
+                      <i class="fas fa-info-circle me-1"></i>Tim kami siap membantu Anda 24/7
+                    </p>
                   </div>
                 </div>
-              <?php endforeach; ?>
+              </div>
             </div>
-
-            <button class="carousel-control-prev" type="button" data-bs-target="#mcuCarousel" data-bs-slide="prev" style="width: 5%;">
-              <span class="carousel-control-prev-icon bg-primary rounded-circle p-3"></span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#mcuCarousel" data-bs-slide="next" style="width: 5%;">
-              <span class="carousel-control-next-icon bg-primary rounded-circle p-3"></span>
-            </button>
           </div>
-        </div>
-      </section>
-      <?php endif; ?>
+        <?php endforeach; ?>
+      </div>
+
+      <!-- Carousel Controls -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#mcuCarousel" data-bs-slide="prev" style="width: 5%;">
+        <span class="carousel-control-prev-icon rounded-circle p-3 shadow" 
+              style="background-color: #0066cc;"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#mcuCarousel" data-bs-slide="next" style="width: 5%;">
+        <span class="carousel-control-next-icon rounded-circle p-3 shadow" 
+              style="background-color: #0066cc;"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
 
       <!-- ==================== VIRTUAL ROOM ==================== -->
       <?php if ($vr_data): ?>
       <section class="py-5 bg-white" id="virtual_room">
         <div class="container">
-          <div class="row align-items-center g-5">
-            <div class="col-lg-6">
+          <div class="row align-items-center g-4 g-lg-5">
+            <div class="col-lg-6 order-2 order-lg-1">
               <div class="position-relative">
                 <div class="bg-primary position-absolute rounded-4" 
-                     style="width: 100%; height: 100%; top: 25px; left: -25px; z-index: -1; opacity: 0.12;"></div>
+                     style="width: 100%; height: 100%; top: 20px; left: -20px; z-index: -1; opacity: 0.12;"></div>
                 <?php if(!empty($vr_data['video_url'])): 
                   $embed_url = $vr_data['video_url'];
                   $sep = (strpos($embed_url, '?') !== false) ? '&' : '?';
@@ -1072,18 +1289,18 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
               </div>
             </div>
 
-            <div class="col-lg-6">
-              <p class="section-subtitle mb-2">
+            <div class="col-lg-6 order-1 order-lg-2">
+              <p class="section-subtitle">
                 <i class="fas fa-building me-2"></i>VIRTUAL ROOM
               </p>
               <h2 class="section-title mb-4"><?php echo htmlspecialchars($vr_data['title']); ?></h2>
-              <p class="text-secondary lead text-justify mb-4" style="line-height: 1.9;">
+              <p class="text-secondary lead text-justify mb-4" style="line-height: 1.8;">
                 <?php echo nl2br(htmlspecialchars($vr_data['content'])); ?>
               </p>
               
-              <div class="row g-4">
+              <div class="row g-3 g-md-4">
                 <div class="col-sm-6">
-                  <div class="d-flex align-items-center p-4 bg-light rounded-4">
+                  <div class="d-flex align-items-center p-3 p-md-4 bg-light rounded-4">
                     <div class="bg-primary bg-gradient rounded-circle p-3 text-white me-3">
                       <i class="fas fa-user-md fa-lg"></i>
                     </div>
@@ -1094,7 +1311,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                   </div>
                 </div>
                 <div class="col-sm-6">
-                  <div class="d-flex align-items-center p-4 bg-light rounded-4">
+                  <div class="d-flex align-items-center p-3 p-md-4 bg-light rounded-4">
                     <div class="bg-danger bg-gradient rounded-circle p-3 text-white me-3">
                       <i class="fas fa-clock fa-lg"></i>
                     </div>
@@ -1116,7 +1333,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         <div class="container">
           <div class="row justify-content-center mb-5">
             <div class="col-lg-8 text-center">
-              <p class="section-subtitle mb-2">
+              <p class="section-subtitle">
                 <i class="fas fa-hospital me-2"></i>TENTANG KAMI
               </p>
               <h2 class="section-title">Mengenal Lebih Dekat RS JHC</h2>
@@ -1126,27 +1343,30 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
           <div class="row g-4">
             <div class="col-lg-3">
-              <div class="nav flex-column nav-pills shadow-sm rounded-4 bg-white overflow-hidden" 
-                   id="v-pills-tab" role="tablist">
+              <div class="nav flex-column nav-pills shadow-sm rounded-4 bg-white overflow-hidden sticky-top" 
+                   id="v-pills-tab" role="tablist" style="top: 100px;">
                 <?php 
                 $no = 0;
                 foreach ($tabs_config as $key => $info): 
                   $active = ($no === 0) ? 'active' : '';
                 ?>
-                  <button class="nav-link <?php echo $active; ?> text-start py-4 px-4 fw-bold border-bottom" 
+                  <button class="nav-link <?php echo $active; ?> text-start py-3 py-md-4 px-3 px-md-4 fw-bold border-bottom" 
                           id="v-pills-<?php echo $key; ?>-tab" 
                           data-bs-toggle="pill" 
                           data-bs-target="#v-pills-<?php echo $key; ?>" 
-                          type="button">
-                    <i class="fas <?php echo $info['icon']; ?> me-3 text-danger"></i> 
-                    <?php echo $info['label']; ?>
+                          type="button"
+                          role="tab"
+                          aria-controls="v-pills-<?php echo $key; ?>"
+                          aria-selected="<?php echo $active ? 'true' : 'false'; ?>">
+                    <i class="fas <?php echo $info['icon']; ?> me-2 me-md-3 text-danger"></i> 
+                    <span class="d-none d-sm-inline"><?php echo $info['label']; ?></span>
                   </button>
                 <?php $no++; endforeach; ?>
               </div>
             </div>
 
             <div class="col-lg-9">
-              <div class="tab-content p-5 bg-white rounded-4 shadow-sm" style="min-height: 480px;">
+              <div class="tab-content p-4 p-md-5 bg-white rounded-4 shadow-sm" style="min-height: 450px;">
                 <?php 
                 $no = 0;
                 foreach ($tabs_config as $key => $info): 
@@ -1158,16 +1378,19 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                   $img_display = !empty($img_src) ? $img_src : "https://via.placeholder.com/800x400/f8f9fa/dee2e6?text=No+Image";
                 ?>
                   <div class="tab-pane fade <?php echo $show_active; ?>" 
-                       id="v-pills-<?php echo $key; ?>">
+                       id="v-pills-<?php echo $key; ?>"
+                       role="tabpanel"
+                       aria-labelledby="v-pills-<?php echo $key; ?>-tab">
                     
                     <?php if ($key === 'salam-direktur'): ?>
                       <div class="text-center">
                         <img src="<?php echo htmlspecialchars($img_display); ?>" 
                              class="rounded-circle shadow-lg mb-4 border border-4 border-white" 
-                             style="width: 170px; height: 170px; object-fit: cover;"
-                             onerror="this.src='https://via.placeholder.com/170';">
+                             style="width: 150px; height: 150px; object-fit: cover;"
+                             onerror="this.src='https://via.placeholder.com/150';"
+                             alt="Direktur">
                         <h3 class="text-danger fw-bold mb-3"><?php echo htmlspecialchars($judul); ?></h3>
-                        <div class="text-muted fst-italic px-lg-5" style="line-height: 1.9;">
+                        <div class="text-muted fst-italic px-lg-4" style="line-height: 1.8;">
                           <i class="fas fa-quote-left fa-2x text-danger opacity-25 me-2"></i>
                           <?php echo $isi; ?>
                           <i class="fas fa-quote-right fa-2x text-danger opacity-25 ms-2"></i>
@@ -1178,12 +1401,13 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                         <div class="col-md-5">
                           <img src="<?php echo htmlspecialchars($img_display); ?>" 
                                class="img-fluid rounded-4 shadow w-100" 
-                               style="object-fit: cover; height: 300px;"
-                               onerror="this.src='https://via.placeholder.com/800x400';">
+                               style="object-fit: cover; height: 280px;"
+                               onerror="this.src='https://via.placeholder.com/800x400';"
+                               alt="<?php echo htmlspecialchars($judul); ?>">
                         </div>
                         <div class="col-md-7">
                           <h3 class="text-danger fw-bold mb-3"><?php echo htmlspecialchars($judul); ?></h3>
-                          <div class="text-secondary text-justify" style="line-height: 1.9;">
+                          <div class="text-secondary text-justify" style="line-height: 1.8;">
                             <?php echo $isi; ?>
                           </div>
                         </div>
@@ -1202,7 +1426,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         <div class="container">
           <div class="row justify-content-center mb-5">
             <div class="col-lg-8 text-center">
-              <p class="section-subtitle mb-2">
+              <p class="section-subtitle">
                 <i class="fas fa-user-doctor me-2"></i>TIM TERBAIK
               </p>
               <h2 class="section-title">Tim Dokter Kami</h2>
@@ -1212,27 +1436,29 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           
           <div class="row g-4">
             <?php foreach($doctors_data as $doc): ?>
-            <div class="col-sm-6 col-lg-3">
-              <div class="card doctor-card h-100 text-center p-4">
-                <div class="card-body">
-                  <div class="mx-auto mb-4" style="width: 150px; height: 150px; overflow: hidden; border-radius: 50%;">
+            <div class="col-6 col-sm-6 col-lg-3">
+              <div class="card doctor-card h-100 text-center p-3 p-md-4">
+                <div class="card-body p-2">
+                  <div class="doctor-img-wrapper">
                     <img src="public/<?php echo htmlspecialchars(!empty($doc['photo_path']) ? $doc['photo_path'] : 'assets/img/gallery/jane.png'); ?>" 
-                         class="w-100 h-100" style="object-fit: cover;" alt="Doctor">
+                         class="w-100 h-100" style="object-fit: cover;" alt="<?php echo htmlspecialchars($doc['name']); ?>">
                   </div>
-                  <h5 class="fw-bold text-dark mb-2"><?php echo htmlspecialchars($doc['name']); ?></h5>
-                  <p class="text-primary small fw-bold text-uppercase mb-3">
+                  <h5 class="fw-bold text-dark mb-2" style="font-size: clamp(0.875rem, 2vw, 1rem);">
+                    <?php echo htmlspecialchars($doc['name']); ?>
+                  </h5>
+                  <p class="text-primary small fw-bold text-uppercase mb-3" style="font-size: clamp(0.7rem, 1.5vw, 0.8rem);">
                     <?php echo htmlspecialchars($doc['specialty']); ?>
                   </p>
                   
                   <button type="button" 
-                          class="btn btn-outline-primary btn-sm rounded-pill px-4 btn-detail-dokter" 
+                          class="btn btn-outline-primary btn-sm rounded-pill px-3 px-md-4 btn-detail-dokter" 
                           data-bs-toggle="modal" 
                           data-bs-target="#modalDetailDokter"
                           data-name="<?php echo htmlspecialchars($doc['name']); ?>"
                           data-specialty="<?php echo htmlspecialchars($doc['specialty']); ?>"
                           data-desc="<?php echo htmlspecialchars($doc['description'] ?? 'Profil profesional dokter di JHC.'); ?>"
                           data-img="public/<?php echo htmlspecialchars(!empty($doc['photo_path']) ? $doc['photo_path'] : 'assets/img/gallery/jane.png'); ?>">
-                    <i class="fas fa-eye me-1"></i>Lihat Profil
+                    <i class="fas fa-eye me-1"></i><span class="d-none d-sm-inline">Lihat </span>Profil
                   </button>
                 </div>
               </div>
@@ -1243,21 +1469,21 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       </section>
 
       <!-- Modal Detail Dokter -->
-      <div class="modal fade" id="modalDetailDokter" tabindex="-1" aria-hidden="true">
+      <div class="modal fade" id="modalDetailDokter" tabindex="-1" aria-labelledby="modalDetailDokterLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title fw-bold">Profil Dokter</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              <h5 class="modal-title fw-bold" id="modalDetailDokterLabel">Profil Dokter</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4 text-center">
               <img id="mdl-img" src="" class="rounded-circle mb-4 border border-4 border-light shadow-lg" 
-                   style="width: 140px; height: 140px; object-fit: cover;">
+                   style="width: 130px; height: 130px; object-fit: cover;" alt="Doctor">
               
               <h4 id="mdl-name" class="fw-bold text-dark mb-2"></h4>
               <p id="mdl-specialty" class="text-primary small fw-bold text-uppercase mb-4"></p>
               
-              <div class="text-start bg-light p-4 rounded-4">
+              <div class="text-start bg-light p-3 p-md-4 rounded-4">
                 <h6 class="fw-bold small text-muted text-uppercase mb-2">
                   <i class="fas fa-info-circle me-2"></i>Tentang Dokter:
                 </h6>
@@ -1280,7 +1506,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         <div class="container">
           <div class="row justify-content-center mb-5">
             <div class="col-lg-8 text-center">
-              <p class="section-subtitle mb-2">
+              <p class="section-subtitle">
                 <i class="fas fa-building me-2"></i>FASILITAS
               </p>
               <h2 class="section-title">Fasilitas Unggulan</h2>
@@ -1291,19 +1517,20 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           <div class="row g-4">
             <?php foreach($facilities_data as $fac): ?>
             <div class="col-md-6 col-lg-4">
-              <div class="card h-100 border-0 shadow-sm hover-lift overflow-hidden" style="border-radius: 24px;">
-                <div class="position-relative" style="height: 260px; overflow: hidden;">
+              <div class="card h-100 border-0 shadow-sm hover-lift overflow-hidden" style="border-radius: 20px;">
+                <div class="position-relative" style="height: 240px; overflow: hidden;">
                   <img src="public/<?php echo htmlspecialchars($fac['image_path']); ?>" 
-                       class="w-100 h-100" style="object-fit: cover; transition: transform 0.6s;" alt="Fasilitas">
-                  <div class="position-absolute bottom-0 start-0 w-100 p-4" 
+                       class="w-100 h-100" style="object-fit: cover; transition: transform 0.6s;" 
+                       alt="<?php echo htmlspecialchars($fac['name']); ?>">
+                  <div class="position-absolute bottom-0 start-0 w-100 p-3 p-md-4" 
                        style="background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);">
-                    <h5 class="text-white mb-0 fw-bold">
+                    <h5 class="text-white mb-0 fw-bold" style="font-size: clamp(0.95rem, 2vw, 1.125rem);">
                       <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($fac['name']); ?>
                     </h5>
                   </div>
                 </div>
-                <div class="card-body p-4">
-                  <p class="card-text text-muted" style="line-height: 1.8;">
+                <div class="card-body p-3 p-md-4">
+                  <p class="card-text text-muted" style="line-height: 1.7; font-size: clamp(0.875rem, 1.5vw, 0.95rem);">
                     <?php echo nl2br(htmlspecialchars($fac['description'])); ?>
                   </p>
                 </div>
@@ -1320,7 +1547,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         <div class="container">
           <div class="row justify-content-center mb-5">
             <div class="col-lg-8 text-center">
-              <p class="section-subtitle mb-2">
+              <p class="section-subtitle">
                 <i class="fas fa-newspaper me-2"></i>BERITA TERKINI
               </p>
               <h2 class="section-title">
@@ -1333,8 +1560,8 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           <div class="row g-4">
             <?php foreach($news_data as $article): ?>
             <div class="col-md-6 col-lg-4">
-              <div class="card h-100 border-0 shadow-sm hover-lift overflow-hidden" style="border-radius: 24px;">
-                <div class="position-relative" style="height: 260px; overflow: hidden;">
+              <div class="card h-100 border-0 shadow-sm hover-lift overflow-hidden" style="border-radius: 20px;">
+                <div class="position-relative" style="height: 240px; overflow: hidden;">
                   <img src="public/<?php echo htmlspecialchars($article['image_path']); ?>" 
                        class="w-100 h-100" style="object-fit: cover;" 
                        alt="<?php echo htmlspecialchars($article['title']); ?>">
@@ -1342,18 +1569,18 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                     <i class="fas fa-calendar-alt me-2"></i><?php echo date('d M Y', strtotime($article['post_date'])); ?>
                   </div>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                   <span class="badge bg-light text-primary mb-3 px-3 py-2 rounded-pill">
                     <i class="fas fa-tag me-1"></i><?php echo htmlspecialchars($article['category']); ?>
                   </span>
-                  <h5 class="card-title fw-bold text-dark lh-base mb-3">
+                  <h5 class="card-title fw-bold text-dark lh-base mb-3" style="font-size: clamp(0.95rem, 2vw, 1.05rem);">
                     <?php echo htmlspecialchars($article['title']); ?>
                   </h5>
-                  <p class="card-text text-muted small" style="line-height: 1.7;">
-                    <?php echo substr(strip_tags($article['content']), 0, 110); ?>...
+                  <p class="card-text text-muted small" style="line-height: 1.7; font-size: clamp(0.8rem, 1.5vw, 0.875rem);">
+                    <?php echo substr(strip_tags($article['content']), 0, 100); ?>...
                   </p>
                   <a href="javascript:void(0)" 
-                     class="news-card-link small mt-3 d-inline-flex align-items-center btn-read-more"
+                     class="news-card-link small mt-3 btn-read-more"
                      data-bs-toggle="modal" 
                      data-bs-target="#modalArticle"
                      data-title="<?php echo htmlspecialchars($article['title']); ?>"
@@ -1372,17 +1599,17 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       </section>
 
       <!-- Modal Article Detail -->
-      <div class="modal fade" id="modalArticle" tabindex="-1" aria-hidden="true">
+      <div class="modal fade" id="modalArticle" tabindex="-1" aria-labelledby="modalArticleLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title fw-bold">Detail Artikel</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              <h5 class="modal-title fw-bold" id="modalArticleLabel">Detail Artikel</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-0">
-              <img id="article-img" src="" class="w-100" style="max-height: 350px; object-fit: cover;" alt="Article">
+              <img id="article-img" src="" class="w-100" style="max-height: 320px; object-fit: cover;" alt="Article">
               <div class="p-4">
-                <div class="d-flex gap-3 mb-3">
+                <div class="d-flex gap-3 mb-3 flex-wrap">
                   <span class="badge bg-light text-primary px-3 py-2 rounded-pill">
                     <i class="fas fa-tag me-1"></i><span id="article-category"></span>
                   </span>
@@ -1391,7 +1618,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                   </span>
                 </div>
                 <h3 id="article-title" class="fw-bold text-dark mb-4"></h3>
-                <div id="article-content" class="text-secondary" style="line-height: 1.9; text-align: justify;"></div>
+                <div id="article-content" class="text-secondary" style="line-height: 1.8; text-align: justify;"></div>
               </div>
             </div>
             <div class="modal-footer border-0">
@@ -1406,7 +1633,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         <div class="container">
           <div class="row justify-content-center mb-5">
             <div class="col-lg-8 text-center">
-              <p class="section-subtitle mb-2">
+              <p class="section-subtitle">
                 <i class="fas fa-handshake me-2"></i>MITRA KAMI
               </p>
               <h2 class="section-title">Mitra Asuransi & Perusahaan</h2>
@@ -1422,7 +1649,8 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                      target="<?php echo !empty($partner['url']) ? '_blank' : '_self'; ?>" 
                      class="d-block p-3"
                      data-bs-toggle="tooltip" 
-                     title="<?php echo htmlspecialchars($partner['name']); ?>">
+                     title="<?php echo htmlspecialchars($partner['name']); ?>"
+                     rel="noopener noreferrer">
                     <img src="public/<?php echo htmlspecialchars($partner['logo_path']); ?>" 
                          class="img-fluid partner-logo" 
                          alt="<?php echo htmlspecialchars($partner['name']); ?>"
@@ -1447,13 +1675,13 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                     background-position:top left;margin-top:-3.125rem;background-size:auto;"></div>
         
         <div class="container position-relative">
-          <div class="row py-7 py-lg-8 g-4">
+          <div class="row py-5 py-lg-7 g-4">
             <div class="col-12 col-sm-6 col-lg-3 mb-4">
               <a class="text-decoration-none d-block mb-4" href="#">
                 <?php 
                 $footer_logo = !empty($settings['footer_logo_path']) ? $settings['footer_logo_path'] : 'assets/img/gallery/footer-logo.png';
                 ?>
-                <img src="public/<?php echo htmlspecialchars($footer_logo); ?>" height="65" alt="JHC Logo" />
+                <img src="public/<?php echo htmlspecialchars($footer_logo); ?>" height="60" alt="JHC Logo" />
               </a>
               <div class="mb-4">
                 <p class="text-light mb-2">
@@ -1468,22 +1696,22 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
               </div>
               <div class="d-flex gap-3">
                 <a class="text-decoration-none d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-circle" 
-                   href="#!" style="width: 42px; height: 42px;">
+                   href="#!" style="width: 40px; height: 40px;" aria-label="Facebook">
                   <i class="fab fa-facebook-f text-white"></i>
                 </a>
                 <a class="text-decoration-none d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-circle" 
-                   href="#!" style="width: 42px; height: 42px;">
+                   href="#!" style="width: 40px; height: 40px;" aria-label="Twitter">
                   <i class="fab fa-twitter text-white"></i>
                 </a>
                 <a class="text-decoration-none d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-circle" 
-                   href="#!" style="width: 42px; height: 42px;">
+                   href="#!" style="width: 40px; height: 40px;" aria-label="Instagram">
                   <i class="fab fa-instagram text-white"></i>
                 </a>
               </div>
             </div>
             
             <div class="col-6 col-sm-6 col-lg-2 mb-3">
-              <h5 class="lh-lg fw-bold text-light mb-4">Departments</h5>
+              <h5 class="lh-lg fw-bold text-light mb-4">Layanan</h5>
               <ul class="list-unstyled">
                 <?php foreach(array_slice($layanan_data, 0, 5) as $d): ?>
                   <li class="lh-lg">
@@ -1497,7 +1725,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             </div>
             
             <div class="col-6 col-sm-6 col-lg-2 mb-3">
-              <h5 class="lh-lg fw-bold text-light mb-4">Useful Links</h5>
+              <h5 class="lh-lg fw-bold text-light mb-4">Link Cepat</h5>
               <ul class="list-unstyled">
                 <li class="lh-lg">
                   <a class="text-200 text-decoration-none" href="#departments">
@@ -1528,13 +1756,14 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             </div>
 
             <div class="col-12 col-sm-6 col-lg-4 mb-3">
-              <h5 class="lh-lg fw-bold text-light mb-4">Our Location</h5>
-              <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-lg" style="max-height: 280px;">
+              <h5 class="lh-lg fw-bold text-light mb-4">Lokasi Kami</h5>
+              <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-lg" style="max-height: 260px;">
                 <iframe 
                   src="https://maps.google.com/maps?q=RS+Jantung+Tasikmalaya+JHC&t=&z=15&ie=UTF8&iwloc=&output=embed" 
                   style="border:0;" 
                   allowfullscreen="" 
-                  loading="lazy">
+                  loading="lazy"
+                  title="Lokasi RS JHC Tasikmalaya">
                 </iframe>
               </div>
             </div>
@@ -1555,39 +1784,41 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     </main>
 
     <!-- ==================== SCRIPTS ==================== -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>   
-     <script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
       document.addEventListener('DOMContentLoaded', function() {
-    // Inisialisasi Carousel Bootstrap
-        const myCarousel = document.getElementById('heroCarousel');
+        // Navbar scroll effect
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', function() {
+          if (window.scrollY > 50) {
+            navbar.classList.add('navbar-scrolled');
+          } else {
+            navbar.classList.remove('navbar-scrolled');
+          }
+        });
+
+        // Collapse navbar on link click (mobile)
+        const navLinks = document.querySelectorAll('.nav-link');
+        const navbarCollapse = document.querySelector('.navbar-collapse');
         
-        // Jika Anda ingin kontrol manual lewat JS (opsional)
-        const carousel = new bootstrap.Carousel(myCarousel, {
-            interval: 10000, // Kecepatan ganti slide (5 detik)
+        navLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            if (navbarCollapse.classList.contains('show')) {
+              bootstrap.Collapse.getInstance(navbarCollapse).hide();
+            }
+          });
+        });
+
+        // Carousel initialization
+        const heroCarousel = document.getElementById('heroCarousel');
+        if (heroCarousel) {
+          const carousel = new bootstrap.Carousel(heroCarousel, {
+            interval: 7000,
             ride: 'carousel',
-            pause: false // Slide tetap jalan meskipun mouse di atas banner
-        });
-
-        // EVENT: Setiap kali slide akan berpindah
-        myCarousel.addEventListener('slide.bs.carousel', function (e) {
-            // Ambil elemen teks di slide yang akan muncul
-            const nextSlide = e.relatedTarget;
-            const animatedElements = nextSlide.querySelectorAll('.animate__animated');
-
-            // Reset animasi agar bisa terulang kembali
-            animatedElements.forEach(el => {
-                el.style.visibility = 'hidden';
-                const animationClass = Array.from(el.classList).find(cl => cl.startsWith('animate__fade'));
-                el.classList.remove(animationClass);
-                
-                // Trigger reflow untuk restart animasi
-                void el.offsetWidth; 
-                
-                el.style.visibility = 'visible';
-                el.classList.add(animationClass);
-            });
-        });
-    
+            pause: false,
+            wrap: true
+          });
+        }
 
         // Detail Layanan Modal
         const detailButtons = document.querySelectorAll('.btn-buka-detail');
@@ -1675,7 +1906,8 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
               e.preventDefault();
               const target = document.querySelector(href);
               if (target) {
-                const offsetTop = target.offsetTop - 90;
+                const navbarHeight = navbar.offsetHeight;
+                const offsetTop = target.offsetTop - navbarHeight - 20;
                 window.scrollTo({
                   top: offsetTop,
                   behavior: 'smooth'
@@ -1684,6 +1916,31 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             }
           });
         });
+
+        // Lazy loading for images
+        if ('IntersectionObserver' in window) {
+          const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const img = entry.target;
+                if (img.dataset.src) {
+                  img.src = img.dataset.src;
+                  img.removeAttribute('data-src');
+                  observer.unobserve(img);
+                }
+              }
+            });
+          });
+
+          document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+          });
+        }
+      });
+
+      // Page load performance
+      window.addEventListener('load', function() {
+        document.body.classList.add('loaded');
       });
     </script>
   </body>
