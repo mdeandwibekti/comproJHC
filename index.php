@@ -80,10 +80,20 @@ if ($banner_result) { while($row = $banner_result->fetch_assoc()) { $banners_dat
 $layanan_data = [];
 $poliklinik_data = [];
 
-$dept_result = $mysqli->query("SELECT id, name, category, icon_path, icon_hover_path FROM departments ORDER BY display_order ASC");
+// Tambahkan kolom description, special_skills, dan additional_info ke dalam SELECT
+$sql = "SELECT id, name, category, icon_path, icon_hover_path, description, special_skills, additional_info 
+        FROM departments 
+        ORDER BY display_order ASC";
+
+$dept_result = $mysqli->query($sql);
 
 if ($dept_result) { 
     while($row = $dept_result->fetch_assoc()) { 
+        // Bersihkan data dari kemungkinan karakter aneh atau null
+        $row['description'] = $row['description'] ?? '';
+        $row['special_skills'] = $row['special_skills'] ?? '';
+        $row['additional_info'] = $row['additional_info'] ?? '';
+        
         if ($row['category'] == 'Layanan') {
             $layanan_data[] = $row;
         } else {
@@ -91,6 +101,7 @@ if ($dept_result) {
         }
     } 
 }
+
 $doctors_data = [];
 $doc_result = $mysqli->query("SELECT * FROM doctors WHERE is_featured = 1 ORDER BY id ASC");
 if ($doc_result) { while($row = $doc_result->fetch_assoc()) { $doctors_data[] = $row; } }
@@ -731,34 +742,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             }
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const detailButtons = document.querySelectorAll('.btn-detail-dokter');
-            
-            detailButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    // 1. Ambil data dari atribut tombol detail
-                    const name = this.getAttribute('data-name');
-                    const specialty = this.getAttribute('data-specialty');
-                    const desc = this.getAttribute('data-desc') || "Tidak ada deskripsi tersedia.";
-                    const img = this.getAttribute('data-img');
-                    
-                    // 2. Masukkan ke dalam elemen modal (Teks & Gambar)
-                    document.getElementById('mdl-name').innerText = name;
-                    document.getElementById('mdl-specialty').innerText = specialty;
-                    document.getElementById('mdl-desc').innerText = desc;
-                    document.getElementById('mdl-img').src = img;
-
-                    // 3. Update Link Booking secara dinamis
-                    // encodeURIComponent digunakan agar karakter spesial (spasi, titik) aman di URL
-                    const bookingUrl = `booking.php?dokter=${encodeURIComponent(name)}&spesialis=${encodeURIComponent(specialty)}`;
-                    
-                    const bookBtn = document.getElementById('mdl-book-link');
-                    if(bookBtn) {
-                        bookBtn.href = bookingUrl;
-                    }
-                });
-            });
-        });
         </script>
       
 
@@ -771,88 +754,59 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                     </div>
                 </div>
 
-                <?php if (!empty($layanan_data)): ?>
-                <div class="mb-5">
-                    <div class="row mb-4">
-                        <div class="col-12 text-center">
-                            <h4 class="fw-bold text-primary"><i class="fas fa-star me-2"></i>LAYANAN UNGGULAN</h4>
-                            <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--accent-color); opacity: 1;">
-                        </div>
-                    </div>
-
-                    <div class="row gx-4 gy-4 justify-content-center">
-                        <?php foreach($layanan_data as $layanan): ?>
-                        <div class="col-6 col-md-4 col-lg-3 mb-2">
-                            <div class="card h-100 border-0 shadow hover-lift text-center p-4" style="background: #f8faff;">
+                <?php 
+                // Helper function untuk looping agar kode lebih bersih
+                function render_cards($data_list, $is_layanan = true) {
+                    foreach($data_list as $item): ?>
+                        <div class="col-6 col-md-4 col-lg-3 mb-4">
+                            <div class="card h-100 border-0 shadow-sm hover-lift text-center p-4" style="<?= $is_layanan ? 'background: #f8faff;' : '' ?>">
                                 <div class="card-body d-flex flex-column align-items-center">
                                     <div class="mb-4 d-flex justify-content-center align-items-center bg-white rounded-circle shadow-sm" style="width: 80px; height: 80px;">
-                                        <?php if(!empty($layanan['icon_path'])): ?>
-                                            <img src="public/<?php echo htmlspecialchars($layanan['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="..." />
+                                        <?php if(!empty($item['icon_path'])): ?>
+                                            <img src="public/<?= htmlspecialchars($item['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="icon" />
                                         <?php else: ?>
-                                            <i class="fas fa-star fa-2x text-warning"></i>
+                                            <i class="fas <?= $is_layanan ? 'fa-star text-warning' : 'fa-heartbeat text-primary' ?> fa-2x"></i>
                                         <?php endif; ?>
                                     </div>
-                                    <h5 class="card-title fw-bold text-dark mb-3"><?php echo htmlspecialchars($layanan['name']); ?></h5>
-                                    <div class="mt-auto">
-                                        <a href="javascript:void(0)" 
+                                    <h5 class="card-title fw-bold text-dark mb-3"><?= htmlspecialchars($item['name']); ?></h5>
+                                    
+                                    <a href="javascript:void(0)" 
                                         class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm btn-buka-detail" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#modalLayanan" 
-                                        data-name="<?php echo htmlspecialchars($layanan['name']); ?>" 
-                                        data-desc="<?php echo htmlspecialchars($layanan['description'] ?? ''); ?>" 
-                                        data-expertise="<?php echo htmlspecialchars($layanan['expertise'] ?? ''); ?>" 
-                                        data-education="<?php echo htmlspecialchars($layanan['education'] ?? ''); ?>" 
-                                        data-icon="public/<?php echo htmlspecialchars($layanan['icon_path']); ?>">
+                                        data-name="<?= htmlspecialchars($item['name']); ?>" 
+                                        data-desc="<?= htmlspecialchars($item['description']); ?>" 
+                                        data-expertise="<?= htmlspecialchars($item['special_skills']); ?>" 
+                                        data-info="<?= htmlspecialchars($item['additional_info']); ?>" 
+                                        data-icon="public/<?= htmlspecialchars($item['icon_path']); ?>">
                                         <i class="fas fa-calendar-check me-1"></i> Detail Layanan
-                                        </a>
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                        <?php endforeach; ?>
+                    <?php endforeach; 
+                } ?>
+
+                <?php if (!empty($layanan_data)): ?>
+                    <div class="mb-5">
+                        <div class="text-center mb-4">
+                            <h4 class="fw-bold text-primary text-uppercase"><i class="fas fa-star me-2"></i>Layanan Unggulan</h4>
+                            <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--accent-color); opacity: 1;">
+                        </div>
+                        <div class="row gx-4 justify-content-center">
+                            <?php render_cards($layanan_data, true); ?>
+                        </div>
                     </div>
-                </div>
                 <?php endif; ?>
 
                 <?php if (!empty($poliklinik_data)): ?>
                     <div class="mt-5">
-                        <div class="row mb-4 pt-4">
-                            <div class="col-12 text-center">
-                                <h4 class="fw-bold text-secondary"><i class="fas fa-stethoscope me-2"></i>POLIKLINIK SPESIALIS</h4>
-                                <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--secondary-color); opacity: 1;">
-                            </div>
+                        <div class="text-center mb-4 pt-4">
+                            <h4 class="fw-bold text-secondary text-uppercase"><i class="fas fa-stethoscope me-2"></i>Poliklinik Spesialis</h4>
+                            <hr style="width: 50px; margin: 10px auto; border-top: 3px solid var(--secondary-color); opacity: 1;">
                         </div>
-
-                        <div class="row gx-4 gy-4 justify-content-center">
-                            <?php foreach($poliklinik_data as $poli): ?>
-                            <div class="col-6 col-md-4 col-lg-3 mb-2">
-                                <div class="card h-100 border-0 shadow-sm hover-lift text-center p-4">
-                                    <div class="card-body d-flex flex-column align-items-center">
-                                        <div class="mb-4 d-flex justify-content-center align-items-center bg-light rounded-circle shadow-sm" style="width: 80px; height: 80px;">
-                                            <?php if(!empty($poli['icon_path'])): ?>
-                                                <img src="public/<?php echo htmlspecialchars($poli['icon_path']); ?>" style="width: 45px; height: 45px; object-fit: contain;" alt="..." />
-                                            <?php else: ?>
-                                                <i class="fas fa-heartbeat fa-2x text-primary"></i>
-                                            <?php endif; ?>
-                                        </div>
-                                        <h5 class="card-title fw-bold text-dark mb-3"><?php echo htmlspecialchars($poli['name']); ?></h5>
-                                        <div class="mt-auto">
-                                            <a href="javascript:void(0)" 
-                                            class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm btn-buka-detail" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#modalLayanan" 
-                                            data-name="<?php echo htmlspecialchars($poli['name']); ?>" 
-                                            data-desc="<?php echo htmlspecialchars($poli['description'] ?? ''); ?>" 
-                                            data-expertise="<?php echo htmlspecialchars($poli['expertise'] ?? ''); ?>" 
-                                            data-education="<?php echo htmlspecialchars($poli['education'] ?? ''); ?>" 
-                                            data-icon="public/<?php echo htmlspecialchars($poli['icon_path'] ?? ''); ?>">
-                                            <i class="fas fa-calendar-check me-1"></i> Detail Layanan
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php endforeach; ?>
+                        <div class="row gx-4 justify-content-center">
+                            <?php render_cards($poliklinik_data, false); ?>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -880,60 +834,65 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                                 <p id="m-desc" class="text-muted"></p>
                             </div>
                             <div class="col-md-6">
-                                <div class="p-3 bg-light rounded-3 h-100">
+                                <div class="p-3 bg-light rounded-3 h-100 border-start border-warning border-4">
                                     <label class="fw-bold text-dark small text-uppercase mb-2 d-block"><i class="fas fa-star me-2 text-warning"></i>Keahlian Khusus</label>
-                                    <div id="m-expertise" class="text-muted" style="white-space: pre-line;"></div>
+                                    <div id="m-expertise" class="text-muted small" style="white-space: pre-line;"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="p-3 bg-light rounded-3 h-100">
-                                    <label class="fw-bold text-dark small text-uppercase mb-2 d-block"><i class="fas fa-graduation-cap me-2 text-danger"></i>Informasi Tambahan</label>
-                                    <div id="m-education" class="text-muted" style="white-space: pre-line;"></div>
+                                <div class="p-3 rounded-3 bg-light h-100 border-start border-primary border-4">
+                                    <label class="fw-bold text-primary small text-uppercase mb-2 d-block"><i class="fas fa-clock me-2"></i>Informasi Layanan</label>
+                                    <div id="m-info" class="text-muted small" style="white-space: pre-line;"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer border-0 p-4">
-                        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
-                        <a href="booking.php" class="btn btn-primary rounded-pill px-4">Buat Janji Temu</a>
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+                        <a href="booking.php" class="btn btn-primary rounded-pill px-4 shadow-sm">Buat Janji Temu</a>
                     </div>
                 </div>
             </div>
         </div>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Delegasi event klik untuk semua tombol detail
-                document.addEventListener('click', function (e) {
-                    const btn = e.target.closest('.btn-buka-detail');
+        document.addEventListener('DOMContentLoaded', function() {
+            const detailButtons = document.querySelectorAll('.btn-buka-detail');
+            
+            detailButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 1. Ambil data dari atribut tombol (data-...)
+                    const name = this.getAttribute('data-name');
+                    const desc = this.getAttribute('data-desc');
+                    const expertise = this.getAttribute('data-expertise');
+                    const info = this.getAttribute('data-info');
+                    const icon = this.getAttribute('data-icon');
+
+                    // 2. Masukkan ke elemen modal sesuai ID yang ada di HTML
                     
-                    if (btn) {
-                        // Berhenti jika tombol tidak memiliki target modal
-                        const modalId = btn.getAttribute('data-bs-target');
-                        const modalElement = document.querySelector(modalId);
-                        
-                        if (modalElement) {
-                            // 1. Ambil data dari atribut tombol
-                            const name = btn.getAttribute('data-name');
-                            const desc = btn.getAttribute('data-desc') || 'Deskripsi tidak tersedia.';
-                            const expertise = btn.getAttribute('data-expertise') || 'Informasi belum tersedia.';
-                            const education = btn.getAttribute('data-education') || 'Informasi belum tersedia.';
-                            const icon = btn.getAttribute('data-icon');
-
-                            // 2. Isi konten Modal
-                            document.getElementById('m-name').innerText = name;
-                            document.getElementById('m-desc').innerText = desc;
-                            document.getElementById('m-expertise').innerText = expertise;
-                            document.getElementById('m-education').innerText = education;
-                            document.getElementById('m-icon').src = icon;
-
-                            // 3. Jalankan Modal secara manual
-                            const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-                            modal.show();
-                        }
+                    // Nama & Deskripsi
+                    document.getElementById('m-name').innerText = name;
+                    document.getElementById('m-desc').innerText = (desc && desc.trim() !== '') ? desc : 'Deskripsi belum tersedia.';
+                    
+                    // Ikon
+                    const iconImg = document.getElementById('m-icon');
+                    if(icon && icon.trim() !== 'public/') {
+                        iconImg.src = icon;
+                        iconImg.style.display = 'block';
+                    } else {
+                        iconImg.src = 'assets/img/default-icon.png'; // Sediakan ikon default jika perlu
                     }
+
+                    // Keahlian Khusus (Gunakan innerText agar white-space: pre-line bekerja)
+                    const expertiseBox = document.getElementById('m-expertise');
+                    expertiseBox.innerText = (expertise && expertise.trim() !== '') ? expertise : 'Informasi keahlian belum tersedia.';
+
+                    // Informasi Layanan / Jadwal
+                    const infoBox = document.getElementById('m-info');
+                    infoBox.innerText = (info && info.trim() !== '') ? info : 'Jadwal atau informasi tambahan belum tersedia.';
                 });
             });
+        });
         </script>
 
       <?php if (!empty($mcu_packages_data)): ?>

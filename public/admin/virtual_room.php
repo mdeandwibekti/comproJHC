@@ -164,18 +164,12 @@ require_once 'layout/header.php';
                                value="<?= htmlspecialchars($data['video_url'] ?? ''); ?>" 
                                placeholder="https://www.youtube.com/embed/XXXXX">
                         
-<<<<<<< HEAD
-                        <div class="instruction-box mt-3">
-                            <p class="mb-1 small fw-bold">Penting:</p>
-                            <small class="text-muted">Link harus mengandung <b>/embed/</b> agar video muncul.</small>
-=======
                         <div class="instruction-box mt-3 shadow-sm">
                             <p class="mb-2 small fw-bold text-dark"><i class="fas fa-lightbulb me-1 text-warning"></i> Panduan Link Video:</p>
                             <ul class="mb-0 small text-muted ps-3">
                                 <li>Pastikan link mengandung kata <strong>/embed/</strong>.</li>
                                   <li>Contoh: <code>https://www.youtube.com/embed/XXXXX</code></li></code>.</li>
                             </ul>
->>>>>>> ab9426a9713eff8e47ef0d104eb64cbc11274bcd
                         </div>
                     </div>
 
