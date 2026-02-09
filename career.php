@@ -157,8 +157,8 @@ if ($mysqli->connect_error) {
         <a class="navbar-brand text-dark fw-bold" href="index.php" style="text-decoration: none;">
             <i class="fas fa-hospital text-danger me-2"></i> RS JHC
         </a>
-        <a href="index.php" class="btn btn-dashboard btn-sm">
-            <i class="fas fa-th-large me-2"></i>Dashboard
+        <a href="index.php" class="btn btn-link text-decoration-none mb-4 text-muted fw-bold">
+            <i class="fas fa-arrow-left me-2"></i> Kembali ke dashboard
         </a>
     </div>
 </div>

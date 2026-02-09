@@ -1321,54 +1321,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     </section>
 
 
-      <section class="py-5" id="career-cta" style="background: linear-gradient(135deg, #1B71A1 0%, #2D3B48 100%);">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-lg-6 mb-5 mb-lg-0 text-white">
-                        <h2 class="fw-bold display-6 mb-3">Ingin Bergabung Bersama Kami?</h2>
-                        <p class="lead mb-4 opacity-75">JHC Tasikmalaya terus berkembang dan mencari talenta terbaik untuk memberikan layanan medis yang unggul bagi masyarakat.</p>
-                        
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="bg-white text-primary rounded-circle p-3 me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div>
-                                <h6 class="mb-0 text-white">Lingkungan Kerja Profesional</h6>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="bg-white text-primary rounded-circle p-3 me-3" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div>
-                                <h6 class="mb-0 text-white">Pengembangan Karir Berkelanjutan</h6>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-6">
-                        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-                            <div class="card-body p-5 text-center">
-                                <div class="mb-4">
-                                    <i class="fas fa-briefcase fa-4x text-primary opacity-25"></i>
-                                </div>
-                                <h3 class="fw-bold text-dark mb-3">Lihat Peluang Karir</h3>
-                                <p class="text-muted mb-4">Temukan posisi yang sesuai dengan keahlian Anda dan kirimkan lamaran secara online melalui sistem kami.</p>
-                                
-                                <a href="./career.php" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow-sm w-100">
-                                    Cari Lowongan Kerja <i class="fas fa-arrow-right ms-2"></i>
-                                </a>
-                                
-                                <div class="mt-4 pt-3 border-top">
-                                    <small class="text-muted">Butuh bantuan? <a href="mailto:info@jhc-tasikmalaya.com" class="text-primary text-decoration-none">Hubungi HRD kami</a></small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
       <footer class="py-0 bg-primary">
         <div class="bg-holder opacity-25" style="background-image:url(public/assets/img/gallery/dot-bg.png);background-position:top left;margin-top:-3.125rem;background-size:auto;"></div>
         
