@@ -4,6 +4,9 @@ require_once 'config.php';
 if ($mysqli->connect_error) {
     die("Koneksi gagal: " . $mysqli->connect_error);
 }
+
+// Set timezone agar perhitungan deadline akurat
+date_default_timezone_set('Asia/Jakarta');
 ?>
 
 <!DOCTYPE html>
@@ -11,7 +14,7 @@ if ($mysqli->connect_error) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karir - JHC Tasikmalaya</title>
+    <title>Karir - RS JHC Tasikmalaya</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -28,23 +31,21 @@ if ($mysqli->connect_error) {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Tombol Kembali ke Dashboard Floating */
         .top-nav-admin {
             background: white;
-            padding: 10px 0;
+            padding: 15px 0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
-        /* Hero Header */
         .career-header {
             background: var(--jhc-gradient);
             color: white;
             padding: 80px 0;
             border-radius: 0 0 50px 50px;
-            margin-bottom: -50px;
+            margin-bottom: 20px;
             box-shadow: 0 10px 30px rgba(138, 48, 51, 0.2);
         }
 
@@ -52,26 +53,27 @@ if ($mysqli->connect_error) {
         .card-job {
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             border-radius: 20px;
-            border: 1px solid rgba(0,0,0,0.03) !important;
-            overflow: hidden;
-            background: #ffffff;
+            border: none !important;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .card-job:hover {
-            transform: translateY(-12px);
+            transform: translateY(-10px);
             box-shadow: 0 20px 40px rgba(138, 48, 51, 0.1) !important;
         }
 
         .job-icon {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             background: rgba(138, 48, 51, 0.05);
             color: var(--jhc-red-dark);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 18px;
-            font-size: 1.5rem;
+            border-radius: 15px;
+            font-size: 1.4rem;
             margin-bottom: 20px;
             transition: 0.3s;
         }
@@ -84,7 +86,7 @@ if ($mysqli->connect_error) {
         .job-title {
             color: #2d3436;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             font-size: 1.25rem;
         }
 
@@ -92,45 +94,28 @@ if ($mysqli->connect_error) {
             color: #636e72;
             font-size: 0.9rem;
             line-height: 1.6;
-            margin-bottom: 25px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 20px;
         }
 
-        /* Button Styling */
         .btn-apply {
             background: var(--jhc-gradient);
             border: none;
-            color: white;
+            color: white !important;
             padding: 12px 25px;
             border-radius: 50px;
             font-weight: 600;
-            font-size: 0.9rem;
             transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
             text-decoration: none;
+            text-align: center;
         }
 
         .btn-apply:hover {
-            color: white;
             opacity: 0.9;
             box-shadow: 0 8px 15px rgba(138, 48, 51, 0.3);
-        }
-
-        .btn-dashboard {
-            background: white;
-            color: var(--jhc-red-dark);
-            border: 2px solid var(--jhc-red-dark);
-            font-weight: 700;
-            border-radius: 50px;
-            padding: 8px 20px;
-            transition: 0.3s;
-        }
-
-        .btn-dashboard:hover {
-            background: var(--jhc-red-dark);
-            color: white;
         }
 
         .badge-status {
@@ -138,10 +123,25 @@ if ($mysqli->connect_error) {
             color: #1e7e34;
             padding: 5px 12px;
             border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .deadline-tag {
             font-size: 0.75rem;
             font-weight: 600;
-            display: inline-block;
-            margin-bottom: 10px;
+        }
+
+        .urgent-flash {
+            color: #d63031;
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
 
         .empty-state {
@@ -157,42 +157,81 @@ if ($mysqli->connect_error) {
         <a class="navbar-brand text-dark fw-bold" href="index.php" style="text-decoration: none;">
             <i class="fas fa-hospital text-danger me-2"></i> RS JHC
         </a>
-        <a href="index.php" class="btn btn-link text-decoration-none mb-4 text-muted fw-bold">
-            <i class="fas fa-arrow-left me-2"></i> Kembali ke dashboard
+        <a href="index.php" class="btn btn-sm btn-outline-secondary rounded-pill px-4 fw-bold">
+            <i class="fas fa-arrow-left me-2"></i> Beranda
         </a>
     </div>
 </div>
 
 <div class="career-header text-center">
     <div class="container">
-        <h1 class="fw-bold display-5 mb-3">Bergabung Bersama JHC</h1>
-        <p class="lead opacity-75">Wujudkan dedikasi medis Anda bersama tim profesional RS JHC Tasikmalaya.</p>
+        <h1 class="fw-bold display-5 mb-3">Karir & Rekrutmen</h1>
+        <p class="lead opacity-75">Bergabunglah bersama tim medis profesional kami di RS JHC Tasikmalaya.</p>
     </div>
 </div>
 
-<div class="container pb-5" style="margin-top: 20px;">
-    <div class="row g-4 justify-content-center">
+<div class="container pb-5">
+    <div class="row g-4">
         <?php
-        $jobs = $mysqli->query("SELECT * FROM careers WHERE status = 'Open' ORDER BY id DESC");
+        // Mengambil data lowongan yang statusnya Open
+        $jobs = $mysqli->query("SELECT * FROM careers WHERE status = 'open' ORDER BY id DESC");
 
         if ($jobs && $jobs->num_rows > 0):
             while($job = $jobs->fetch_assoc()):
+                
+                // --- LOGIKA DEADLINE ---
+                $has_deadline = !empty($job['deadline']) && $job['deadline'] != '0000-00-00';
+                $is_expired = false;
+                $is_urgent = false;
+                $deadline_label = "";
+
+                if ($has_deadline) {
+                    $deadline_date = strtotime($job['deadline']);
+                    $today = strtotime(date('Y-m-d'));
+                    $days_diff = ($deadline_date - $today) / 86400;
+
+                    if ($days_diff < 0) {
+                        $is_expired = true; // Tanggal sudah lewat
+                    } elseif ($days_diff <= 7) {
+                        $is_urgent = true;
+                        $deadline_label = "Sisa " . round($days_diff) . " Hari Lagi!";
+                    } else {
+                        $deadline_label = "Batas: " . date('d M Y', $deadline_date);
+                    }
+                }
+
+                // Jangan tampilkan jika sudah kedaluwarsa
+                if ($is_expired) continue;
         ?>
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100 shadow-sm border-0 card-job">
-                <div class="card-body p-4 p-xl-5">
-                    <span class="badge-status"><i class="fas fa-check-circle me-1"></i> Rekrutmen Aktif</span>
-                    <div class="job-icon">
-                        <i class="fas fa-stethoscope"></i>
+            <div class="card shadow-sm card-job">
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge-status">Open</span>
+                        <?php if ($has_deadline): ?>
+                            <span class="deadline-tag <?= $is_urgent ? 'urgent-flash fw-bold' : 'text-muted' ?>">
+                                <i class="far fa-clock me-1"></i> <?= $deadline_label ?>
+                            </span>
+                        <?php endif; ?>
                     </div>
+
+                    <div class="job-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+
                     <h5 class="job-title"><?= htmlspecialchars($job['job_title']); ?></h5>
                     
-                    <p class="job-desc">
-                        <?= nl2br(substr(htmlspecialchars($job['description']), 0, 150)); ?>...
+                    <div class="d-flex align-items-center mb-3 text-muted small">
+                        <span class="me-3"><i class="fas fa-map-marker-alt me-1"></i> <?= htmlspecialchars($job['location']); ?></span>
+                        <span><i class="far fa-calendar-alt me-1"></i> <?= date('d/m/y', strtotime($job['post_date'])); ?></span>
+                    </div>
+
+                    <p class="job-desc flex-grow-1">
+                        <?= nl2br(htmlspecialchars($job['description'])); ?>
                     </p>
-                    
-                    <a href="apply.php?job_id=<?= $job['id']; ?>" class="btn btn-apply">
-                        Lamar Posisi Ini <i class="fas fa-arrow-right ms-2"></i>
+
+                    <a href="apply.php?job_id=<?= $job['id']; ?>" class="btn btn-apply w-100">
+                        Lamar Sekarang <i class="fas fa-paper-plane ms-2"></i>
                     </a>
                 </div>
             </div>
@@ -201,17 +240,16 @@ if ($mysqli->connect_error) {
             endwhile; 
         else: 
         ?>
-        <div class="col-md-8 text-center empty-state">
-            <div class="mb-4">
-                <i class="fas fa-briefcase fa-5x opacity-25"></i>
-            </div>
-            <h4 class="text-dark fw-bold">Belum Ada Lowongan Aktif</h4>
-            <p>Terima kasih atas minat Anda. Saat ini kami belum membuka posisi baru.<br>Silakan cek kembali di lain waktu.</p>
-            <a href="index.php" class="btn btn-outline-danger rounded-pill px-4 mt-3">Kembali ke Beranda</a>
+        <div class="col-12 text-center empty-state">
+            <i class="fas fa-search fa-4x mb-4 opacity-25"></i>
+            <h4 class="text-dark fw-bold">Belum Ada Lowongan Tersedia</h4>
+            <p>Saat ini belum ada posisi yang dibuka. Silakan cek kembali secara berkala.</p>
         </div>
         <?php endif; ?>
     </div>
 </div>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -18,8 +18,8 @@ if (isset($_GET['delete'])) {
     }
 }
 
-// Ambil data karir dari database
-$sql = "SELECT id, job_title, location, status, post_date FROM careers ORDER BY post_date DESC";
+// Ambil data karir dari database (Tambahkan kolom deadline)
+$sql = "SELECT id, job_title, location, status, post_date, deadline FROM careers ORDER BY post_date DESC";
 $result = $mysqli->query($sql);
 
 require_once 'layout/header.php';
@@ -84,7 +84,18 @@ require_once 'layout/header.php';
         border-bottom: 1px solid #f1f1f1;
         font-size: 0.9rem;
     }
-    
+
+    .deadline-badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    }
+    .deadline-safe { background-color: #f0f7ff; color: #0056b3; }
+    .deadline-urgent { background-color: #fff4e6; color: #d97706; }
+    .deadline-passed { background-color: #f4f4f5; color: #71717a; text-decoration: line-through; }
+        
     .status-badge { padding: 6px 14px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; }
     .status-open { background-color: #e6f4ea; color: #1e7e34; }
     .status-closed { background-color: #fceaea; color: #c53030; }
@@ -123,8 +134,7 @@ require_once 'layout/header.php';
                         <th class="ps-4">Judul Pekerjaan</th>
                         <th>Lokasi</th>
                         <th class="text-center">Status</th>
-                        <th>Tanggal Posting</th>
-                        <th class="text-center">Aksi</th>
+                        <th>Batas Pendaftaran</th> <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -133,27 +143,44 @@ require_once 'layout/header.php';
                             <tr>
                                 <td class="ps-4">
                                     <div class="fw-bold text-dark"><?= htmlspecialchars($row['job_title']); ?></div>
+                                    <small class="text-muted">Diposting: <?= date('d/m/Y', strtotime($row['post_date'])); ?></small>
                                 </td>
                                 <td><i class="fas fa-map-marker-alt me-1 text-muted"></i> <?= htmlspecialchars($row['location'] ?? 'Tasikmalaya'); ?></td>
                                 <td class="text-center">
                                     <?php 
                                     $statusClass = (strtolower($row['status']) == 'open') ? 'status-open' : 'status-closed';
-                                    $statusLabel = strtoupper($row['status'] ?? 'OPEN');
                                     ?>
-                                    <span class="status-badge <?= $statusClass; ?>"><?= $statusLabel; ?></span>
+                                    <span class="status-badge <?= $statusClass; ?>"><?= strtoupper($row['status']); ?></span>
                                 </td>
-                                <td class="text-muted small">
-                                    <i class="far fa-calendar-alt me-1"></i> <?= date('d M Y', strtotime($row['post_date'])); ?>
+                                
+                                <td>
+                                    <?php 
+                                    if ($row['deadline']) {
+                                        $deadline_ts = strtotime($row['deadline']);
+                                        $today_ts = strtotime(date('Y-m-d'));
+                                        $diff = ($deadline_ts - $today_ts) / (60 * 60 * 24); // Hitung selisih hari
+
+                                        if ($diff < 0) {
+                                            $d_class = "deadline-passed";
+                                            $d_text = "Berakhir";
+                                        } elseif ($diff <= 7) {
+                                            $d_class = "deadline-urgent";
+                                            $d_text = $diff . " Hari Lagi";
+                                        } else {
+                                            $d_class = "deadline-safe";
+                                            $d_text = date('d M Y', $deadline_ts);
+                                        }
+                                        echo '<span class="deadline-badge ' . $d_class . '"><i class="far fa-clock me-1"></i>' . $d_text . '</span>';
+                                    } else {
+                                        echo '<span class="text-muted small">-</span>';
+                                    }
+                                    ?>
                                 </td>
+
                                 <td class="text-center pe-4">
                                     <div class="d-flex gap-2 justify-content-center">
-                                        <a href="career_edit.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-outline-primary btn-action-jhc" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="careers.php?delete=<?= $row['id']; ?>" class="btn btn-sm btn-outline-danger btn-action-jhc" 
-                                           onclick="return confirm('Apakah Anda yakin ingin menghapus lowongan ini?');" title="Hapus">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </a>
+                                        <a href="career_edit.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-outline-primary btn-action-jhc"><i class="fas fa-edit"></i></a>
+                                        <a href="careers.php?delete=<?= $row['id']; ?>" class="btn btn-sm btn-outline-danger btn-action-jhc" onclick="return confirm('Hapus?');"><i class="fas fa-trash-alt"></i></a>
                                     </div>
                                 </td>
                             </tr>

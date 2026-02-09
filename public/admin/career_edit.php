@@ -1,64 +1,48 @@
 <?php
 require_once "../../config.php";
 
-// --- LOGIKA PEMROSESAN POST (Harus SEBELUM require layout/header.php) ---
-$job_title = $description = $location = $end_date = "";
+// --- LOGIKA PEMROSESAN POST ---
+$job_title = $description = $location = $deadline = ""; // Ubah end_date jadi deadline
 $status = 'open';
-$job_title_err = $description_err = $location_err = $end_date_err = "";
+$job_title_err = $description_err = $location_err = ""; 
 $id = isset($_POST['id']) ? trim($_POST['id']) : (isset($_GET['id']) ? trim($_GET['id']) : null);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validasi Judul Pekerjaan
-    if (empty(trim($_POST["job_title"]))) {
-        $job_title_err = "Silakan masukkan judul pekerjaan.";
-    } else {
-        $job_title = trim($_POST["job_title"]);
-    }
-
-    // Validasi Deskripsi
-    if (empty(trim($_POST["description"]))) {
-        $description_err = "Silakan masukkan deskripsi pekerjaan.";
-    } else {
-        $description = trim($_POST["description"]);
-    }
-
-    // Validasi Lokasi
-    if (empty(trim($_POST["location"]))) {
-        $location_err = "Silakan masukkan lokasi.";
-    } else {
-        $location = trim($_POST["location"]);
-    }
+    // Validasi Judul, Deskripsi, Lokasi (Tetap sama)
+    if (empty(trim($_POST["job_title"]))) { $job_title_err = "Silakan masukkan judul."; } else { $job_title = trim($_POST["job_title"]); }
+    if (empty(trim($_POST["description"]))) { $description_err = "Silakan masukkan deskripsi."; } else { $description = trim($_POST["description"]); }
+    if (empty(trim($_POST["location"]))) { $location_err = "Silakan masukkan lokasi."; } else { $location = trim($_POST["location"]); }
 
     $status = trim($_POST["status"]);
-    $end_date = !empty($_POST["end_date"]) ? trim($_POST["end_date"]) : NULL;
+    // Ambil nilai deadline dari input 'deadline'
+    $deadline = !empty($_POST["deadline"]) ? trim($_POST["deadline"]) : NULL;
 
-    // Cek jika tidak ada error sebelum simpan ke database
     if (empty($job_title_err) && empty($description_err) && empty($location_err)) {
         if (empty($id)) {
-            $sql = "INSERT INTO careers (job_title, description, location, status, end_date) VALUES (?, ?, ?, ?, ?)";
+            // Gunakan kolom 'deadline' sesuai database
+            $sql = "INSERT INTO careers (job_title, description, location, status, deadline) VALUES (?, ?, ?, ?, ?)";
         } else {
-            $sql = "UPDATE careers SET job_title = ?, description = ?, location = ?, status = ?, end_date = ? WHERE id = ?";
+            $sql = "UPDATE careers SET job_title = ?, description = ?, location = ?, status = ?, deadline = ? WHERE id = ?";
         }
 
         if ($stmt = $mysqli->prepare($sql)) {
             if (empty($id)) {
-                $stmt->bind_param("sssss", $job_title, $description, $location, $status, $end_date);
+                $stmt->bind_param("sssss", $job_title, $description, $location, $status, $deadline);
             } else {
-                $stmt->bind_param("sssssi", $job_title, $description, $location, $status, $end_date, $id);
+                $stmt->bind_param("sssssi", $job_title, $description, $location, $status, $deadline, $id);
             }
             
             if ($stmt->execute()) {
                 header("location: careers.php?saved=true");
                 exit();
             } else {
-                $db_err = "Terjadi kesalahan sistem: " . $stmt->error;
+                $db_err = "Gagal menyimpan: " . $stmt->error;
             }
-            $stmt->close();
         }
     }
 } elseif (isset($_GET['id'])) {
-    // Ambil data untuk mode EDIT
-    $sql = "SELECT job_title, description, location, status, end_date FROM careers WHERE id = ?";
+    // Mode EDIT: Ambil data deadline
+    $sql = "SELECT job_title, description, location, status, deadline FROM careers WHERE id = ?";
     if ($stmt = $mysqli->prepare($sql)) {
         $stmt->bind_param("i", $id);
         if ($stmt->execute()) {
@@ -69,10 +53,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $description = $row['description'];
                 $location = $row['location'];
                 $status = $row['status'];
-                $end_date = $row['end_date'];
+                $deadline = $row['deadline']; // Pastikan ini 'deadline'
             }
         }
-        $stmt->close();
     }
 }
 
@@ -163,13 +146,13 @@ $page_title_form = empty($id) ? "Tambah Lowongan Baru" : "Edit Lowongan Pekerjaa
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label text-muted text-uppercase small">Batas Akhir Pendaftaran (Opsional)</label>
+                    <label class="form-label text-muted text-uppercase small">Batas Akhir Pendaftaran (Deadline)</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light border-end-0"><i class="far fa-calendar-alt text-muted"></i></span>
-                        <input type="date" name="end_date" class="form-control form-control-lg border-start-0 <?php echo (!empty($end_date_err)) ? 'is-invalid' : ''; ?>" 
-                               value="<?php echo htmlspecialchars($end_date); ?>">
-                        <div class="invalid-feedback"><?php echo $end_date_err; ?></div>
+                        <input type="date" name="deadline" class="form-control form-control-lg border-start-0" 
+                            value="<?php echo htmlspecialchars($deadline); ?>">
                     </div>
+                    <div class="form-text small text-info"><i class="fas fa-info-circle me-1"></i> Biarkan kosong jika tidak ada batas waktu.</div>
                 </div>
 
                 <div class="col-12">
