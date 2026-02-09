@@ -317,10 +317,11 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         /* ==================== HERO SECTION ==================== */
         .hero-section {
             width: 100%;
-            height: 100vh; /* Tinggi penuh layar */
+            height: 100vh;
             margin: 0;
             padding: 0;
             overflow: hidden;
+            position: relative;
         }
 
         .bg-holder {
@@ -340,7 +341,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Gelapkan background agar teks putih terbaca */
+            background: linear-gradient(135deg, rgba(0, 40, 85, 0.7), rgba(138, 48, 51, 0.7));
             z-index: 1;
         }
 
@@ -351,48 +352,22 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
         .hero-badge {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: white !important;
             padding: 12px 28px;
             border-radius: 50px;
             font-weight: 700;
             font-size: 0.9rem;
             margin-bottom: 24px;
-            animation: slideInDown 0.8s ease;
+            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        #banner-title {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            text-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
-            transition: opacity 0.5s ease-in-out;
-            opacity: 1;
-
-        }
-
-        #banner-description {
-            font-size: clamp(1rem, 2vw, 1.3rem);
-            line-height: 1.7;
-            margin-bottom: 35px;
-            text-shadow: 1px 2px 6px rgba(0, 0, 0, 0.4);
-            transition: opacity 0.5s ease-in-out;
-            opacity: 1;
-
+        .carousel-item h1,
+        .carousel-item p {
+            color: white !important;
+            text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.6);
         }
 
         .btn-hero {
@@ -402,6 +377,10 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             border-radius: 50px;
             transition: var(--transition-smooth);
             border: 2px solid white;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            color: white !important;
+            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .btn-hero:hover {
@@ -409,6 +388,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
             background: white;
             color: var(--jhc-navy) !important;
+            text-shadow: none;
         }
 
         /* ==================== SECTIONS ==================== */
@@ -462,7 +442,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             overflow: hidden;
             height: 100%;
         }
-        
 
         .service-card:hover {
             border: 2px solid rgba(138, 48, 51, 0.15);
@@ -507,7 +486,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         .doctor-card:hover img {
             transform: scale(1.12);
         }
-        
 
         /* ==================== MODALS ==================== */
         .modal-content {
@@ -519,13 +497,18 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
         .modal-header {
             background: var(--jhc-gradient);
-            color: white;
+            color: white !important;
             border: none;
             padding: 20px 30px;
         }
 
+        .modal-title {
+            color: white !important;
+        }
+
         .btn-close {
             filter: brightness(0) invert(1);
+            opacity: 1;
         }
 
         .modal-body {
@@ -533,18 +516,16 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
 
         /* ==================== PARTNERS ==================== */
-        /* Menghapus efek abu-abu pada logo partner */
         .partner-logo {
-            filter: none !important;      /* Menghapus filter grayscale */
+            filter: none !important;      
             -webkit-filter: none !important; 
-            opacity: 1 !important;        /* Memastikan logo tidak transparan */
+            opacity: 1 !important;        
             transition: transform 0.3s ease;
-            max-height: 80px;             /* Menjaga ukuran tetap rapi */
+            max-height: 80px;             
             width: auto;
             object-fit: contain;
         }
 
-        /* Opsional: Memberikan efek sedikit membesar saat kursor di atasnya */
         .partner-logo:hover {
             transform: scale(1.1);
         }
@@ -555,13 +536,25 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             top: 18px;
             left: 18px;
             background: var(--jhc-gradient);
-            color: white;
+            color: white !important;
             padding: 10px 20px;
             border-radius: 50px;
             font-size: 0.75rem;
             font-weight: 700;
             z-index: 10;
             box-shadow: var(--shadow-md);
+        }
+
+        .news-card-link {
+            color: var(--jhc-blue);
+            font-weight: 700;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+
+        .news-card-link:hover {
+            color: var(--jhc-red);
+            transform: translateX(5px);
         }
 
         /* ==================== FOOTER ==================== */
@@ -593,6 +586,36 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             background: white;
             box-shadow: 0 0 0 5px rgba(27, 113, 161, 0.1);
             border-color: var(--jhc-blue);
+        }
+
+        /* ==================== CAROUSEL CONTROLS ==================== */
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 50px;
+            height: 50px;
+            background: rgba(200, 16, 46, 0.8);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.8;
+        }
+
+        .carousel-control-prev:hover,
+        .carousel-control-next:hover {
+            opacity: 1;
+            background: rgba(200, 16, 46, 1);
+        }
+
+        .carousel-indicators button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.6);
+            border: 2px solid white;
+        }
+
+        .carousel-indicators button.active {
+            background-color: var(--jhc-red);
         }
 
         /* ==================== RESPONSIVE ==================== */
@@ -749,53 +772,56 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
       <!-- ==================== HERO SECTION ==================== -->
       <section class="hero-section p-0" id="home">
-            <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                    <?php foreach ($banners_data as $index => $banner): ?>
-                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $index; ?>" class="<?= $index === 0 ? 'active' : ''; ?>"></button>
-                    <?php endforeach; ?>
-                </div>
+        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+          <div class="carousel-indicators">
+            <?php foreach ($banners_data as $index => $banner): ?>
+              <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $index; ?>" class="<?= $index === 0 ? 'active' : ''; ?>"></button>
+            <?php endforeach; ?>
+          </div>
 
-                <div class="carousel-inner">
-                    <?php if (!empty($banners_data)): ?>
-                        <?php foreach ($banners_data as $index => $banner): ?>
-                            <div class="carousel-item <?= $index === 0 ? 'active' : ''; ?>">
-                                <div class="bg-holder" style="background-image:url(public/<?= htmlspecialchars($banner['image_path']); ?>);"></div>
-                                <div class="banner-overlay"></div>
-                                
-                                <div class="container hero-content">
-                                    <div class="row align-items-center min-vh-100">
-                                        <div class="col-lg-8 text-center text-lg-start">
-                                            <span class="hero-badge animate__animated animate__fadeInDown">
-                                                <i class="fas fa-heart-pulse me-2"></i>Selamat Datang di JHC Tasikmalaya
-                                            </span>
-                                            <h1 class="text-white fw-bold display-3 animate__animated animate__fadeInLeft">
-                                                <?= htmlspecialchars($banner['title']); ?>
-                                            </h1>
-                                            <p class="text-white lead fs-4 animate__animated animate__fadeInLeft animate__delay-1s">
-                                                <?= htmlspecialchars($banner['description']); ?>
-                                            </p>
-                                            <div class="mt-4 animate__animated animate__fadeInUp animate__delay-2s">
-                                                <a class="btn btn-light btn-lg px-5 py-3 rounded-pill text-primary fw-bold" href="#departments">
-                                                    <i class="fas fa-hospital me-2"></i>Layanan Kami
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+          <div class="carousel-inner">
+            <?php if (!empty($banners_data)): ?>
+              <?php foreach ($banners_data as $index => $banner): ?>
+                <div class="carousel-item <?= $index === 0 ? 'active' : ''; ?>">
+                  <div class="bg-holder" style="background-image:url(public/<?= htmlspecialchars($banner['image_path']); ?>);"></div>
+                  <div class="banner-overlay"></div>
+                  
+                  <div class="container hero-content">
+                    <div class="row align-items-center min-vh-100">
+                      <div class="col-lg-9 text-center text-lg-start">
+                        <span class="hero-badge">
+                          <i class="fas fa-heart-pulse me-2"></i>Selamat Datang di JHC Tasikmalaya
+                        </span>
+                        <h1 class="text-white fw-bold display-3 mb-4">
+                          <?= htmlspecialchars($banner['title']); ?>
+                        </h1>
+                        <p class="text-white lead fs-4 mb-5">
+                          <?= htmlspecialchars($banner['description']); ?>
+                        </p>
+                        <div class="d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap">
+                          <a class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold" href="#departments" style="color: var(--jhc-navy) !important;">
+                            <i class="fas fa-hospital me-2"></i>Layanan Kami
+                          </a>
+                          <a class="btn btn-hero btn-lg px-5 py-3" href="#doctors">
+                            <i class="fas fa-user-doctor me-2"></i>Lihat Dokter
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </div>
 
-                <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                </button>
-            </div>
-        </section>
+          <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+      </section>
 
       <!-- ==================== SERVICES SECTION ==================== -->
       <section class="py-5 bg-white" id="departments">
@@ -880,8 +906,9 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       <div class="modal fade" id="modalLayanan" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
           <div class="modal-content">
-            <div class="modal-header bg-dark"> <h5 class="modal-title fw-bold text-white">Detail Layanan</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-header">
+              <h5 class="modal-title fw-bold">Detail Layanan</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
               <div class="text-center mb-4">
@@ -1204,8 +1231,9 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       <div class="modal fade" id="modalDetailDokter" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-            <div class="modal-header bg-dark"> <h5 class="modal-title fw-bold text-white">Profil Dokter</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-header">
+              <h5 class="modal-title fw-bold">Profil Dokter</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4 text-center">
               <img id="mdl-img" src="" class="rounded-circle mb-4 border border-4 border-light shadow-lg" 
@@ -1309,8 +1337,16 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                   <p class="card-text text-muted small" style="line-height: 1.7;">
                     <?php echo substr(strip_tags($article['content']), 0, 110); ?>...
                   </p>
-                  <a href="#!" class="text-primary fw-bold text-decoration-none small mt-3 d-inline-block">
-                    Baca Selengkapnya <i class="fas fa-arrow-right ms-1"></i>
+                  <a href="javascript:void(0)" 
+                     class="news-card-link small mt-3 d-inline-flex align-items-center btn-read-more"
+                     data-bs-toggle="modal" 
+                     data-bs-target="#modalArticle"
+                     data-title="<?php echo htmlspecialchars($article['title']); ?>"
+                     data-category="<?php echo htmlspecialchars($article['category']); ?>"
+                     data-date="<?php echo date('d M Y', strtotime($article['post_date'])); ?>"
+                     data-image="public/<?php echo htmlspecialchars($article['image_path']); ?>"
+                     data-content="<?php echo htmlspecialchars($article['content']); ?>">
+                    Baca Selengkapnya <i class="fas fa-arrow-right ms-2"></i>
                   </a>
                 </div>
               </div>
@@ -1319,6 +1355,36 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           </div>
         </div>
       </section>
+
+      <!-- Modal Article Detail -->
+      <div class="modal fade" id="modalArticle" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title fw-bold">Detail Artikel</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+              <img id="article-img" src="" class="w-100" style="max-height: 350px; object-fit: cover;" alt="Article">
+              <div class="p-4">
+                <div class="d-flex gap-3 mb-3">
+                  <span class="badge bg-light text-primary px-3 py-2 rounded-pill">
+                    <i class="fas fa-tag me-1"></i><span id="article-category"></span>
+                  </span>
+                  <span class="badge bg-light text-dark px-3 py-2 rounded-pill">
+                    <i class="fas fa-calendar-alt me-1"></i><span id="article-date"></span>
+                  </span>
+                </div>
+                <h3 id="article-title" class="fw-bold text-dark mb-4"></h3>
+                <div id="article-content" class="text-secondary" style="line-height: 1.9; text-align: justify;"></div>
+              </div>
+            </div>
+            <div class="modal-footer border-0">
+              <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- ==================== PARTNERS ==================== -->
       <section class="py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);" id="partners">
@@ -1477,51 +1543,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     <script src="public/vendors/bootstrap/bootstrap.min.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-        const bannerItems = document.querySelectorAll('.banner-item');
-        const titleElement = document.getElementById('banner-title');
-        const descElement = document.getElementById('banner-description');
-        const bgHolder = document.querySelector('.bg-holder'); // Target background
-        
-        let currentIndex = 0;
-
-        function updateBanner() {
-            if (bannerItems.length === 0) return;
-
-            const item = bannerItems[currentIndex];
-            const title = item.getAttribute('data-title');
-            const desc = item.getAttribute('data-description');
-            const image = item.getAttribute('data-image'); // Ambil path gambar
-
-            // Efek transisi halus
-            titleElement.style.opacity = 0;
-            descElement.style.opacity = 0;
-            bgHolder.style.opacity = 0.8; // Sedikit pudar saat ganti
-
-            setTimeout(() => {
-                // Update Teks
-                titleElement.innerText = title;
-                descElement.innerText = desc;
-
-                // Update Gambar Background
-                bgHolder.style.backgroundImage = `url('${image}')`;
-
-                // Kembalikan Opacity
-                titleElement.style.opacity = 1;
-                descElement.style.opacity = 1;
-                bgHolder.style.opacity = 1;
-            }, 500);
-
-            currentIndex = (currentIndex + 1) % bannerItems.length;
-        }
-
-            updateBanner();
-            setInterval(updateBanner, 5000); // Ganti setiap 5 detik
-
-
-            // Set interval perpindahan (misal: setiap 5 detik)
-            setInterval(updateBanner, 5000);
-
-
         // Navbar Scroll Effect
         window.addEventListener('scroll', function() {
           const navbar = document.querySelector('.navbar');
@@ -1585,6 +1606,25 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           });
         });
 
+        // Article Detail Modal
+        const readMoreButtons = document.querySelectorAll('.btn-read-more');
+        
+        readMoreButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            const title = this.getAttribute('data-title');
+            const category = this.getAttribute('data-category');
+            const date = this.getAttribute('data-date');
+            const image = this.getAttribute('data-image');
+            const content = this.getAttribute('data-content');
+            
+            document.getElementById('article-title').innerText = title;
+            document.getElementById('article-category').innerText = category;
+            document.getElementById('article-date').innerText = date;
+            document.getElementById('article-img').src = image;
+            document.getElementById('article-content').innerHTML = content.replace(/\n/g, '<br>');
+          });
+        });
+
         // Initialize Tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -1608,7 +1648,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             }
           });
         });
-    });
+      });
     </script>
   </body>
 </html>
