@@ -380,7 +380,9 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             line-height: 1.2;
             margin-bottom: 20px;
             text-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
-            transition: opacity 0.5s ease;
+            transition: opacity 0.5s ease-in-out;
+            opacity: 1;
+
         }
 
         #banner-description {
@@ -388,12 +390,9 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             line-height: 1.7;
             margin-bottom: 35px;
             text-shadow: 1px 2px 6px rgba(0, 0, 0, 0.4);
-            transition: opacity 0.5s ease;
-        }
-
-        #banner-title, #banner-description {
             transition: opacity 0.5s ease-in-out;
             opacity: 1;
+
         }
 
         .btn-hero {
@@ -463,6 +462,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             overflow: hidden;
             height: 100%;
         }
+        
 
         .service-card:hover {
             border: 2px solid rgba(138, 48, 51, 0.15);
@@ -880,9 +880,8 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       <div class="modal fade" id="modalLayanan" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
           <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title fw-bold">Detail Layanan</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header bg-dark"> <h5 class="modal-title fw-bold text-white">Detail Layanan</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
               <div class="text-center mb-4">
