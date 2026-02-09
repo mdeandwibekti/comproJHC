@@ -135,7 +135,7 @@ require_once 'layout/header.php';
                             <p class="mb-2 small fw-bold text-dark"><i class="fas fa-lightbulb me-1 text-warning"></i> Panduan Link Video:</p>
                             <ul class="mb-0 small text-muted ps-3">
                                 <li>Pastikan link mengandung kata <strong>/embed/</strong>.</li>
-                                <li>Cara mendapatkan: Klik "Share" di YouTube > Pilih "Embed" > Ambil bagian link di dalam tanda petik <code>src="..."</code>.</li>
+                                  <li>Contoh: <code>https://www.youtube.com/embed/XXXXX</code></li></code>.</li>
                             </ul>
                         </div>
                     </div>
