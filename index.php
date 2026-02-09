@@ -322,6 +322,15 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             padding: 0;
             overflow: hidden;
             position: relative;
+            background-color: #000; /* Fallback warna hitam saat gambar loading */
+        }
+
+        /* Memastikan Carousel mengikuti tinggi layar */
+        #heroCarousel, 
+        .carousel-inner, 
+        .carousel-item {
+            height: 100vh;
+            width: 100%;
         }
 
         .bg-holder {
@@ -331,64 +340,82 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             width: 100%;
             height: 100%;
             background-size: cover;
-            background-position: center;
+            background-position: center center; /* Pastikan center agar gambar tidak terpotong aneh */
             background-repeat: no-repeat;
+            transition: transform 0.8s ease-in-out; /* Efek zoom halus saat slide */
         }
 
+        /* Overlay diperbaiki agar teks lebih mudah dibaca */
         .banner-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(0, 40, 85, 0.7), rgba(138, 48, 51, 0.7));
+            /* Menggunakan linear gradient dari kiri ke kanan agar teks di kiri lebih menonjol */
+            background: linear-gradient(90deg, rgba(0, 20, 40, 0.8) 0%, rgba(138, 48, 51, 0.4) 100%);
             z-index: 1;
         }
 
         .hero-content {
             position: relative;
             z-index: 2;
+            /* Memastikan konten berada di tengah secara vertikal sudah ditangani min-vh-100 di HTML */
         }
 
         .hero-badge {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.4);
+            display: inline-flex; /* Gunakan flex agar ikon & teks sejajar sempurna */
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: white !important;
-            padding: 12px 28px;
+            padding: 10px 24px;
             border-radius: 50px;
-            font-weight: 700;
-            font-size: 0.9rem;
+            font-weight: 600;
+            font-size: 0.85rem;
             margin-bottom: 24px;
-            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .carousel-item h1,
-        .carousel-item p {
+        /* Memperbaiki Tipografi Slider */
+        .carousel-item h1 {
+            font-size: clamp(2rem, 6vw, 4rem); /* Responsif otomatis */
             color: white !important;
-            text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.6);
+            text-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5);
+            line-height: 1.1;
         }
 
+        .carousel-item p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            max-width: 700px; /* Batasi lebar agar tidak terlalu panjang ke samping */
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Perbaikan Tombol Hero */
         .btn-hero {
-            padding: 16px 36px;
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 32px;
             font-size: 1rem;
             font-weight: 700;
             border-radius: 50px;
-            transition: var(--transition-smooth);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 2px solid white;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
             color: white !important;
-            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
         }
 
         .btn-hero:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
             background: white;
-            color: var(--jhc-navy) !important;
-            text-shadow: none;
+            color: #8a3033 !important; /* Gunakan warna merah JHC saat hover */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         /* ==================== SECTIONS ==================== */
@@ -397,27 +424,18 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             display: inline-block;
             font-size: clamp(1.8rem, 4vw, 2.8rem);
             font-weight: 800;
-            color: var(--jhc-navy);
+            color: #002855; /* Pastikan variabel navy didefinisikan atau gunakan hex */
             margin-bottom: 20px;
         }
 
         .section-title::after {
             content: '';
             display: block;
-            width: 90px;
-            height: 5px;
-            background: var(--jhc-gradient);
-            margin: 18px auto 0;
-            border-radius: 3px;
-        }
-
-        .section-subtitle {
-            font-size: 0.95rem;
-            font-weight: 700;
-            letter-spacing: 2.5px;
-            text-transform: uppercase;
-            color: var(--jhc-red);
-            margin-bottom: 12px;
+            width: 60px; /* Ukuran lebih proporsional */
+            height: 4px;
+            background: linear-gradient(90deg, #8a3033, #bd3030);
+            margin: 15px auto 0;
+            border-radius: 10px;
         }
 
         /* ==================== CARDS ==================== */
@@ -772,56 +790,53 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
       <!-- ==================== HERO SECTION ==================== -->
       <section class="hero-section p-0" id="home">
-        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
-          <div class="carousel-indicators">
-            <?php foreach ($banners_data as $index => $banner): ?>
-              <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $index; ?>" class="<?= $index === 0 ? 'active' : ''; ?>"></button>
-            <?php endforeach; ?>
-          </div>
+        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <?php foreach ($banners_data as $index => $banner): ?>
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $index; ?>" class="<?= $index === 0 ? 'active' : ''; ?>"></button>
+                <?php endforeach; ?>
+            </div>
 
-          <div class="carousel-inner">
-            <?php if (!empty($banners_data)): ?>
-              <?php foreach ($banners_data as $index => $banner): ?>
-                <div class="carousel-item <?= $index === 0 ? 'active' : ''; ?>">
-                  <div class="bg-holder" style="background-image:url(public/<?= htmlspecialchars($banner['image_path']); ?>);"></div>
-                  <div class="banner-overlay"></div>
-                  
-                  <div class="container hero-content">
-                    <div class="row align-items-center min-vh-100">
-                      <div class="col-lg-9 text-center text-lg-start">
-                        <span class="hero-badge">
-                          <i class="fas fa-heart-pulse me-2"></i>Selamat Datang di JHC Tasikmalaya
-                        </span>
-                        <h1 class="text-white fw-bold display-3 mb-4">
-                          <?= htmlspecialchars($banner['title']); ?>
-                        </h1>
-                        <p class="text-white lead fs-4 mb-5">
-                          <?= htmlspecialchars($banner['description']); ?>
-                        </p>
-                        <div class="d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap">
-                          <a class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold" href="#departments" style="color: var(--jhc-navy) !important;">
-                            <i class="fas fa-hospital me-2"></i>Layanan Kami
-                          </a>
-                          <a class="btn btn-hero btn-lg px-5 py-3" href="#doctors">
-                            <i class="fas fa-user-doctor me-2"></i>Lihat Dokter
-                          </a>
+            <div class="carousel-inner">
+                <?php if (!empty($banners_data)): ?>
+                    <?php foreach ($banners_data as $index => $banner): ?>
+                        <div class="carousel-item <?= $index === 0 ? 'active' : ''; ?>">
+                            <div class="bg-holder" style="background-image:url(public/<?= htmlspecialchars($banner['image_path']); ?>);"></div>
+                            <div class="banner-overlay"></div>
+                            
+                            <div class="container hero-content">
+                                <div class="row align-items-center min-vh-100">
+                                    <div class="col-lg-8 text-center text-lg-start">
+                                        <span class="hero-badge animate__animated animate__fadeInDown">
+                                            <i class="fas fa-heart-pulse me-2"></i>Selamat Datang di JHC Tasikmalaya
+                                        </span>
+                                        <h1 class="text-white fw-bold display-3 animate__animated animate__fadeInLeft">
+                                            <?= htmlspecialchars($banner['title']); ?>
+                                        </h1>
+                                        <p class="text-white lead fs-4 animate__animated animate__fadeInLeft animate__delay-1s">
+                                            <?= htmlspecialchars($banner['description']); ?>
+                                        </p>
+                                        <div class="mt-4 animate__animated animate__fadeInUp animate__delay-2s">
+                                            <a class="btn btn-light btn-lg px-5 py-3 rounded-pill text-primary fw-bold" href="#departments">
+                                                <i class="fas fa-hospital me-2"></i>Layanan Kami
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <?php endforeach; ?>
-            <?php endif; ?>
-          </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
 
-          <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          </button>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            </button>
         </div>
-      </section>
+    </section>
 
       <!-- ==================== SERVICES SECTION ==================== -->
       <section class="py-5 bg-white" id="departments">
@@ -1540,18 +1555,39 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     </main>
 
     <!-- ==================== SCRIPTS ==================== -->
-    <script src="public/vendors/bootstrap/bootstrap.min.js"></script>
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>   
+     <script>
       document.addEventListener('DOMContentLoaded', function() {
-        // Navbar Scroll Effect
-        window.addEventListener('scroll', function() {
-          const navbar = document.querySelector('.navbar');
-          if (window.scrollY > 100) {
-            navbar.classList.add('navbar-scrolled');
-          } else {
-            navbar.classList.remove('navbar-scrolled');
-          }
+    // Inisialisasi Carousel Bootstrap
+        const myCarousel = document.getElementById('heroCarousel');
+        
+        // Jika Anda ingin kontrol manual lewat JS (opsional)
+        const carousel = new bootstrap.Carousel(myCarousel, {
+            interval: 5000, // Kecepatan ganti slide (5 detik)
+            ride: 'carousel',
+            pause: false // Slide tetap jalan meskipun mouse di atas banner
         });
+
+        // EVENT: Setiap kali slide akan berpindah
+        myCarousel.addEventListener('slide.bs.carousel', function (e) {
+            // Ambil elemen teks di slide yang akan muncul
+            const nextSlide = e.relatedTarget;
+            const animatedElements = nextSlide.querySelectorAll('.animate__animated');
+
+            // Reset animasi agar bisa terulang kembali
+            animatedElements.forEach(el => {
+                el.style.visibility = 'hidden';
+                const animationClass = Array.from(el.classList).find(cl => cl.startsWith('animate__fade'));
+                el.classList.remove(animationClass);
+                
+                // Trigger reflow untuk restart animasi
+                void el.offsetWidth; 
+                
+                el.style.visibility = 'visible';
+                el.classList.add(animationClass);
+            });
+        });
+    
 
         // Detail Layanan Modal
         const detailButtons = document.querySelectorAll('.btn-buka-detail');
