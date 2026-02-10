@@ -1563,7 +1563,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         
         // Jika Anda ingin kontrol manual lewat JS (opsional)
         const carousel = new bootstrap.Carousel(myCarousel, {
-            interval: 10000, // Kecepatan ganti slide (5 detik)
+            interval: 10000, // Kecepatan ganti slide (10 detik)
             ride: 'carousel',
             pause: false // Slide tetap jalan meskipun mouse di atas banner
         });

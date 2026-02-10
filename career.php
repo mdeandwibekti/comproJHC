@@ -91,7 +91,7 @@ date_default_timezone_set('Asia/Jakarta');
         }
 
         .job-desc {
-            color: #636e72;
+            color: #636a72;
             font-size: 0.9rem;
             line-height: 1.6;
             display: -webkit-box;
