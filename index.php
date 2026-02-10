@@ -1833,125 +1833,147 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       </div>
       <?php endif; ?>
 
-      <!-- ==================== FOOTER ==================== -->
-      <footer class="py-0 bg-primary position-relative">
-        <div class="bg-holder opacity-25" 
-             style="background-image:url(public/assets/img/gallery/dot-bg.png);
-                    background-position:top left;margin-top:-3.125rem;background-size:auto;"></div>
-        
-        <div class="container position-relative">
-          <div class="row py-5 py-lg-7 g-4">
-            <div class="col-12 col-sm-6 col-lg-3 mb-4">
-              <a class="text-decoration-none d-block mb-4" href="#">
-                <?php 
-                $footer_logo = !empty($settings['footer_logo_path']) ? $settings['footer_logo_path'] : 'assets/img/gallery/footer-logo.png';
-                ?>
-                <img src="public/<?php echo htmlspecialchars($footer_logo); ?>" height="60" alt="JHC Logo" />
-              </a>
-              <div class="mb-4">
-                <p class="text-light mb-2">
-                  <i class="fas fa-phone me-2"></i>EU: +49 9999 0000
-                </p>
-                <p class="text-light mb-2">
-                  <i class="fas fa-phone me-2"></i>US: +00 4444 0000
-                </p>
-                <p class="text-light mb-0">
-                  <i class="fas fa-envelope me-2"></i>info@jhc.com
-                </p>
-              </div>
-              <div class="d-flex gap-3">
-                <a class="text-decoration-none d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-circle" 
-                   href="#!" style="width: 40px; height: 40px;" aria-label="Facebook">
-                  <i class="fab fa-facebook-f text-white"></i>
+<footer class="py-0 bg-primary position-relative overflow-hidden">
+    <div class="bg-holder opacity-10" 
+         style="background-image:url(public/assets/img/gallery/dot-bg.png);
+                background-position:top left; margin-top:-3rem; background-size:auto;"></div>
+    
+    <div class="container position-relative">
+        <div class="row py-6 g-5">
+            <div class="col-12 col-md-6 col-lg-4">
+                <a class="text-decoration-none d-inline-block mb-4" href="index.php">
+                    <?php 
+                    $footer_logo = !empty($settings['footer_logo_path']) ? $settings['footer_logo_path'] : 'assets/img/gallery/footer-logo.png';
+                    ?>
+                    <img src="public/<?php echo htmlspecialchars($footer_logo); ?>" height="65" alt="JHC Logo" class="footer-logo-main" />
                 </a>
-                <a class="text-decoration-none d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-circle" 
-                   href="#!" style="width: 40px; height: 40px;" aria-label="Twitter">
-                  <i class="fab fa-twitter text-white"></i>
-                </a>
-                <a class="text-decoration-none d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-circle" 
-                   href="#!" style="width: 40px; height: 40px;" aria-label="Instagram">
-                  <i class="fab fa-instagram text-white"></i>
-                </a>
-              </div>
+                <p class="text-light opacity-75 mb-4 small" style="line-height: 1.8;">
+                    Memberikan pelayanan kesehatan jantung terpadu dengan standar kualitas tinggi dan tenaga medis profesional untuk masyarakat Tasikmalaya dan sekitarnya.
+                </p>
+                <div class="contact-info">
+                    <div class="d-flex align-items-center text-light mb-3">
+                        <div class="icon-circle me-3"><i class="fas fa-ambulance"></i></div>
+                        <div><small class="d-block opacity-50">Gawat Darurat (IGD)</small><strong>(0265) 3172112</strong></div>
+                    </div>
+                    <div class="d-flex align-items-center text-light mb-3">
+                        <div class="icon-circle me-3"><i class="fab fa-whatsapp"></i></div>
+                        <div><small class="d-block opacity-50">WhatsApp RS</small><strong>+62 851-7500-0375</strong></div>
+                    </div>
+                    <div class="d-flex align-items-center text-light mb-4">
+                        <div class="icon-circle me-3"><i class="fas fa-envelope"></i></div>
+                        <div><small class="d-block opacity-50">Email Resmi</small><strong>jhc.tasik@gmail.com</strong></div>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <a href="https://facebook.com/rsjantungjakarta" class="social-btn" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://instagram.com/rsjantungtasikmalaya" class="social-btn" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://youtube.com/@RSJantungJakartaJHC" class="social-btn" target="_blank"><i class="fab fa-youtube"></i></a>
+                </div>
             </div>
             
-            <div class="col-6 col-sm-6 col-lg-2 mb-3">
-              <h5 class="lh-lg fw-bold text-light mb-4">Layanan</h5>
-              <ul class="list-unstyled">
-                <?php foreach(array_slice($layanan_data, 0, 5) as $d): ?>
-                  <li class="lh-lg">
-                    <a class="text-200 text-decoration-none" href="#departments">
-                      <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>
-                      <?php echo htmlspecialchars($d['name']); ?>
-                    </a>
-                  </li>
-                <?php endforeach; ?>
-              </ul>
+            <div class="col-6 col-lg-2">
+                <h5 class="fw-bold text-white mb-4 border-start border-3 border-danger ps-3">Informasi</h5>
+                <ul class="list-unstyled footer-nav">
+                    <li><a href="index.php#about_us" class="footer-link">Tentang Kami</a></li>
+                    <li><a href="index.php#doctors" class="footer-link">Tim Dokter</a></li>
+                    <li><a href="index.php#facilities" class="footer-link">Fasilitas</a></li>
+                    <li><a href="index.php#news" class="footer-link">Berita & Artikel</a></li>
+                    <li><a href="career.php" class="footer-link">Karir / Lowongan</a></li>
+                </ul>
             </div>
             
-            <div class="col-6 col-sm-6 col-lg-2 mb-3">
-              <h5 class="lh-lg fw-bold text-light mb-4">Link Cepat</h5>
-              <ul class="list-unstyled">
-                <li class="lh-lg">
-                  <a class="text-200 text-decoration-none footer-link" href="index.php#departments">
-                    <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>Layanan
-                  </a>
-                </li>
-                <li class="lh-lg">
-                  <a class="text-200 text-decoration-none footer-link" href="index.php#virtual_room">
-                    <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>Virtual Room
-                  </a>
-                </li>
-                <li class="lh-lg">
-                  <a class="text-200 text-decoration-none footer-link" href="index.php#about_us">
-                    <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>Tentang Kami
-                  </a>
-                </li>
-                <li class="lh-lg">
-                  <a class="text-200 text-decoration-none footer-link" href="index.php#doctors">
-                    <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>Dokter Kami
-                  </a>
-                </li>
-                <li class="lh-lg">
-                  <a class="text-200 text-decoration-none footer-link" href="index.php#facilities">
-                    <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>Fasilitas
-                  </a>
-                </li>
-                <li class="lh-lg">
-                  <a class="text-200 text-decoration-none footer-link" href="index.php#news">
-                    <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>Berita
-                  </a>
-                </li>
-              </ul>
+            <div class="col-6 col-lg-2">
+                <h5 class="fw-bold text-white mb-4 border-start border-3 border-danger ps-3">Layanan</h5>
+                <ul class="list-unstyled footer-nav">
+                    <?php foreach(array_slice($layanan_data, 0, 5) as $d): ?>
+                        <li><a href="index.php#departments" class="footer-link"><?php echo htmlspecialchars($d['name']); ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
 
-            <div class="col-12 col-sm-6 col-lg-4 mb-3">
-              <h5 class="lh-lg fw-bold text-light mb-4">Lokasi Kami</h5>
-              <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-lg" style="max-height: 260px;">
-                <iframe 
-                  src="https://maps.google.com/maps?q=RS+Jantung+Tasikmalaya+JHC&t=&z=15&ie=UTF8&iwloc=&output=embed" 
-                  style="border:0;" 
-                  allowfullscreen="" 
-                  loading="lazy"
-                  title="Lokasi RS JHC Tasikmalaya">
-                </iframe>
-              </div>
+            <div class="col-12 col-lg-4">
+                <h5 class="fw-bold text-white mb-4 border-start border-3 border-danger ps-3">Lokasi Kami</h5>
+                <div class="map-container shadow-lg rounded-4 overflow-hidden position-relative">
+                    <iframe 
+                        src="https://maps.google.com/maps?q=RS+Jantung+Tasikmalaya+JHC&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                        width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"
+                        title="Lokasi RS JHC Tasikmalaya">
+                    </iframe>
+                    <div class="p-3 bg-white bg-opacity-10 backdrop-blur">
+                        <small class="text-white"><i class="fas fa-map-marker-alt me-2 text-danger"></i>Jl. Raya Tasikmalaya, Jawa Barat, Indonesia</small>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
+    </div>
 
-        <div class="container position-relative">
-          <div class="row justify-content-center py-4 border-top border-white border-opacity-25">
+    <div class="container position-relative">
+        <div class="row py-4 border-top border-white border-opacity-10">
             <div class="col-12 text-center">
-              <p class="mb-0 text-200 fw-bold">
-                <i class="fas fa-copyright me-2"></i>All rights Reserved © JHC Tasikmalaya, 2026
-              </p>
+                <p class="mb-0 text-light opacity-50 small fw-bold">
+                    &copy; 2026 RS Jantung Heart Center Tasikmalaya. All Rights Reserved.
+                </p>
             </div>
-          </div>
         </div>
-      </footer>
-    </main>
+    </div>
+</footer>
 
+<style>
+    /* Custom Footer Styling */
+    .footer-nav li { margin-bottom: 12px; }
+    
+    .footer-link {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+    
+    .footer-link:hover {
+        color: #fff;
+        transform: translateX(5px);
+    }
+
+    .icon-circle {
+        width: 35px; height: 35px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 0.9rem;
+    }
+
+    .social-btn {
+        width: 40px; height: 40px;
+        background: rgba(255,255,255,0.1);
+        color: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .social-btn:hover {
+        background: #bd3030; /* JHC Red */
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    .map-container {
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .footer-logo-main {
+        filter: brightness(0) invert(1); /* Pastikan logo putih jika background gelap */
+    }
+</style>
+    </main>
     <!-- ==================== SCRIPTS ==================== -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
