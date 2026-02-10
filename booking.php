@@ -32,22 +32,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($name) || empty($phone) || empty($message)) {
         $error_msg = "Nama, Nomor Telepon, dan Pesan wajib diisi.";
     } else {
-        // Query Insert
-        $sql = "INSERT INTO appointments (name, email, phone, message, status, submission_date) VALUES (?, ?, ?, ?, 'new', NOW())";
-        
-        if ($stmt = $mysqli->prepare($sql)) {
-            $stmt->bind_param("ssss", $name, $email, $phone, $final_message);
+        if (isset($mysqli)) {
+            $sql = "INSERT INTO appointments (name, email, phone, message, status, submission_date) VALUES (?, ?, ?, ?, 'new', NOW())";
             
-            if ($stmt->execute()) {
-                $success_msg = "Janji temu berhasil dibuat! Tim kami akan segera menghubungi Anda melalui WhatsApp atau Telepon.";
-                // Kosongkan pesan setelah sukses
-                $default_message = ""; 
+            if ($stmt = $mysqli->prepare($sql)) {
+                $stmt->bind_param("ssss", $name, $email, $phone, $final_message);
+                
+                if ($stmt->execute()) {
+                    $success_msg = "Janji temu berhasil dibuat! Tim kami akan segera menghubungi Anda melalui WhatsApp atau Telepon.";
+                    $default_message = ""; 
+                } else {
+                    $error_msg = "Terjadi kesalahan sistem: " . $stmt->error;
+                }
+                $stmt->close();
             } else {
-                $error_msg = "Terjadi kesalahan sistem: " . $stmt->error;
+                $error_msg = "Database error: " . $mysqli->error;
             }
-            $stmt->close();
         } else {
-            $error_msg = "Database error: " . $mysqli->error;
+            $success_msg = "Simulasi: Janji temu berhasil dibuat (Database belum terkoneksi).";
         }
     }
 }
@@ -67,7 +69,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <style>
         :root {
             --rs-red: #a12a2a;
+            --rs-red-light: #bd3030;
             --rs-bg: #f8f9fa;
+            --jhc-gradient: linear-gradient(135deg, #8a3033 0%, #bd3030 100%);
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         body {
@@ -75,12 +80,75 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: var(--rs-bg);
         }
 
-        .navbar-rs {
-            background-color: white;
+        /* --- NAVBAR STYLE (Sama Persis dengan Index.php) --- */
+        .navbar {
+            padding: 0.75rem 0;
+            min-height: 80px;
+            background: rgba(255, 255, 255, 0.98) !important;
+            backdrop-filter: blur(15px);
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             border-bottom: 3px solid var(--rs-red);
+            transition: var(--transition-smooth);
         }
 
+        .navbar .container {
+            max-width: 1320px;
+            padding: 0 1.25rem;
+        }
+
+        /* Logo Besar & Animasi */
+        .navbar-brand img {
+            height: 65px; /* Ukuran Besar sesuai Index */
+            width: auto;
+            transition: var(--transition-smooth);
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+        }
+
+        /* Efek Bergerak saat Disentuh (Hover) */
+        .navbar-brand:hover img {
+            transform: scale(1.05);
+            filter: drop-shadow(0 4px 12px rgba(200, 16, 46, 0.25));
+        }
+
+        /* --- BUTTON STYLE --- */
+        .btn-janji {
+            background: var(--jhc-gradient) !important;
+            color: white !important;
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 2px solid transparent !important;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(200, 16, 46, 0.2);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-janji:hover, 
+        .btn-janji:active,
+        .btn-janji:focus {
+            background: white !important;
+            color: var(--rs-red) !important;
+            border-color: var(--rs-red) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(200, 16, 46, 0.3);
+        }
+
+        .btn-janji:hover i {
+            color: var(--rs-red) !important;
+        }
+
+        /* Tombol Form Full Width */
+        .btn-submit-form {
+            width: 100%;
+            padding: 12px 30px;
+        }
+
+        /* --- CARD STYLE --- */
         .booking-card {
             border: none;
             border-radius: 15px;
@@ -89,46 +157,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .booking-header {
-            background-color: var(--rs-red);
+            background: var(--jhc-gradient);
             color: white;
             padding: 30px;
             text-align: center;
-        }
-
-        .btn-submit {
-            background-color: var(--rs-red);
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-weight: 600;
-            width: 100%;
-            transition: all 0.3s;
-        }
-
-        .btn-submit:hover {
-            background-color: #b71c1c;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3);
         }
         
         .contact-info i {
             color: var(--rs-red);
             width: 30px;
         }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--rs-red-light);
+            box-shadow: 0 0 0 0.25rem rgba(189, 48, 48, 0.1);
+        }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-rs navbar-light fixed-top py-3">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-dark" href="index.php">
-                <i class="fas fa-heartbeat text-danger me-2"></i> RS JHC Tasikmalaya
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="index.php">
+                <img src="public/assets/img/gallery/JHC_Logo.png" alt="JHC Logo" onerror="this.src='assets/img/gallery/JHC_Logo.png';">
             </a>
-            <a href="index.php" class="btn btn-outline-danger rounded-pill btn-sm">Kembali ke Home</a>
+            
+            <a href="index.php" class="btn btn-janji">
+                <i class="fas fa-home me-2"></i> Kembali ke Home
+            </a>
         </div>
     </nav>
 
-    <div class="container" style="margin-top: 120px; margin-bottom: 50px;">
+    <div class="container" style="margin-top: 130px; margin-bottom: 50px;">
         <div class="row justify-content-center">
             
             <div class="col-lg-4 mb-4 d-none d-lg-block">
@@ -205,7 +265,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 </div>
 
                                 <div class="col-12 mt-4">
-                                    <button type="submit" class="btn btn-primary btn-submit shadow-lg">
+                                    <button type="submit" class="btn btn-janji btn-submit-form shadow-lg">
                                         <i class="fas fa-paper-plane me-2"></i> Konfirmasi Janji Temu
                                     </button>
                                 </div>
