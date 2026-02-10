@@ -954,7 +954,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         <div class="container">
           <a class="navbar-brand" href="index.php">
             <?php $header_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/JHC_Logo.png'; ?>
-            <img src="public/<?php echo htmlspecialchars($header_logo); ?>" alt="JHC Logo" />
+            <img src="public/<?php echo htmlspecialchars($header_logo); ?>" alt="JHC Logo" height="50" />
           </a>
         
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -963,12 +963,12 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li class="nav-item"><a class="nav-link" href="#departments">Layanan</a></li>
-              <li class="nav-item"><a class="nav-link" href="#virtual_room">Virtual Room</a></li>
-              <li class="nav-item"><a class="nav-link" href="#about_us">Tentang Kami</a></li>
-              <li class="nav-item"><a class="nav-link" href="#doctors">Dokter Kami</a></li>
-              <li class="nav-item"><a class="nav-link" href="#facilities">Fasilitas</a></li>
-              <li class="nav-item"><a class="nav-link" href="#news">Berita</a></li>
+              <li class="nav-item"><a class="nav-link" href="index.php#departments">Layanan</a></li>
+              <li class="nav-item"><a class="nav-link" href="index.php#virtual_room">Virtual Room</a></li>
+              <li class="nav-item"><a class="nav-link" href="index.php#about_us">Tentang Kami</a></li>
+              <li class="nav-item"><a class="nav-link" href="index.php#doctors">Dokter Kami</a></li>
+              <li class="nav-item"><a class="nav-link" href="index.php#facilities">Fasilitas</a></li>
+              <li class="nav-item"><a class="nav-link" href="index.php#news">Berita</a></li>
             </ul>
 
             <div class="nav-actions ms-lg-3">
@@ -1724,28 +1724,33 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
               <h5 class="lh-lg fw-bold text-light mb-4">Link Cepat</h5>
               <ul class="list-unstyled">
                 <li class="lh-lg">
-                  <a class="text-200 text-decoration-none" href="#departments">
+                  <a class="text-200 text-decoration-none footer-link" href="index.php#departments">
                     <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>Layanan
                   </a>
                 </li>
                 <li class="lh-lg">
-                  <a class="text-200 text-decoration-none" href="#virtual_room">
+                  <a class="text-200 text-decoration-none footer-link" href="index.php#virtual_room">
                     <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>Virtual Room
                   </a>
                 </li>
                 <li class="lh-lg">
-                  <a class="text-200 text-decoration-none" href="#about_us">
+                  <a class="text-200 text-decoration-none footer-link" href="index.php#about_us">
                     <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>Tentang Kami
                   </a>
                 </li>
                 <li class="lh-lg">
-                  <a class="text-200 text-decoration-none" href="#doctors">
+                  <a class="text-200 text-decoration-none footer-link" href="index.php#doctors">
                     <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>Dokter Kami
                   </a>
                 </li>
                 <li class="lh-lg">
-                  <a class="text-200 text-decoration-none" href="#facilities">
+                  <a class="text-200 text-decoration-none footer-link" href="index.php#facilities">
                     <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>Fasilitas
+                  </a>
+                </li>
+                <li class="lh-lg">
+                  <a class="text-200 text-decoration-none footer-link" href="index.php#news">
+                    <i class="fas fa-chevron-right me-2" style="font-size: 0.7rem;"></i>Berita
                   </a>
                 </li>
               </ul>
