@@ -49,15 +49,17 @@ if ($settings_result) {
         
         /* Navbar dengan Gradasi Linear 90 derajat */
         .navbar-admin {
-            background-color: #a32a2e !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(90deg, #8a3033 0%, #bd3030 100%) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             border: none !important;
+            padding: 0.75rem 0;
         }
 
         .navbar-admin .nav-link {
             color: rgba(255,255,255,0.9) !important;
             font-weight: 600;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            padding: 0.625rem 0.875rem !important;
         }
 
         .navbar-admin .nav-link:hover {
@@ -65,10 +67,42 @@ if ($settings_result) {
             transform: translateY(-1px);
         }
 
-        .navbar-admin .navbar-brand img {
-            filter: brightness(0) invert(1);
-            height: 50px;
-            width: auto;
+        /* Text Admin Panel */
+        .navbar-admin .navbar-brand {
+            color: white !important;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-admin .navbar-brand:hover {
+            transform: scale(1.05);
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dropdown Menu */
+        .navbar-admin .dropdown-menu {
+            border: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+        }
+
+        .navbar-admin .dropdown-item {
+            border-radius: 8px;
+            padding: 0.625rem 1rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .navbar-admin .dropdown-item:hover {
+            background: linear-gradient(90deg, rgba(138, 48, 51, 0.1) 0%, rgba(189, 48, 48, 0.1) 100%);
+            color: var(--jhc-red-dark);
+            transform: translateX(5px);
         }
 
         .wrapper { 
@@ -97,74 +131,119 @@ if ($settings_result) {
         transition: all 0.3s ease;
         }
 
+        .btn-jhc-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 48, 51, 0.4);
+        }
+
         .btn-logout {
-            background: #fff;
-            color: var(--jhc-red-dark) !important;
+            background: rgba(255, 255, 255, 0.15);
+            color: white !important;
             font-weight: 700;
-            border: none;
-            transition: 0.3s;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
         .btn-logout:hover {
-            background: #f1f1f1;
+            background: white;
+            color: var(--jhc-red-dark) !important;
+            border-color: white;
             transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
         }
 
-        .dropdown-menu {
-            border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-radius: 10px;
+        /* Navbar Container */
+        .navbar-admin .container {
+            max-width: 1320px;
+        }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            .navbar-admin .navbar-brand {
+                font-size: 1.25rem;
+            }
+
+            .navbar-admin .nav-link {
+                padding: 0.75rem 1rem !important;
+            }
+
+            .btn-logout {
+                margin-top: 1rem;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .navbar-admin .navbar-brand {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top py-2 navbar-admin">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-admin">
     <div class="container">
         <a class="navbar-brand" href="dashboard.php">
-            <?php 
-            $admin_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/JHC_Logo.png';
-            ?>
-            <img src="../public/<?php echo htmlspecialchars($admin_logo); ?>" alt="Logo JHC">
+            <i class="fas fa-shield-halved me-2"></i>Admin Panel
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="adminNavbar">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item px-2"><a class="nav-link" href="dashboard.php"><i class="fas fa-chart-line me-1"></i> Dashboard</a></li>
-                <li class="nav-item px-2"><a class="nav-link" href="applicants2.php"><i class="fas fa-users me-1"></i> Pelamar</a></li>
-                <li class="nav-item px-2"><a class="nav-link" href="banners.php"><i class="fas fa-image me-1"></i> Banner</a></li>
+                <li class="nav-item px-2">
+                    <a class="nav-link" href="dashboard.php">
+                        <i class="fas fa-chart-line me-2"></i>Dashboard
+                    </a>
+                </li>
+                
+                <li class="nav-item px-2">
+                    <a class="nav-link" href="applicants2.php">
+                        <i class="fas fa-users me-2"></i>Pelamar
+                    </a>
+                </li>
+                
+                <li class="nav-item px-2">
+                    <a class="nav-link" href="banners.php">
+                        <i class="fas fa-image me-2"></i>Banner
+                    </a>
+                </li>
                 
                 <li class="nav-item dropdown px-2">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropMCU" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-hospital-user me-1"></i> Layanan
+                    <a class="nav-link dropdown-toggle" href="#" id="dropMCU" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-hospital-user me-2"></i>Layanan
                     </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="mcu_packages.php">Paket MCU</a></li>
-                        <li><a class="dropdown-item" href="partners.php">Mitra Perusahaan</a></li>
+                    <ul class="dropdown-menu" aria-labelledby="dropMCU">
+                        <li><a class="dropdown-item" href="mcu_packages.php"><i class="fas fa-file-medical me-2"></i>Paket MCU</a></li>
+                        <li><a class="dropdown-item" href="partners.php"><i class="fas fa-handshake me-2"></i>Mitra Perusahaan</a></li>
                     </ul>
                 </li>
 
                 <li class="nav-item dropdown px-2">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropSettings" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-cog me-1"></i> Pengaturan
+                    <a class="nav-link dropdown-toggle" href="#" id="dropSettings" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-cog me-2"></i>Pengaturan
                     </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="background_settings2.php">Background Hero</a></li>
-                        <li><a class="dropdown-item" href="logo_settings.php">Logo & Favicon</a></li>
-                        <li><a class="dropdown-item" href="popup_settings2.php">Popup Promo</a></li>
+                    <ul class="dropdown-menu" aria-labelledby="dropSettings">
+                        <li><a class="dropdown-item" href="background_settings2.php"><i class="fas fa-panorama me-2"></i>Background Hero</a></li>
+                        <li><a class="dropdown-item" href="logo_settings.php"><i class="fas fa-icons me-2"></i>Logo & Favicon</a></li>
+                        <li><a class="dropdown-item" href="popup_settings2.php"><i class="fas fa-bullhorn me-2"></i>Popup Promo</a></li>
                     </ul>
                 </li>
             </ul>
+            
             <a class="btn btn-sm btn-logout rounded-pill px-4 ms-lg-3" href="logout.php">
-                <i class="fas fa-sign-out-alt me-1"></i> Keluar
+                <i class="fas fa-sign-out-alt me-2"></i>Keluar
             </a>
         </div>
     </div>
 </nav>
+
+<!-- Spacer untuk fixed navbar -->
+<div style="height: 80px;"></div>
 
 <main class="main" id="top">
     <div class="wrapper">
