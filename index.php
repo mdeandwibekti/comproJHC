@@ -1247,11 +1247,15 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       <section class="py-5 bg-white" id="virtual_room">
         <div class="container">
           <div class="row align-items-center g-4 g-lg-5">
+            
             <div class="col-lg-6 order-2 order-lg-1">
               <div class="position-relative">
                 <div class="bg-primary position-absolute rounded-4" 
-                     style="width: 100%; height: 100%; top: 20px; left: -20px; z-index: -1; opacity: 0.12;"></div>
-                <?php if(!empty($vr_data['video_url'])): 
+                    style="width: 100%; height: 100%; top: 20px; left: -20px; z-index: -1; opacity: 0.12;"></div>
+                
+                <?php 
+                // 1. PRIORITAS: VIDEO YOUTUBE
+                if(!empty($vr_data['video_url'])): 
                   $embed_url = $vr_data['video_url'];
                   $sep = (strpos($embed_url, '?') !== false) ? '&' : '?';
                   $autoplay_url = $embed_url . $sep . "autoplay=1&mute=1&loop=1&playlist=" . basename(parse_url($embed_url, PHP_URL_PATH));
@@ -1260,9 +1264,22 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                     <iframe src="<?php echo htmlspecialchars($autoplay_url); ?>" 
                             allow="autoplay; encrypted-media" allowfullscreen></iframe>
                   </div>
-                <?php else: ?>
-                  <img src="public/<?php echo htmlspecialchars($vr_data['image_path_360']); ?>" 
-                       class="img-fluid rounded-4 shadow-lg w-100" alt="Virtual Room">
+
+                <?php 
+                // 2. KEDUA: VIDEO LOKAL (MP4)
+                elseif(!empty($vr_data['video_path'])): ?>
+                  <div class="ratio ratio-16x9 shadow-lg rounded-4 overflow-hidden bg-black">
+                    <video class="w-100 h-100" autoplay muted loop controls style="object-fit: cover;">
+                      <source src="<?php echo htmlspecialchars($vr_data['video_path']); ?>" type="video/mp4">
+                      Browser Anda tidak mendukung tag video.
+                    </video>
+                  </div>
+
+                <?php 
+                // 3. TERAKHIR: GAMBAR 360 / FALLBACK
+                else: ?>
+                  <img src="<?php echo htmlspecialchars($vr_data['image_path_360']); ?>" 
+                      class="img-fluid rounded-4 shadow-lg w-100" alt="Virtual Room">
                 <?php endif; ?>
               </div>
             </div>
@@ -1301,6 +1318,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                 </div>
               </div>
             </div>
+            
           </div>
         </div>
       </section>

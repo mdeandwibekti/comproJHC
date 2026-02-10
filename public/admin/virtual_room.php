@@ -8,54 +8,68 @@ $error_msg = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $title = trim($_POST["title"] ?? '');
     $content = trim($_POST["content"] ?? '');
-    $video_url = trim($_POST["video_url"] ?? '');
+    $video_url = trim($_POST["video_url"] ?? ''); 
     $current_img = $_POST["current_image_360"] ?? '';
-    
-    // Logika Upload File
+    $current_video = $_POST["current_video_path"] ?? '';
+
+    // 1. LOGIKA UPLOAD VIDEO LOKAL
+    if (isset($_FILES["video_file"]) && $_FILES["video_file"]["error"] == 0) {
+        $vid_dir = "../../assets/videos/virtual_tour/"; 
+        if (!is_dir($vid_dir)) mkdir($vid_dir, 0777, true);
+        
+        $vid_ext = strtolower(pathinfo($_FILES["video_file"]["name"], PATHINFO_EXTENSION));
+        $allowed_vid = ['mp4', 'webm'];
+        
+        if (in_array($vid_ext, $allowed_vid)) {
+            // Batasi ukuran (Contoh: 60MB)
+            if ($_FILES["video_file"]["size"] < 60 * 1024 * 1024) {
+                $new_vid_name = "VR_VID_" . uniqid() . "." . $vid_ext;
+                if (move_uploaded_file($_FILES["video_file"]["tmp_name"], $vid_dir . $new_vid_name)) {
+                    // Hapus video lama jika ada
+                    if (!empty($current_video) && file_exists("../../" . $current_video)) {
+                        unlink("../../" . $current_video);
+                    }
+                    $current_video = "assets/videos/virtual_tour/" . $new_vid_name;
+                    $video_url = ""; // Kosongkan URL YouTube jika upload file lokal
+                }
+            } else { $error_msg = "Ukuran video terlalu besar (Maks 60MB)."; }
+        } else { $error_msg = "Format video harus MP4 atau WebM."; }
+    }
+
+    // 2. LOGIKA UPLOAD GAMBAR 360
     if (isset($_FILES["image_360"]) && $_FILES["image_360"]["error"] == 0) {
-        $upload_dir = "../../assets/img/virtual_tour/"; 
-        if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+        $img_dir = "../../assets/img/virtual_tour/"; 
+        if (!is_dir($img_dir)) mkdir($img_dir, 0777, true);
         
-        $file_info = pathinfo($_FILES["image_360"]["name"]);
-        $file_ext = strtolower($file_info['extension']);
-        $allowed_ext = ['jpg', 'jpeg', 'png', 'webp'];
-        
-        if (in_array($file_ext, $allowed_ext)) {
-            $new_name = uniqid('vr_') . "." . $file_ext;
-            $target_file = $upload_dir . $new_name;
-            
-            if (move_uploaded_file($_FILES["image_360"]["tmp_name"], $target_file)) {
-                // Hapus file lama jika ada
+        $img_ext = strtolower(pathinfo($_FILES["image_360"]["name"], PATHINFO_EXTENSION));
+        if (in_array($img_ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+            $new_img_name = "VR_IMG_" . uniqid() . "." . $img_ext;
+            if (move_uploaded_file($_FILES["image_360"]["tmp_name"], $img_dir . $new_img_name)) {
                 if (!empty($current_img) && file_exists("../../" . $current_img)) {
                     unlink("../../" . $current_img);
                 }
-                $current_img = "assets/img/virtual_tour/" . $new_name;
-            } else {
-                $error_msg = "Gagal memindahkan file.";
+                $current_img = "assets/img/virtual_tour/" . $new_img_name;
             }
-        } else {
-            $error_msg = "Format file tidak didukung (Gunakan JPG/PNG/WebP).";
         }
     }
 
+    // 3. SIMPAN KE DATABASE
     if (empty($error_msg)) {
-        $sql = "UPDATE page_virtual_room SET title=?, content=?, video_url=?, image_path_360=? WHERE id=1";
+        $sql = "UPDATE page_virtual_room SET title=?, content=?, video_url=?, image_path_360=?, video_path=? WHERE id=1";
         if ($stmt = $mysqli->prepare($sql)) {
-            $stmt->bind_param("ssss", $title, $content, $video_url, $current_img);
+            $stmt->bind_param("sssss", $title, $content, $video_url, $current_img, $current_video);
             if ($stmt->execute()) {
                 header("location: virtual_room.php?status=updated");
                 exit();
-            } else {
-                $error_msg = "Database error: " . $mysqli->error;
-            }
+            } else { $error_msg = "Gagal memperbarui database."; }
             $stmt->close();
         }
     }
 }
 
-// --- AMBIL DATA DENGAN PREVENT NULL ---
+// AMBIL DATA TERBARU
 $query = $mysqli->query("SELECT * FROM page_virtual_room WHERE id=1");
-$data = $query->fetch_assoc();
+$data = $query->fetch_assoc() ?: ['title'=>'','content'=>'','video_url'=>'','image_path_360'=>'','video_path'=>''];
 
 // Jika data tidak ditemukan di database, inisialisasi array kosong agar tidak error
 if (!$data) {
@@ -126,80 +140,67 @@ require_once 'layout/header.php';
 <div class="container-fluid py-4">
     <div class="admin-wrapper">
         <form id="vrForm" action="virtual_room.php" method="post" enctype="multipart/form-data">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center manage-header">
+            <input type="hidden" name="current_image_360" value="<?= $data['image_path_360']; ?>">
+            <input type="hidden" name="current_video_path" value="<?= $data['video_path']; ?>">
+
+            <div class="d-flex justify-content-between align-items-center manage-header">
                 <div>
-                    <h3 class="fw-bold mb-1 text-dark">Virtual Room Settings</h3>
-                    <p class="text-muted small mb-0">Kelola konten tur virtual RS JHC.</p>
+                    <h3 class="fw-bold mb-1">Pengaturan Tur Virtual</h3>
+                    <p class="text-muted small mb-0">Kontrol konten visual untuk Virtual Room RS JHC.</p>
                 </div>
-                <button type="submit" class="btn btn-jhc-save mt-3 mt-md-0" id="btnSubmit">
-                    <i class="fas fa-save me-2"></i> Simpan Perubahan
-                </button>
+                <button type="submit" class="btn btn-jhc-save" id="btnSubmit"><i class="fas fa-save me-2"></i> Simpan</button>
             </div>
 
-            <?php if(isset($_GET['status']) && $_GET['status'] == 'updated'): ?>
-                <div class="alert alert-success border-0 shadow-sm border-start border-success border-4 mb-4">
-                    <i class="fas fa-check-circle me-2"></i> Berhasil diperbarui!
-                </div>
+            <?php if(isset($_GET['status'])): ?>
+                <div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i> Pengaturan berhasil diperbarui!</div>
             <?php endif; ?>
 
-            <?php if(!empty($error_msg)): ?>
-                <div class="alert alert-danger border-start border-danger border-4 mb-4">
-                    <i class="fas fa-exclamation-triangle me-2"></i> <?= $error_msg; ?>
-                </div>
-            <?php endif; ?>
-
-            <input type="hidden" name="current_image_360" value="<?= htmlspecialchars($data['image_path_360'] ?? ''); ?>">
-            
-            <div class="row g-5">
+            <div class="row g-4">
                 <div class="col-lg-7">
                     <div class="mb-4">
                         <label class="form-label">Judul Halaman</label>
-                        <input type="text" name="title" class="form-control form-control-lg" 
-                               value="<?= htmlspecialchars($data['title'] ?? ''); ?>" required>
+                        <input type="text" name="title" class="form-control form-control-lg" value="<?= htmlspecialchars($data['title']); ?>" required>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label text-danger"><i class="fab fa-youtube me-1"></i> YouTube Embed Link</label>
-                        <input type="text" name="video_url" class="form-control" 
-                               value="<?= htmlspecialchars($data['video_url'] ?? ''); ?>" 
-                               placeholder="https://www.youtube.com/embed/XXXXX">
-                        
-                        <div class="instruction-box mt-3 shadow-sm">
-                            <p class="mb-2 small fw-bold text-dark"><i class="fas fa-lightbulb me-1 text-warning"></i> Panduan Link Video:</p>
-                            <ul class="mb-0 small text-muted ps-3">
-                                <li>Pastikan link mengandung kata <strong>/embed/</strong>.</li>
-                                  <li>Contoh: <code>https://www.youtube.com/embed/XXXXX</code></li></code>.</li>
-                            </ul>
+                    <div class="card card-settings p-4 mb-4">
+                        <label class="form-label text-danger"><i class="fab fa-youtube me-1"></i> Opsi A: Link YouTube</label>
+                        <input type="text" name="video_url" class="form-control mb-2" value="<?= htmlspecialchars($data['video_url']); ?>" placeholder="https://www.youtube.com/embed/...">
+                        <small class="text-muted">Jika diisi, video lokal akan diabaikan.</small>
+                    </div>
+
+                    <div class="card card-settings p-4 mb-4">
+                        <label class="form-label text-primary"><i class="fas fa-upload me-1"></i> Opsi B: Upload Video Lokal (MP4)</label>
+                        <input type="file" name="video_file" class="form-control" accept="video/mp4">
+                        <div id="uploadProgress" class="progress mt-2 d-none" style="height: 5px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 0%"></div>
                         </div>
+                        <small class="text-muted mt-2 d-block">Maksimal 60MB. Direkomendasikan resolusi HD 720p.</small>
                     </div>
 
                     <div class="mb-0">
-                        <label class="form-label">Deskripsi</label>
-                        <textarea name="content" class="form-control" rows="8"><?= htmlspecialchars($data['content'] ?? ''); ?></textarea>
+                        <label class="form-label">Deskripsi Narasi</label>
+                        <textarea name="content" class="form-control" rows="6"><?= htmlspecialchars($data['content']); ?></textarea>
                     </div>
                 </div>
 
                 <div class="col-lg-5">
-                    <div class="card bg-light border-0 rounded-4 p-4 shadow-sm">
-                        <label class="form-label mb-3">Preview Aktif</label>
-                        <div class="preview-container text-center mb-4">
-                            <?php if(!empty($data['video_url'])): ?>
-                                <div class="ratio ratio-16x9 rounded overflow-hidden mb-2">
-                                    <iframe src="<?= htmlspecialchars($data['video_url']); ?>" frameborder="0" allowfullscreen></iframe>
-                                </div>
-                                <span class="badge bg-danger rounded-pill">Video Mode</span>
-                            <?php elseif(!empty($data['image_path_360'])): ?>
-                                <img src="../../<?= htmlspecialchars($data['image_path_360']); ?>" class="img-fluid rounded shadow-sm mb-2" style="max-height: 180px;">
-                                <span class="badge bg-secondary rounded-pill">Image Mode</span>
-                            <?php else: ?>
-                                <p class="text-muted small">Belum ada media.</p>
-                            <?php endif; ?>
-                        </div>
+                    <label class="form-label">Preview Media Aktif</label>
+                    <div class="preview-box mb-4 shadow-sm">
+                        <?php if(!empty($data['video_url'])): ?>
+                            <div class="ratio ratio-16x9"><iframe src="<?= $data['video_url']; ?>" allowfullscreen></iframe></div>
+                        <?php elseif(!empty($data['video_path'])): ?>
+                            <video controls class="w-100"><source src="../../<?= $data['video_path']; ?>" type="video/mp4"></video>
+                        <?php elseif(!empty($data['image_path_360'])): ?>
+                            <img src="../../<?= $data['image_path_360']; ?>" class="img-fluid">
+                        <?php else: ?>
+                            <div class="text-white opacity-50 text-center"><i class="fas fa-photo-video fa-3x mb-2"></i><br>Belum ada media</div>
+                        <?php endif; ?>
+                    </div>
 
-                        <div class="mb-0">
-                            <label class="form-label small">Ganti Gambar (Fallback)</label>
-                            <input type="file" name="image_360" class="form-control form-control-sm" accept="image/*">
-                        </div>
+                    <div class="card card-settings p-4">
+                        <label class="form-label">Gambar 360 / Thumbnail</label>
+                        <input type="file" name="image_360" class="form-control" accept="image/*">
+                        <small class="text-muted mt-2">Digunakan sebagai latar belakang jika video tidak diputar.</small>
                     </div>
                 </div>
             </div>
@@ -207,11 +208,28 @@ require_once 'layout/header.php';
     </div>
 </div>
 
+
+
 <script>
     document.getElementById('vrForm').onsubmit = function() {
         const btn = document.getElementById('btnSubmit');
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Menyimpan...';
+        const progress = document.getElementById('uploadProgress');
+        
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Mengunggah...';
         btn.classList.add('disabled');
+        
+        // Menampilkan progress bar jika ada file video yang dipilih
+        const videoInput = document.querySelector('input[name="video_file"]');
+        if(videoInput.files.length > 0) {
+            progress.classList.remove('d-none');
+            let width = 0;
+            const bar = progress.querySelector('.progress-bar');
+            const interval = setInterval(() => {
+                if (width >= 90) clearInterval(interval);
+                width += 10;
+                bar.style.width = width + '%';
+            }, 500);
+        }
     };
 </script>
 
