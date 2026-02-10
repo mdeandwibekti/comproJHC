@@ -24,6 +24,7 @@ date_default_timezone_set('Asia/Jakarta');
             --jhc-red-light: #bd3030;
             --jhc-gradient: linear-gradient(135deg, #8a3033 0%, #bd3030 100%);
             --jhc-soft-bg: #f8f9fa;
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
@@ -31,15 +32,70 @@ date_default_timezone_set('Asia/Jakarta');
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .top-nav-admin {
-            background: white;
-            padding: 15px 0;
+        /* --- NAVBAR STYLE (Mirip Index.php User) --- */
+        .navbar {
+            padding: 0.75rem 0;
+            min-height: 80px;
+            background: rgba(255, 255, 255, 0.98) !important;
+            backdrop-filter: blur(15px);
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            transition: var(--transition-smooth);
+            border-bottom: 3px solid var(--jhc-red-dark); /* Aksen Merah Bawah */
         }
 
+        .navbar .container {
+            max-width: 1320px;
+            padding: 0 1.25rem;
+        }
+
+        /* Logo Besar & Animasi */
+        .navbar-brand img {
+            height: 65px; /* Ukuran Besar sesuai Index */
+            width: auto;
+            transition: var(--transition-smooth);
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
+        }
+
+        /* Efek Bergerak saat Disentuh (Hover) */
+        .navbar-brand:hover img {
+            transform: scale(1.05);
+            filter: drop-shadow(0 4px 12px rgba(200, 16, 46, 0.25));
+        }
+
+        /* --- BUTTON STYLE (Sama dengan Home/Apply Job) --- */
+        .btn-janji {
+            background: var(--jhc-gradient) !important;
+            color: white !important;
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border: 2px solid transparent !important;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(200, 16, 46, 0.2);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-janji:hover, 
+        .btn-janji:active,
+        .btn-janji:focus {
+            background: white !important;
+            color: var(--jhc-red-dark) !important;
+            border-color: var(--jhc-red-dark) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(200, 16, 46, 0.3);
+        }
+
+        .btn-janji:hover i,
+        .btn-janji:active i {
+            color: var(--jhc-red-dark) !important;
+        }
+
+        /* --- CAREER HEADER --- */
         .career-header {
             background: var(--jhc-gradient);
             color: white;
@@ -47,6 +103,7 @@ date_default_timezone_set('Asia/Jakarta');
             border-radius: 0 0 50px 50px;
             margin-bottom: 20px;
             box-shadow: 0 10px 30px rgba(138, 48, 51, 0.2);
+            margin-top: 90px; /* Spacer karena navbar fixed */
         }
 
         /* Job Card Styling */
@@ -101,23 +158,6 @@ date_default_timezone_set('Asia/Jakarta');
             margin-bottom: 20px;
         }
 
-        .btn-apply {
-            background: var(--jhc-gradient);
-            border: none;
-            color: white !important;
-            padding: 12px 25px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: 0.3s;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .btn-apply:hover {
-            opacity: 0.9;
-            box-shadow: 0 8px 15px rgba(138, 48, 51, 0.3);
-        }
-
         .badge-status {
             background: #e6f4ea;
             color: #1e7e34;
@@ -152,16 +192,17 @@ date_default_timezone_set('Asia/Jakarta');
 </head>
 <body>
 
-<div class="top-nav-admin">
+<nav class="navbar navbar-expand-lg fixed-top">
     <div class="container d-flex justify-content-between align-items-center">
-        <a class="navbar-brand text-dark fw-bold" href="index.php" style="text-decoration: none;">
-            <i class="fas fa-hospital text-danger me-2"></i> RS JHC
+        <a class="navbar-brand" href="index.php">
+            <img src="public/assets/img/gallery/JHC_Logo.png" alt="JHC Logo" onerror="this.src='assets/img/gallery/JHC_Logo.png';">
         </a>
-        <a href="index.php" class="btn btn-sm btn-outline-secondary rounded-pill px-4 fw-bold">
-            <i class="fas fa-arrow-left me-2"></i> Beranda
+        
+        <a href="index.php" class="btn btn-janji">
+            <i class="fas fa-home me-2"></i> Kembali ke Home
         </a>
     </div>
-</div>
+</nav>
 
 <div class="career-header text-center">
     <div class="container">
@@ -230,7 +271,7 @@ date_default_timezone_set('Asia/Jakarta');
                         <?= nl2br(htmlspecialchars($job['description'])); ?>
                     </p>
 
-                    <a href="apply.php?job_id=<?= $job['id']; ?>" class="btn btn-apply w-100">
+                    <a href="apply.php?job_id=<?= $job['id']; ?>" class="btn btn-janji w-100">
                         Lamar Sekarang <i class="fas fa-paper-plane ms-2"></i>
                     </a>
                 </div>
@@ -248,8 +289,6 @@ date_default_timezone_set('Asia/Jakarta');
         <?php endif; ?>
     </div>
 </div>
-
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
