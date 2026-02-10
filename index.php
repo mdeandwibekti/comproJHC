@@ -971,16 +971,8 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
       <!-- ==================== HERO SECTION ==================== -->
       <section class="hero-section p-0" id="home">
-        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="7000">
-            <div class="carousel-indicators">
-                <?php foreach ($banners_data as $index => $banner): ?>
-                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $index; ?>" 
-                            class="<?= $index === 0 ? 'active' : ''; ?>" 
-                            aria-current="<?= $index === 0 ? 'true' : 'false'; ?>" 
-                            aria-label="Slide <?= $index + 1; ?>"></button>
-                <?php endforeach; ?>
-            </div>
-
+        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+            
             <div class="carousel-inner">
                 <?php if (!empty($banners_data)): ?>
                     <?php foreach ($banners_data as $index => $banner): ?>
@@ -988,23 +980,11 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                             <div class="bg-holder" style="background-image:url(public/<?= htmlspecialchars($banner['image_path']); ?>);"></div>
                             <div class="banner-overlay"></div>
                             
-                            <div class="container hero-content d-flex align-items-center">
-                                <div class="row w-100">
-                                    <div class="col-lg-8 text-center text-lg-start">
-                                        <span class="hero-badge animate__animated animate__fadeInDown">
-                                            <i class="fas fa-heart-pulse me-2"></i>Selamat Datang di JHC Tasikmalaya
-                                        </span>
-                                        <h1 class="text-white fw-bold animate__animated animate__fadeInLeft">
-                                            <?= htmlspecialchars($banner['title']); ?>
-                                        </h1>
-                                        <p class="text-white lead animate__animated animate__fadeInLeft">
-                                            <?= htmlspecialchars($banner['description']); ?>
-                                        </p>
-                                        <div class="mt-4 animate__animated animate__fadeInUp">
-                                            <a class="btn btn-hero" href="#departments">
-                                                <i class="fas fa-hospital me-2"></i>Layanan Kami
-                                            </a>
-                                        </div>
+                            <div class="container hero-content">
+                                <div class="row align-items-center min-vh-100">
+                                    <div class="col-lg-8 text-center text-lg-start text-white">
+                                        <h1 class="display-3 fw-bold"><?= htmlspecialchars($banner['title']); ?></h1>
+                                        <p class="lead"><?= htmlspecialchars($banner['description']); ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -1013,13 +993,11 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                 <?php endif; ?>
             </div>
 
-            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" style="z-index: 5;">
+                <span class="carousel-control-prev-icon"></span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" style="z-index: 5;">
+                <span class="carousel-control-next-icon"></span>
             </button>
         </div>
     </section>
@@ -1787,44 +1765,36 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-        // Navbar scroll effect
-        const navbar = document.querySelector('.navbar');
-        window.addEventListener('scroll', function() {
-          if (window.scrollY > 50) {
-            navbar.classList.add('navbar-scrolled');
-          } else {
-            navbar.classList.remove('navbar-scrolled');
-          }
-        });
-
-        // Collapse navbar on link click (mobile)
-        const navLinks = document.querySelectorAll('.nav-link');
-        const navbarCollapse = document.querySelector('.navbar-collapse');
+        // Inisialisasi Carousel Bootstrap
+        const myCarousel = document.getElementById('heroCarousel');
         
-<<<<<<< HEAD
         // Jika Anda ingin kontrol manual lewat JS (opsional)
         const carousel = new bootstrap.Carousel(myCarousel, {
-            interval: 10000, // Kecepatan ganti slide (10 detik)
-=======
-        navLinks.forEach(link => {
-          link.addEventListener('click', () => {
-            if (navbarCollapse.classList.contains('show')) {
-              bootstrap.Collapse.getInstance(navbarCollapse).hide();
-            }
-          });
+            interval: 5000, // Kecepatan ganti slide (5 detik)
+            ride: 'carousel',
+            pause: false // Slide tetap jalan meskipun mouse di atas banner
         });
 
-        // Carousel initialization
-        const heroCarousel = document.getElementById('heroCarousel');
-        if (heroCarousel) {
-          const carousel = new bootstrap.Carousel(heroCarousel, {
-            interval: 7000,
->>>>>>> 5ad290c92b53cd6834101eb9493c86cbff3f7608
-            ride: 'carousel',
-            pause: false,
-            wrap: true
-          });
-        }
+        // EVENT: Setiap kali slide akan berpindah
+        myCarousel.addEventListener('slide.bs.carousel', function (e) {
+            // Ambil elemen teks di slide yang akan muncul
+            const nextSlide = e.relatedTarget;
+            const animatedElements = nextSlide.querySelectorAll('.animate__animated');
+
+            // Reset animasi agar bisa terulang kembali
+            animatedElements.forEach(el => {
+                el.style.visibility = 'hidden';
+                const animationClass = Array.from(el.classList).find(cl => cl.startsWith('animate__fade'));
+                el.classList.remove(animationClass);
+                
+                // Trigger reflow untuk restart animasi
+                void el.offsetWidth; 
+                
+                el.style.visibility = 'visible';
+                el.classList.add(animationClass);
+            });
+        });
+    
 
         // Detail Layanan Modal
         const detailButtons = document.querySelectorAll('.btn-buka-detail');
