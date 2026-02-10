@@ -26,6 +26,7 @@ if ($job_id) {
             --jhc-red-dark: #8a3033;
             --jhc-red-light: #bd3030;
             --jhc-gradient: linear-gradient(135deg, #8a3033 0%, #bd3030 100%);
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body { 
@@ -76,19 +77,38 @@ if ($job_id) {
             background-color: #fff;
         }
 
-        .btn-jhc { 
-            background: var(--jhc-gradient); 
-            border: none; 
-            color: white; 
-            padding: 15px;
-            transition: all 0.3s ease;
+        /* --- BUTTON STYLE (Sama dengan Home) --- */
+        .btn-janji {
+            background: var(--jhc-gradient) !important;
+            color: white !important;
+            border-radius: 50px;
+            padding: 12px 25px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border: 2px solid transparent !important;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(200, 16, 46, 0.2);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .btn-jhc:hover { 
+        /* Hover & Active State: Jadi Putih */
+        .btn-janji:hover, 
+        .btn-janji:active,
+        .btn-janji:focus {
+            background: white !important;
+            color: var(--jhc-red-dark) !important;
+            border-color: var(--jhc-red-dark) !important;
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(138, 48, 51, 0.3);
-            color: white;
-            opacity: 0.95;
+            box-shadow: 0 6px 20px rgba(200, 16, 46, 0.3);
+        }
+
+        /* Ubah warna icon saat dihover */
+        .btn-janji:hover i,
+        .btn-janji:active i {
+            color: var(--jhc-red-dark) !important;
         }
 
         .job-badge {
@@ -134,9 +154,11 @@ if ($job_id) {
 <div class="top-accent"></div>
 
 <div class="container apply-container px-3">
-    <a href="career.php" class="btn btn-link text-decoration-none mb-4 text-muted fw-bold">
-        <i class="fas fa-arrow-left me-2"></i> Kembali ke Lowongan
-    </a>
+    <div class="mb-4">
+        <a href="career.php" class="btn btn-janji">
+            <i class="fas fa-arrow-left me-2"></i> Kembali ke Lowongan
+        </a>
+    </div>
     
     <div class="card card-apply">
         <div class="card-body p-4 p-md-5">
@@ -205,7 +227,7 @@ if ($job_id) {
                     </div>
                     
                     <div class="col-12 mt-5">
-                        <button type="submit" name="submit_application" class="btn btn-jhc w-100 rounded-pill fw-bold shadow-lg">
+                        <button type="submit" name="submit_application" class="btn btn-janji w-100 rounded-pill fw-bold shadow-lg">
                             KIRIM LAMARAN SEKARANG <i class="fas fa-paper-plane ms-2"></i>
                         </button>
                         <p class="text-center text-muted mt-3" style="font-size: 0.75rem;">
