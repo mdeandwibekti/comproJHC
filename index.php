@@ -579,38 +579,60 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
 
         /* ==================== MCU CAROUSEL - IMPROVED ==================== */
-        #mcuCarousel .carousel-control-prev-icon,
-        #mcuCarousel .carousel-control-next-icon {
-            background-color: #0066cc;
-            border-radius: 50%;
-            padding: 0.75rem;
+        /* Styling Khusus agar Rapi & Simple */
+        .mcu-card { border-radius: 20px; transition: 0.3s; overflow: hidden; }
+        .mcu-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.08)!important; }
+        
+        .mcu-img-wrapper { position: relative; height: 200px; }
+        .mcu-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .mcu-price-tag { 
+          position: absolute; bottom: 15px; left: 15px; 
+          background: rgba(255,255,255,0.95); backdrop-filter: blur(5px);
+          color: #0066cc; font-weight: 800; padding: 5px 15px; border-radius: 10px; font-size: 0.9rem;
         }
 
-        #mcuCarousel .carousel-control-prev-icon:hover,
-        #mcuCarousel .carousel-control-next-icon:hover {
-            background-color: #0052a3;
-            transform: scale(1.1);
+        .mcu-card:hover .mcu-img-wrapper img {
+          transform: scale(1.1);
         }
 
-        #mcuCarousel .carousel-indicators button {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: #0066cc;
-            opacity: 0.5;
-            margin: 0 4px;
+        .mcu-price-badge {
+          position: absolute;
+          bottom: 15px;
+          right: 15px;
+          background: #ffffff;
+          color: #0066cc;
+          padding: 6px 16px;
+          border-radius: 8px;
+          font-weight: 800;
+          font-size: 0.95rem;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        #mcuCarousel .carousel-indicators button.active {
-            opacity: 1;
-            width: 28px;
-            border-radius: 5px;
+        .mcu-desc-container {
+          border-left: 2px solid #eef2f7;
+          padding-left: 15px;
         }
 
-        #mcuCarousel .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(37, 211, 102, 0.3) !important;
+        .mcu-btn {
+          background-color: #0066cc;
+          border: none;
+          transition: background 0.3s;
         }
+
+        .mcu-btn:hover {
+          background-color: #004d99;
+        }
+
+        /* Memastikan teks deskripsi tidak merusak tinggi card */
+        .card-text {
+          display: -webkit-box;
+          -webkit-line-clamp: 4;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          line-height: 1.6;
+        }
+      
 
         /* ==================== PARTNERS - IMPROVED ==================== */
         .partner-logo {
@@ -1131,116 +1153,94 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         </div>
       </div>
 
-<!-- ==================== MCU PACKAGES ==================== -->
-<?php if (!empty($mcu_packages_data)): ?>
-<section class="py-5" style="background: linear-gradient(135deg, #f8fbff 0%, #e8f4f8 100%);">
-  <div class="container">
-    <div class="row justify-content-center mb-5">
-      <div class="col-lg-8 text-center">
-        <p class="section-subtitle">
-          <i class="fas fa-heart-pulse me-2"></i>Prioritaskan Kesehatan Anda
-        </p>
-        <h2 class="section-title">Paket Medical Check Up</h2>
-        <p class="text-muted mt-3" style="font-size: 1.05rem; line-height: 1.6;">
-          Deteksi dini adalah kunci kesehatan optimal. Pilih paket pemeriksaan kesehatan yang sesuai dengan kebutuhan Anda.
-        </p>
-      </div>
-    </div>
-    
-    <div id="mcuCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-indicators">
-        <?php foreach ($mcu_packages_data as $index => $package): ?>
-          <button type="button" data-bs-target="#mcuCarousel" data-bs-slide-to="<?php echo $index; ?>" 
-                  class="<?php echo ($index === 0) ? 'active' : ''; ?>" 
-                  aria-current="<?php echo ($index === 0) ? 'true' : 'false'; ?>"
-                  aria-label="Slide <?php echo $index + 1; ?>"></button>
-        <?php endforeach; ?>
-      </div>
+      <?php if (!empty($mcu_packages_data)): ?>
+      <section class="py-5 bg-light" id="mcu-section">
+        <div class="container">
+          <div class="row mb-5 align-items-end">
+            <div class="col-lg-7">
+              <p class="text-primary fw-bold text-uppercase mb-2" style="letter-spacing: 1px; font-size: 0.85rem;">
+                <i class="fas fa-file-medical me-2"></i>Layanan Check Up
+              </p>
+              <h2 class="fw-bold text-dark mb-0">Pilih Paket Kesehatan Anda</h2>
+            </div>
+          </div>
+          
+          <div class="row g-4">
+            <?php foreach ($mcu_packages_data as $index => $package): ?>
+              <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm mcu-card">
+                  
+                  <div class="mcu-img-wrapper">
+                    <img src="public/<?php echo htmlspecialchars($package['image_path']); ?>" class="card-img-top" alt="MCU">
+                    <div class="mcu-price-tag">
+                      Rp <?php echo number_format($package['price'], 0, ',', '.'); ?>
+                    </div>
+                  </div>
 
-      <div class="carousel-inner">
-        <?php foreach ($mcu_packages_data as $index => $package): ?>
-          <div class="carousel-item <?php echo ($index === 0) ? 'active' : ''; ?>">
-            <div class="card border-0 shadow-lg mx-auto" style="max-width: 1100px; border-radius: 20px; overflow: hidden;">
-              <div class="row g-0">
-                <!-- Image Column - Full Height -->
-                <div class="col-md-5 position-relative" style="min-height: 420px;">
-                  <img src="public/<?php echo htmlspecialchars($package['image_path']); ?>" 
-                       class="position-absolute top-0 start-0 w-100 h-100" 
-                       style="object-fit: cover; object-position: center;" 
-                       alt="<?php echo htmlspecialchars($package['title']); ?>">
-                  <div class="position-absolute top-0 start-0 w-100 h-100" 
-                       style="background: linear-gradient(180deg, rgba(0,102,204,0.1) 0%, rgba(0,102,204,0.05) 100%);"></div>
-                </div>
-                
-                <!-- Content Column -->
-                <div class="col-md-7 d-flex align-items-center bg-white">
-                  <div class="card-body p-4 p-lg-5">
-                    <span class="badge mb-3 px-3 px-md-4 py-2 rounded-pill" 
-                          style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #1a1a1a; font-weight: 600; font-size: 0.8rem;">
-                      <i class="fas fa-star me-1"></i>Paket Terpopuler
-                    </span>
+                  <div class="card-body p-4 d-flex flex-column">
+                    <h5 class="fw-bold text-dark mb-2"><?php echo htmlspecialchars($package['title']); ?></h5>
                     
-                    <h3 class="fw-bold mb-3" style="color: #0066cc; font-size: clamp(1.25rem, 3vw, 1.75rem);">
-                      <?php echo htmlspecialchars($package['title']); ?>
-                    </h3>
-                    
-                    <p class="text-muted mb-4" style="line-height: 1.7; font-size: clamp(0.875rem, 2vw, 1rem);">
-                      <?php echo nl2br(htmlspecialchars($package['description'])); ?>
+                    <p class="text-muted small mb-4 line-clamp-3">
+                      <?php echo htmlspecialchars(substr($package['description'], 0, 120)) . '...'; ?>
                     </p>
-                    
-                    <div class="p-3 p-md-4 mb-4 rounded-3" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #0066cc;">
-                      <div class="d-flex align-items-center">
-                        <div class="me-3">
-                          <i class="fas fa-tag fa-2x" style="color: #0066cc;"></i>
+
+                    <div class="mt-auto">
+                      <div class="row g-2">
+                        <div class="col-6">
+                          <button type="button" class="btn btn-outline-primary w-100 rounded-pill fw-bold btn-sm py-2" 
+                                  data-bs-toggle="modal" data-bs-target="#mcuModal<?php echo $index; ?>">
+                            Lihat Detail
+                          </button>
                         </div>
-                        <div>
-                          <small class="text-muted d-block mb-1" style="font-size: 0.8rem;">Investasi Kesehatan Anda</small>
-                          <h4 class="fw-bold mb-0" style="color: #1a1a1a; font-size: clamp(1.25rem, 3vw, 1.75rem);">
-                            Rp <?php echo number_format($package['price'], 0, ',', '.'); ?>
-                          </h4>
+                        <div class="col-6">
+                          <?php
+                            $wa_link = "https://api.whatsapp.com/send?phone=6287760615300&text=" . urlencode("Halo JHC, saya ingin reservasi: " . $package['title']);
+                          ?>
+                          <a href="<?php echo $wa_link; ?>" target="_blank" class="btn btn-success w-100 rounded-pill fw-bold btn-sm py-2">
+                            Reservasi
+                          </a>
                         </div>
                       </div>
                     </div>
-                    
-                    <?php
-                    $whatsapp_number = '6287760615300';
-                    $whatsapp_message = urlencode("Halo JHC, saya tertarik dengan paket MCU: " . $package['title'] . ". Mohon informasi lebih lanjut.");
-                    $whatsapp_link = "https://api.whatsapp.com/send?phone={$whatsapp_number}&text={$whatsapp_message}";
-                    ?>
-                    
-                    <a href="<?php echo $whatsapp_link; ?>" target="_blank" 
-                       class="btn btn-success rounded-pill px-4 px-md-5 py-2 py-md-3 fw-bold shadow-sm d-inline-flex align-items-center" 
-                       style="font-size: clamp(0.875rem, 2vw, 1rem); transition: all 0.3s ease;">
-                      <i class="fab fa-whatsapp me-2" style="font-size: 1.125rem;"></i>
-                      Reservasi Via WhatsApp
-                    </a>
-                    
-                    <p class="text-muted mt-3 mb-0" style="font-size: 0.8rem;">
-                      <i class="fas fa-info-circle me-1"></i>Tim kami siap membantu Anda 24/7
-                    </p>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        <?php endforeach; ?>
-      </div>
 
-      <!-- Carousel Controls -->
-      <button class="carousel-control-prev" type="button" data-bs-target="#mcuCarousel" data-bs-slide="prev" style="width: 5%;">
-        <span class="carousel-control-prev-icon rounded-circle p-3 shadow" 
-              style="background-color: #0066cc;"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#mcuCarousel" data-bs-slide="next" style="width: 5%;">
-        <span class="carousel-control-next-icon rounded-circle p-3 shadow" 
-              style="background-color: #0066cc;"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
-  </div>
-</section>
-<?php endif; ?>
+              <div class="modal fade" id="mcuModal<?php echo $index; ?>" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                  <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                    <div class="modal-header border-0 pb-0">
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 p-lg-5">
+                      <div class="row g-4">
+                        <div class="col-md-5">
+                          <img src="public/<?php echo htmlspecialchars($package['image_path']); ?>" class="img-fluid rounded-4 shadow-sm" alt="Detail MCU">
+                        </div>
+                        <div class="col-md-7">
+                          <span class="badge bg-primary-soft text-primary mb-2 px-3">Rincian Paket</span>
+                          <h3 class="fw-bold text-dark mb-3"><?php echo htmlspecialchars($package['title']); ?></h3>
+                          <h4 class="text-primary fw-bold mb-4">Rp <?php echo number_format($package['price'], 0, ',', '.'); ?></h4>
+                          
+                          <div class="detail-content text-muted mb-4" style="line-height: 1.8;">
+                            <h6 class="text-dark fw-bold"><i class="fas fa-list-check me-2"></i>Item Pemeriksaan:</h6>
+                            <?php echo nl2br(htmlspecialchars($package['description'])); ?>
+                          </div>
+
+                          <a href="<?php echo $wa_link; ?>" target="_blank" class="btn btn-success w-100 py-3 rounded-3 fw-bold shadow-sm">
+                            <i class="fab fa-whatsapp me-2"></i> Hubungi Kami Sekarang
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <?php endforeach; ?>
+          </div>
+        </div>
+      </section>
+      <?php endif; ?>
 
       <!-- ==================== VIRTUAL ROOM ==================== -->
       <?php if ($vr_data): ?>
