@@ -245,7 +245,12 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             width: 80%;
         }
 
-        .btn-janji {
+        /* ==================== UNIFIED BUTTON STYLES ==================== */
+        .btn-janji,
+        .btn-detail-layanan,
+        .btn-detail-dokter,
+        .btn-mcu-reservasi,
+        .btn-janji-modal {
             background: var(--jhc-gradient);
             color: white !important;
             border-radius: 50px;
@@ -256,14 +261,28 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             transition: var(--transition-smooth);
             box-shadow: 0 4px 15px rgba(200, 16, 46, 0.2);
             white-space: nowrap;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .btn-janji:hover {
+        .btn-janji:hover,
+        .btn-detail-layanan:hover,
+        .btn-detail-dokter:hover,
+        .btn-mcu-reservasi:hover,
+        .btn-janji-modal:hover {
             background: white;
             color: var(--jhc-red) !important;
             border-color: var(--jhc-red);
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(200, 16, 46, 0.3);
+        }
+
+        .btn-detail-layanan,
+        .btn-detail-dokter {
+            padding: 0.5rem 1.25rem;
+            font-size: 0.8rem;
         }
 
         /* ==================== FLOATING BUTTONS - IMPROVED ==================== */
@@ -614,16 +633,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           padding-left: 15px;
         }
 
-        .mcu-btn {
-          background-color: #0066cc;
-          border: none;
-          transition: background 0.3s;
-        }
-
-        .mcu-btn:hover {
-          background-color: #004d99;
-        }
-
         /* Memastikan teks deskripsi tidak merusak tinggi card */
         .card-text {
           display: -webkit-box;
@@ -950,7 +959,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     <main class="main" id="top">
       
       <!-- ==================== NAVBAR ==================== -->
-      <nav class="navbar navbar-expand-lg navbar-light fixed-top" data-navbar-on-scroll="data-navbar-on-scroll">
+     <nav class="navbar navbar-expand-lg navbar-light fixed-top" data-navbar-on-scroll="data-navbar-on-scroll">
         <div class="container">
           <a class="navbar-brand" href="index.php">
             <?php $header_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/JHC_Logo.png'; ?>
@@ -1054,7 +1063,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                                   <?= htmlspecialchars($item['name']); ?>
                               </h5>
                               <a href="javascript:void(0)" 
-                                 class="btn btn-primary btn-sm rounded-pill px-3 py-2 shadow-sm btn-buka-detail" 
+                                 class="btn btn-detail-layanan btn-sm rounded-pill px-3 py-2 shadow-sm btn-buka-detail" 
                                  data-bs-toggle="modal" 
                                  data-bs-target="#modalLayanan" 
                                  data-name="<?= htmlspecialchars($item['name']); ?>" 
@@ -1145,7 +1154,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             </div>
             <div class="modal-footer border-0">
               <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
-              <a href="booking.php" class="btn btn-primary rounded-pill px-4 shadow-sm">
+              <a href="booking.php" class="btn btn-janji-modal rounded-pill px-4 shadow-sm">
                 <i class="fas fa-calendar-check me-2"></i>Buat Janji Temu
               </a>
             </div>
@@ -1196,7 +1205,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                           <?php
                             $wa_link = "https://api.whatsapp.com/send?phone=6287760615300&text=" . urlencode("Halo JHC, saya ingin reservasi: " . $package['title']);
                           ?>
-                          <a href="<?php echo $wa_link; ?>" target="_blank" class="btn btn-success w-100 rounded-pill fw-bold btn-sm py-2">
+                          <a href="<?php echo $wa_link; ?>" target="_blank" class="btn btn-mcu-reservasi w-100 rounded-pill fw-bold btn-sm py-2">
                             Reservasi
                           </a>
                         </div>
@@ -1447,7 +1456,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                   </p>
                   
                   <button type="button" 
-                          class="btn btn-outline-primary btn-sm rounded-pill px-3 px-md-4 btn-detail-dokter" 
+                          class="btn btn-detail-dokter btn-sm rounded-pill px-3 px-md-4" 
                           data-bs-toggle="modal" 
                           data-bs-target="#modalDetailDokter"
                           data-name="<?php echo htmlspecialchars($doc['name']); ?>"
@@ -1487,7 +1496,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
               </div>
               
               <div class="d-grid mt-4">
-                <a id="mdl-book-link" href="booking.php" class="btn btn-danger rounded-pill py-3 fw-bold shadow-sm">
+                <a id="mdl-book-link" href="booking.php" class="btn btn-janji-modal rounded-pill py-3 fw-bold shadow-sm">
                   <i class="fas fa-calendar-check me-2"></i>Buat Janji Temu
                 </a>
               </div>
