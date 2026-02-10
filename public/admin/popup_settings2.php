@@ -1,191 +1,150 @@
 <?php
 require_once "../../config.php";
 
-// --- LOGIKA PEMROSESAN (Harus SEBELUM require layout/header.php) ---
+// --- LOGIKA PEMROSESAN ---
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // 1. Ambil data lama untuk referensi penghapusan file jika ada upload baru
+    $old_image_path = '';
+    $res = $mysqli->query("SELECT setting_value FROM settings2 WHERE setting_key = 'popup_image_path'");
+    if ($row_old = $res->fetch_assoc()) {
+        $old_image_path = $row_old['setting_value'];
+    }
+
+    // 2. Simpan Title, Content, dan Status menggunakan Prepared Statements
     $sql = "INSERT INTO settings2 (setting_key, setting_value) VALUES (?, ?) 
             ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)";
     
-    if ($stmt = $mysqli->prepare($sql)) {
-        // 1. Ambil data lama untuk referensi penghapusan file
-        $old_settings = [];
-        $res = $mysqli->query("SELECT * FROM settings2 WHERE setting_key = 'popup_image_path'");
-        $row_old = $res->fetch_assoc();
-        $old_image_path = $row_old['setting_value'] ?? '';
+    $stmt = $mysqli->prepare($sql);
+    $params = [
+        'popup_title'   => $_POST['popup_title'] ?? '',
+        'popup_content' => $_POST['popup_content'] ?? '',
+        'popup_status'  => $_POST['popup_status'] ?? 'inactive'
+    ];
 
-        // 2. Simpan Title, Content, dan Status
-        $params = [
-            'popup_title'   => $_POST['popup_title'],
-            'popup_content' => $_POST['popup_content'],
-            'popup_status'  => $_POST['popup_status']
-        ];
+    foreach ($params as $key => $value) {
+        $stmt->bind_param("ss", $key, $value);
+        $stmt->execute();
+    }
 
-        foreach ($params as $key => $value) {
-            $stmt->bind_param("ss", $key, $value);
-            $stmt->execute();
-        }
+    // 3. Handle Upload Gambar (Hanya jika ada file yang dipilih)
+    if (isset($_FILES["popup_image"]) && $_FILES["popup_image"]["error"] == 0) {
+        $upload_dir = "../assets/img/popups/";
+        if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
 
-        // 3. Handle Upload Gambar
-        if (isset($_FILES["popup_image"]) && $_FILES["popup_image"]["error"] == 0) {
-            $upload_dir = "../assets/img/popups/";
-            if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
+        $file_name = $_FILES["popup_image"]["name"];
+        $ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
 
-            $ext = strtolower(pathinfo($_FILES["popup_image"]["name"], PATHINFO_EXTENSION));
-            $new_filename = uniqid('popup_') . '.' . $ext;
-            $target_file = $upload_dir . $new_filename;
+        // Validasi Ekstensi & Ukuran (Maks 2MB)
+        if (in_array($ext, $allowed)) {
+            if ($_FILES["popup_image"]["size"] < 2 * 1024 * 1024) {
+                $new_filename = 'popup_' . time() . '.' . $ext;
+                $target_file = $upload_dir . $new_filename;
 
-            if (move_uploaded_file($_FILES["popup_image"]["tmp_name"], $target_file)) {
-                // Hapus file fisik lama jika ada
-                if (!empty($old_image_path) && file_exists("../" . $old_image_path)) {
-                    unlink("../" . $old_image_path);
+                if (move_uploaded_file($_FILES["popup_image"]["tmp_name"], $target_file)) {
+                    // Hapus file fisik lama
+                    if (!empty($old_image_path) && file_exists("../../" . $old_image_path)) {
+                        unlink("../../" . $old_image_path);
+                    }
+
+                    // Update path di database (Gunakan path relatif dari root public)
+                    $db_path = 'assets/img/popups/' . $new_filename;
+                    $stmt->bind_param("ss", $k = 'popup_image_path', $db_path);
+                    $stmt->execute();
                 }
-
-                // Update path di database
-                $db_path = 'assets/img/popups/' . $new_filename;
-                $stmt->bind_param("ss", $k = 'popup_image_path', $db_path);
-                $stmt->execute();
             }
         }
-        $stmt->close();
     }
-    
+    $stmt->close();
     header("location: popup_settings2.php?saved=true");
     exit();
 }
 
-// Ambil data settings terbaru untuk ditampilkan di form
+// Ambil data settings terbaru
 $settings = [];
 $result = $mysqli->query("SELECT * FROM settings2 WHERE setting_key LIKE 'popup_%'");
-if ($result) {
-    while($row = $result->fetch_assoc()){
-        $settings[$row['setting_key']] = $row['setting_value'];
-    }
+while($row = $result->fetch_assoc()){
+    $settings[$row['setting_key']] = $row['setting_value'];
 }
 
 require_once 'layout/header.php';
 ?>
 
 <style>
-    :root { 
-        --jhc-red-dark: #8a3033;
-        --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
-    }
-
-    /* Card Wrapper bergaya Neumorphism */
-    .admin-wrapper {
-        background: #ffffff;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        padding: 40px;
-        margin-top: 20px;
-        border: 1px solid rgba(0,0,0,0.05);
-    }
-
-    .manage-header {
-        border-left: 4px solid var(--jhc-red-dark);
-        padding-left: 20px;
-        margin-bottom: 30px;
-    }
-
-    /* Tombol Utama Gradasi JHC */
-    .btn-jhc-save { 
-        background: var(--jhc-gradient) !important; 
-        color: white !important; 
-        border-radius: 12px !important; 
-        padding: 12px 35px !important; 
-        font-weight: 700; 
-        border: none !important;
-        box-shadow: 0 4px 15px rgba(138, 48, 51, 0.3);
-        transition: 0.3s; 
-    }
-    .btn-jhc-save:hover { transform: translateY(-2px); opacity: 0.95; }
-
-    .img-preview-box {
-        background: #fdfdfd; border: 2px dashed #ddd; border-radius: 15px;
-        padding: 20px; text-align: center; transition: 0.3s;
-    }
-    .img-preview-box img { max-height: 200px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    
-    .form-label { font-weight: 700; color: #444; font-size: 0.85rem; text-transform: uppercase; }
-    .form-control:focus { border-color: var(--jhc-red-dark); box-shadow: 0 0 0 0.25rem rgba(138, 48, 51, 0.1); }
-
-    /* Custom Radio Status */
-    .status-toggle {
-        background: #f8f9fa; padding: 10px 20px; border-radius: 12px; display: inline-block;
-    }
+    :root { --jhc-red: #8a3033; --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%); }
+    .admin-wrapper { background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 40px; border: 1px solid rgba(0,0,0,0.05); }
+    .manage-header { border-left: 5px solid var(--jhc-red); padding-left: 20px; margin-bottom: 30px; }
+    .btn-jhc-save { background: var(--jhc-gradient); color: white !important; border-radius: 12px; padding: 12px 35px; font-weight: 700; border: none; transition: 0.3s; }
+    .btn-jhc-save:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(138, 48, 51, 0.3); }
+    .img-preview-box { background: #f8f9fa; border: 2px dashed #ddd; border-radius: 15px; padding: 20px; text-align: center; overflow: hidden; }
+    .img-preview-box img { max-height: 250px; border-radius: 10px; }
+    .status-toggle { background: #f8f9fa; padding: 12px 20px; border-radius: 12px; border: 1px solid #eee; }
 </style>
 
 <div class="container-fluid py-4">
     <div class="admin-wrapper">
-        <div class="d-flex justify-content-between align-items-center manage-header">
-            <div>
-                <h3 class="fw-bold mb-1 text-dark">Promotional Popup Settings</h3>
-                <p class="text-muted small mb-0">Kelola pengumuman atau promo yang muncul secara otomatis saat pengunjung membuka website.</p>
-            </div>
-            <button type="submit" form="popupForm" class="btn btn-jhc-save">
-                <i class="fas fa-save me-2"></i> Simpan Pengaturan
-            </button>
-        </div>
-
-        <?php if(isset($_GET['saved'])): ?>
-            <div class="alert alert-success border-0 shadow-sm border-start border-success border-4 mb-4">
-                <i class="fas fa-check-circle me-2"></i> Pengaturan popup berhasil diperbarui!
-            </div>
-        <?php endif; ?>
-
         <form action="popup_settings2.php" method="post" enctype="multipart/form-data" id="popupForm">
-            <div class="row g-5">
-                <div class="col-md-7">
-                    <div class="mb-4">
-                        <label class="form-label">Judul Popup</label>
-                        <input type="text" name="popup_title" class="form-control form-control-lg" 
-                               value="<?php echo htmlspecialchars($settings['popup_title'] ?? ''); ?>" 
-                               placeholder="Contoh: Promo Ramadhan Sehat">
-                    </div>
+            <div class="d-flex justify-content-between align-items-center manage-header">
+                <div>
+                    <h3 class="fw-bold mb-1">Promotional Popup</h3>
+                    <p class="text-muted small mb-0">Atur konten promo yang akan muncul saat user membuka beranda.</p>
+                </div>
+                <button type="submit" class="btn btn-jhc-save"><i class="fas fa-save me-2"></i> Simpan</button>
+            </div>
 
-                    <div class="mb-4">
-                        <label class="form-label">Isi Pesan / Konten</label>
-                        <textarea name="popup_content" class="form-control" rows="6" 
-                                  placeholder="Tuliskan detail pengumuman di sini..."><?php echo htmlspecialchars($settings['popup_content'] ?? ''); ?></textarea>
-                    </div>
+            <?php if(isset($_GET['saved'])): ?>
+                <div class="alert alert-success border-0 shadow-sm mb-4"><i class="fas fa-check-circle me-2"></i> Pengaturan berhasil disimpan!</div>
+            <?php endif; ?>
 
-                    <div class="mb-0">
-                        <label class="form-label d-block">Status Aktivasi</label>
-                        <div class="status-toggle border">
-                            <div class="form-check form-check-inline me-4">
-                                <input class="form-check-input" type="radio" name="popup_status" id="status_active" value="active" <?php echo (($settings['popup_status'] ?? '') == 'active') ? 'checked' : ''; ?>>
-                                <label class="form-check-label fw-bold text-success" for="status_active">AKTIF</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="popup_status" id="status_inactive" value="inactive" <?php echo (($settings['popup_status'] ?? 'inactive') == 'inactive') ? 'checked' : ''; ?>>
-                                <label class="form-check-label fw-bold text-muted" for="status_inactive">NON-AKTIF</label>
-                            </div>
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="mb-4">
+                        <label class="form-label">Judul Promo</label>
+                        <input type="text" name="popup_title" class="form-control" value="<?= htmlspecialchars($settings['popup_title'] ?? ''); ?>" placeholder="Masukkan judul...">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Deskripsi / Konten</label>
+                        <textarea name="popup_content" class="form-control" rows="5"><?= htmlspecialchars($settings['popup_content'] ?? ''); ?></textarea>
+                    </div>
+                    <div class="status-toggle">
+                        <label class="form-label d-block mb-2">Status Popup</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="popup_status" id="active" value="active" <?= ($settings['popup_status'] ?? '') == 'active' ? 'checked' : ''; ?>>
+                            <label class="form-check-label text-success fw-bold" for="active">AKTIF</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="popup_status" id="inactive" value="inactive" <?= ($settings['popup_status'] ?? 'inactive') == 'inactive' ? 'checked' : ''; ?>>
+                            <label class="form-check-label text-muted fw-bold" for="inactive">MATI</label>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-5 border-start">
-                    <label class="form-label">Gambar Popup</label>
-                    <div class="img-preview-box mb-3">
+                <div class="col-lg-5">
+                    <label class="form-label">Preview Gambar</label>
+                    <div class="img-preview-box mb-3" id="previewContainer">
                         <?php if (!empty($settings['popup_image_path'])): ?>
-                            <img src="../<?php echo htmlspecialchars($settings['popup_image_path']); ?>" alt="Popup Preview" class="img-fluid">
+                            <img src="../../<?= htmlspecialchars($settings['popup_image_path']); ?>" id="imageDisplay" class="img-fluid shadow-sm">
                         <?php else: ?>
-                            <div class="py-5 text-muted">
-                                <i class="fas fa-bullhorn fa-4x opacity-25 mb-3"></i><br>
-                                <span class="small">Belum ada gambar promo</span>
-                            </div>
+                            <div id="noImage" class="py-5 text-muted"><i class="fas fa-image fa-3x mb-2"></i><br>No Image</div>
                         <?php endif; ?>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="small fw-bold mb-2">Unggah Gambar Baru:</label>
-                        <input type="file" name="popup_image" class="form-control form-control-sm shadow-sm">
-                        <div class="form-text x-small mt-2">Format: JPG, PNG, WebP. Pastikan rasio gambar proporsional untuk tampilan popup.</div>
-                    </div>
+                    <input type="file" name="popup_image" class="form-control" id="imageInput" accept="image/*">
+                    <small class="text-muted d-block mt-2">Maksimal 2MB (JPG, PNG, WebP)</small>
                 </div>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+    // Fitur Instant Preview
+    document.getElementById('imageInput').onchange = function (evt) {
+        const [file] = this.files;
+        if (file) {
+            const container = document.getElementById('previewContainer');
+            container.innerHTML = `<img src="${URL.createObjectURL(file)}" class="img-fluid shadow-sm">`;
+        }
+    };
+</script>
 
 <?php require_once 'layout/footer.php'; ?>

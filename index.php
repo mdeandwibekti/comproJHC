@@ -633,6 +633,16 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           padding-left: 15px;
         }
 
+        .mcu-btn {
+          background-color: #0066cc;
+          border: none;
+          transition: background 0.3s;
+        }
+
+        .mcu-btn:hover {
+          background-color: #004d99;
+        }
+
         /* Memastikan teks deskripsi tidak merusak tinggi card */
         .card-text {
           display: -webkit-box;
@@ -945,6 +955,102 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
         .spinner-overlay.active {
             display: flex;
+        }
+
+        /* Container Utama Modal */
+        #promoPopup .modal-content {
+            border: none;
+            border-radius: 24px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        /* Penataan Gambar agar Proporsional */
+        .popup-image-container {
+            width: 100%;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #promoPopup img {
+            width: 100%;
+            height: auto;
+            max-height: 400px; /* Batasi tinggi agar tidak memakan seluruh layar laptop */
+            object-fit: cover; /* Gambar akan terpotong rapi jika ukurannya tidak pas */
+            transition: transform 0.5s ease;
+        }
+
+        /* Efek Hover Gambar */
+        #promoPopup:hover img {
+            transform: scale(1.02);
+        }
+
+        /* Tipografi */
+        #promoPopup h4 {
+            color: #333;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+        }
+
+        #promoPopup p {
+            color: #6c757d;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Tombol Tutup (Close Button) */
+        #promoPopup .btn-close {
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            padding: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        #promoPopup .btn-close:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+
+        /* Tombol Aksi di Bawah */
+        #promoPopup .btn-primary {
+            background: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
+            border: none;
+            padding: 10px 40px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(138, 48, 51, 0.2);
+        }
+
+        #promoPopup .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 48, 51, 0.3);
+        }
+
+        /* Animasi Masuk Popup */
+        .modal.fade .modal-dialog {
+            transform: scale(0.8);
+            transition: transform 0.4s ease-out;
+        }
+
+        .modal.show .modal-dialog {
+            transform: scale(1);
+        }
+
+        /* Responsif Mobile */
+        @media (max-width: 576px) {
+            #promoPopup .modal-dialog {
+                margin: 20px;
+            }
+            
+            #promoPopup img {
+                max-height: 250px; /* Lebih pendek di layar HP */
+            }
         }
     </style>
   </head>
@@ -1673,6 +1779,60 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         </div>
       </section>
 
+      <?php 
+        $popup_res = $mysqli->query("SELECT * FROM settings2 WHERE setting_key LIKE 'popup_%'");
+        $p_data = [];
+        while($row = $popup_res->fetch_assoc()) {
+            $p_data[$row['setting_key']] = $row['setting_value'];
+        }
+
+        if (($p_data['popup_status'] ?? '') === 'active'): 
+            $raw_path = $p_data['popup_image_path'] ?? '';
+            
+            // Karena index.php di luar folder public, kita arahkan masuk ke public/
+            $final_image_url = "public/" . $raw_path;
+      ?>
+      <div class="modal fade" id="promoPopup" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            
+            <button type="button" class="btn-close position-absolute end-0 top-0 m-3 shadow-none" 
+                    data-bs-dismiss="modal" style="z-index: 100; background-color: white; border-radius: 50%; padding: 10px;"></button>
+
+            <div class="modal-body p-0">
+              <?php if (!empty($raw_path)): ?>
+                <div class="w-100 bg-light">
+                  <img src="<?php echo $final_image_url; ?>" 
+                      class="w-100 d-block" 
+                      style="max-height: 450px; object-fit: cover;" 
+                      onerror="this.src='public/assets/img/gallery/JHC_Logo.png'; this.style.padding='40px';"
+                      alt="Promo">
+                </div>
+              <?php endif; ?>
+              
+              <div class="p-4 text-center">
+                <?php if (!empty($p_data['popup_title'])): ?>
+                  <h4 class="fw-bold text-dark mb-2"><?php echo htmlspecialchars($p_data['popup_title']); ?></h4>
+                <?php endif; ?>
+                
+                <?php if (!empty($p_data['popup_content'])): ?>
+                  <p class="text-muted mb-0 small" style="line-height: 1.6;">
+                      <?php echo nl2br(htmlspecialchars($p_data['popup_content'])); ?>
+                  </p>
+                <?php endif; ?>
+              </div>
+            </div>
+            
+            <div class="modal-footer border-0 p-3 justify-content-center bg-white">
+              <button type="button" class="btn btn-primary px-5 rounded-pill fw-bold" data-bs-dismiss="modal">
+                  Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <?php endif; ?>
+
       <!-- ==================== FOOTER ==================== -->
       <footer class="py-0 bg-primary position-relative">
         <div class="bg-holder opacity-25" 
@@ -1790,7 +1950,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           </div>
         </div>
       </footer>
-
     </main>
 
     <!-- ==================== SCRIPTS ==================== -->
@@ -1949,6 +2108,16 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       // Page load performance
       window.addEventListener('load', function() {
         document.body.classList.add('loaded');
+      });
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var myModalEl = document.getElementById('promoPopup');
+        if (myModalEl) {
+          var myModal = new bootstrap.Modal(myModalEl);
+          setTimeout(function() {
+            myModal.show();
+          }, 1000); 
+        }
       });
     </script>
   </body>
