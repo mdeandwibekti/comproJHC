@@ -538,35 +538,125 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         }
 
         /* ==================== DOCTORS SECTION - IMPROVED ==================== */
+        :root {
+          --jhc-red-dark: #8a3033;
+          --jhc-red-light: #bd3030;
+          --jhc-gradient: linear-gradient(145deg, #8a3033 0%, #bd3030 100%);
+        }
+
         .doctor-card {
-            border-radius: 20px;
-            overflow: hidden;
-            transition: var(--transition-smooth);
-            background: white;
-            box-shadow: var(--shadow-sm);
+            border-radius: 25px;
+            background: #ffffff;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
         }
 
         .doctor-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(138, 48, 51, 0.12);
         }
 
-        .doctor-card img {
-            transition: transform 0.6s ease;
+        .doctor-img-container {
+            position: relative;
+            padding-top: 10px;
         }
 
-        .doctor-card:hover img {
-            transform: scale(1.08);
+        /* Lingkaran dekorasi di belakang foto */
+        .img-bg-decoration {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 140px;
+            background: var(--jhc-gradient);
+            border-radius: 50%;
+            opacity: 0.1;
+            z-index: 0;
         }
 
         .doctor-img-wrapper {
-            width: 140px;
-            height: 140px;
-            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            width: 130px;
+            height: 130px;
+            margin: 0 auto;
             border-radius: 50%;
-            margin: 0 auto 1.25rem;
-            border: 4px solid #f8f9fa;
-            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            border: 5px solid #ffffff;
+        }
+
+        .doctor-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .doctor-card:hover .doctor-img-wrapper img {
+            transform: scale(1.15);
+        }
+
+        .doctor-name {
+            font-size: 1.1rem;
+            line-height: 1.3;
+            color: #2d3436 !important;
+        }
+
+        .doctor-specialty {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--jhc-red-light);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .btn-detail-dokter {
+          /* Gradasi merah tua ke merah terang */
+          background: linear-gradient(145deg, #8a3033 0%, #bd3030 100%);
+          color: #ffffff;
+          border: 2px solid transparent; /* Border transparan agar layout tidak geser saat hover */
+          font-weight: 600;
+          font-size: 0.85rem;
+          padding: 10px 0;
+          width: 100%;
+          display: block;
+          border-radius: 50px; /* Membuat tombol lonjong/rounded pill */
+          transition: all 0.4s ease;
+          cursor: pointer;
+          box-shadow: 0 4px 15px rgba(138, 48, 51, 0.2);
+        }
+
+        /* Kondisi saat tombol disentuh (Hover) atau ditekan (Active) */
+        .btn-detail-dokter:hover, 
+        .btn-detail-dokter:active {
+            background: #ffffff !important; /* Background menjadi putih */
+            color: #8a3033 !important;      /* Tulisan menjadi merah tua */
+            border: 2px solid #8a3033;     /* Menambahkan garis pinggir merah */
+            transform: translateY(-2px);    /* Efek sedikit terangkat */
+            box-shadow: 0 6px 20px rgba(138, 48, 51, 0.3);
+        }
+
+        .doctor-card:hover .btn-detail-dokter {
+            background: var(--jhc-gradient);
+            color: #ffffff;
+            border-color: transparent;
+        }
+
+        /* Responsif Mobile */
+        @media (max-width: 576px) {
+            .doctor-img-wrapper {
+                width: 100px;
+                height: 100px;
+            }
+            .img-bg-decoration {
+                width: 110px;
+                height: 110px;
+            }
+            .doctor-name {
+                font-size: 0.95rem;
+            }
         }
 
         /* ==================== MODALS - IMPROVED ==================== */
@@ -1538,39 +1628,45 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           <div class="row justify-content-center mb-5">
             <div class="col-lg-8 text-center">
               <p class="section-subtitle">
-                <i class="fas fa-user-doctor me-2"></i>TIM TERBAIK
+                <i class="fas fa-user-md me-2"></i>TIM TERBAIK
               </p>
-              <h2 class="section-title">Tim Dokter Kami</h2>
-              <p class="text-muted mt-3">Ditangani langsung oleh dokter spesialis yang berpengalaman di bidangnya.</p>
+              <h2 class="section-title">Tim Dokter Spesialis</h2>
+              <p class="text-muted mt-3">Ditangani oleh tenaga medis profesional dengan dedikasi tinggi dan pengalaman luas.</p>
             </div>
           </div>
           
-          <div class="row g-4">
+          <div class="row g-4 justify-content-center">
             <?php foreach($doctors_data as $doc): ?>
-            <div class="col-6 col-sm-6 col-lg-3">
-              <div class="card doctor-card h-100 text-center p-3 p-md-4">
-                <div class="card-body p-2">
-                  <div class="doctor-img-wrapper">
-                    <img src="public/<?php echo htmlspecialchars(!empty($doc['photo_path']) ? $doc['photo_path'] : 'assets/img/gallery/jane.png'); ?>" 
-                         class="w-100 h-100" style="object-fit: cover;" alt="<?php echo htmlspecialchars($doc['name']); ?>">
+            <div class="col-6 col-md-4 col-lg-3">
+              <div class="card doctor-card h-100 border-0">
+                <div class="card-body p-4">
+                  <div class="doctor-img-container">
+                    <div class="img-bg-decoration"></div>
+                    <div class="doctor-img-wrapper shadow-sm">
+                      <img src="public/<?php echo htmlspecialchars(!empty($doc['photo_path']) ? $doc['photo_path'] : 'assets/img/gallery/jane.png'); ?>" 
+                          alt="<?php echo htmlspecialchars($doc['name']); ?>">
+                    </div>
                   </div>
-                  <h5 class="fw-bold text-dark mb-2" style="font-size: clamp(0.875rem, 2vw, 1rem);">
-                    <?php echo htmlspecialchars($doc['name']); ?>
-                  </h5>
-                  <p class="text-primary small fw-bold text-uppercase mb-3" style="font-size: clamp(0.7rem, 1.5vw, 0.8rem);">
-                    <?php echo htmlspecialchars($doc['specialty']); ?>
-                  </p>
                   
-                  <button type="button" 
-                          class="btn btn-detail-dokter btn-sm rounded-pill px-3 px-md-4" 
-                          data-bs-toggle="modal" 
-                          data-bs-target="#modalDetailDokter"
-                          data-name="<?php echo htmlspecialchars($doc['name']); ?>"
-                          data-specialty="<?php echo htmlspecialchars($doc['specialty']); ?>"
-                          data-desc="<?php echo htmlspecialchars($doc['description'] ?? 'Profil profesional dokter di JHC.'); ?>"
-                          data-img="public/<?php echo htmlspecialchars(!empty($doc['photo_path']) ? $doc['photo_path'] : 'assets/img/gallery/jane.png'); ?>">
-                    <i class="fas fa-eye me-1"></i><span class="d-none d-sm-inline">Lihat </span>Profil
-                  </button>
+                  <div class="doctor-info-wrapper mt-3">
+                    <h5 class="doctor-name fw-bold text-dark mb-1">
+                      <?php echo htmlspecialchars($doc['name']); ?>
+                    </h5>
+                    <p class="doctor-specialty mb-3">
+                      <?php echo htmlspecialchars($doc['specialty']); ?>
+                    </p>
+                    
+                    <button type="button" 
+                            class="btn btn-detail-dokter rounded-pill px-4 shadow-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modalDetailDokter"
+                            data-name="<?php echo htmlspecialchars($doc['name']); ?>"
+                            data-specialty="<?php echo htmlspecialchars($doc['specialty']); ?>"
+                            data-desc="<?php echo htmlspecialchars($doc['description'] ?? 'Profil profesional dokter di JHC.'); ?>"
+                            data-img="public/<?php echo htmlspecialchars(!empty($doc['photo_path']) ? $doc['photo_path'] : 'assets/img/gallery/jane.png'); ?>">
+                      <i class="fas fa-id-card me-2"></i>Lihat Profil
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1843,7 +1939,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             <div class="col-12 col-md-6 col-lg-4">
                 <a class="text-decoration-none d-inline-block mb-4" href="index.php">
                     <?php 
-                    $footer_logo = !empty($settings['footer_logo_path']) ? $settings['footer_logo_path'] : 'assets/img/gallery/footer-logo.png';
+                    $footer_logo = !empty($settings['footer_logo_path']) ? $settings['footer_logo_path'] : 'assets/img/gallery/JhC_Logo.png';
                     ?>
                     <img src="public/<?php echo htmlspecialchars($footer_logo); ?>" height="65" alt="JHC Logo" class="footer-logo-main" />
                 </a>

@@ -19,11 +19,13 @@ if (isset($_GET['delete'])) {
 }
 
 // Fetch doctors dengan join ke tabel departments
-$sql = "SELECT d.id, d.name, d.specialty, d.photo_path, d.is_featured, d.description, dep.name as department_name 
+// Fetch doctors dengan join ke tabel departments dan ambil kolom schedule
+$sql = "SELECT d.id, d.name, d.specialty, d.photo_path, d.is_featured, d.description, d.schedule, dep.name as department_name 
         FROM doctors d 
         LEFT JOIN departments dep ON d.department_id = dep.id 
         ORDER BY d.name ASC";
 $result = $mysqli->query($sql);
+
 
 require_once 'layout/header.php';
 ?>
@@ -94,6 +96,22 @@ require_once 'layout/header.php';
 
     .badge-featured { background-color: #e6f4ea; color: #1e7e34; border-radius: 50px; padding: 6px 16px; font-weight: 600; }
     .btn-action-jhc { border-radius: 8px; font-weight: 600; padding: 6px 12px; }
+
+    .schedule-badge {
+    display: inline-block;
+    background-color: #f0f7ff;
+    color: #0056b3;
+    border: 1px solid #d0e3ff;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    margin: 2px;
+    font-weight: 500;
+    }
+    .text-schedule {
+        max-width: 250px;
+        line-height: 1.2;
+    }
 </style>
 
 <div class="container-fluid py-4">
@@ -121,65 +139,91 @@ require_once 'layout/header.php';
         <?php endif; ?>
 
         <div class="table-responsive">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th class="text-center" style="width: 80px;">Foto</th>
-                <th>Nama Dokter</th>
-                <th>Spesialisasi</th>
-                <th style="width: 250px;">Tentang Dokter</th> <th>Departemen</th>
-                <th class="text-center">Unggulan</th>
-                <th class="text-center">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if ($result && $result->num_rows > 0): ?>
-                <?php while($row = $result->fetch_assoc()): ?>
-                    <tr>
-                        <td class="text-center">
-                            <?php $photo = !empty($row['photo_path']) ? $row['photo_path'] : 'assets/img/gallery/default-avatar.png'; ?>
-                            <img src="../<?= htmlspecialchars($photo); ?>" class="doctor-avatar" onerror="this.src='../assets/img/gallery/default-avatar.png';">
-                        </td>
-                        <td>
-                            <div class="fw-bold text-dark"><?= htmlspecialchars($row['name']); ?></div>
-                        </td>
-                        <td class="text-muted small"><?= htmlspecialchars($row['specialty']); ?></td>
-                        
-                        <td>
-                            <div class="text-muted small text-truncate-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;">
-                                <?= !empty($row['description']) ? htmlspecialchars($row['description']) : '<i class="text-light">Tidak ada deskripsi.</i>'; ?>
-                            </div>
-                        </td>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 80px;">Foto</th>
+                    <th>Nama Dokter</th>
+                    <th>Spesialisasi</th>
+                    <th style="width: 250px;">Tentang Dokter</th> 
+                    <th style="width: 220px;">Jadwal Praktik</th> 
+                    <th>Departemen</th>
+                    <th class="text-center">Unggulan</th>
+                    <th class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($result && $result->num_rows > 0): ?>
+                    <?php while($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <td class="text-center">
+                                <?php $photo = !empty($row['photo_path']) ? $row['photo_path'] : 'assets/img/gallery/default-avatar.png'; ?>
+                                <img src="../<?= htmlspecialchars($photo); ?>" class="doctor-avatar" onerror="this.src='../assets/img/gallery/default-avatar.png';">
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark"><?= htmlspecialchars($row['name']); ?></div>
+                                <div class="text-muted" style="font-size: 0.7rem;">ID: #<?= $row['id']; ?></div>
+                            </td>
+                            <td class="text-muted small"><?= htmlspecialchars($row['specialty']); ?></td>
+                            
+                            <td>
+                                <div class="text-muted small" style="line-height: 1.4; max-height: 70px; overflow-y: auto;">
+                                    <?= !empty($row['description']) ? nl2br(htmlspecialchars($row['description'])) : '<i class="text-light">Belum ada deskripsi profil.</i>'; ?>
+                                </div>
+                            </td>
 
-                        <td>
-                            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill small fw-bold">
-                                <?= htmlspecialchars($row['department_name'] ?? '-'); ?>
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <?php if ($row['is_featured']): ?>
-                                <span class="badge-featured small"><i class="fas fa-check-circle me-1"></i> Ya</span>
-                            <?php else: ?>
-                                <span class="text-muted small">Tidak</span>
-                            <?php endif; ?>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex gap-2 justify-content-center">
-                                <a href="doctor_edit.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-outline-primary btn-action-jhc" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="doctors.php?delete=<?= $row['id']; ?>" class="btn btn-sm btn-outline-danger btn-action-jhc" 
-                                   onclick="return confirm('Apakah Anda yakin ingin menghapus dokter ini?');" title="Hapus">
-                                    <i class="fas fa-trash-alt"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
-            <?php else: ?>
+                            <td>
+                                <div class="text-schedule">
+                                    <?php if (!empty($row['schedule'])): ?>
+                                        <?php 
+                                        // Memecah jadwal jika ada beberapa hari (dipisah koma)
+                                        $schedules = explode(',', $row['schedule']);
+                                        foreach ($schedules as $sch): ?>
+                                            <div class="mb-1">
+                                                <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2 py-1 small" style="font-size: 0.7rem; font-weight: 600;">
+                                                    <i class="fas fa-calendar-alt me-1"></i><?= htmlspecialchars(trim($sch)); ?>
+                                                </span>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <span class="text-muted small italic">Jadwal belum diatur</span>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-light text-dark border px-3 py-2 rounded-pill small fw-bold">
+                                    <?= htmlspecialchars($row['department_name'] ?? '-'); ?>
+                                </span>
+                            </td>
+                            
+                            <td class="text-center">
+                                <?php if ($row['is_featured']): ?>
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 small fw-bold">
+                                        <i class="fas fa-star me-1"></i>Ya
+                                    </span>
+                                <?php else: ?>
+                                    <span class="text-muted small">Tidak</span>
+                                <?php endif; ?>
+                            </td>
+
+                            <td class="text-center">
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <a href="doctor_edit.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-outline-primary btn-action-jhc" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="doctors.php?delete=<?= $row['id']; ?>" class="btn btn-sm btn-outline-danger btn-action-jhc" 
+                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data dokter ini?');" title="Hapus">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
                 <?php endif; ?>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <?php
