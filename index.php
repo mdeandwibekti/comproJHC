@@ -1047,12 +1047,14 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             display: flex;
         }
 
+        /* ==================== PopUp ==================== */
         /* Container Utama Modal */
         #promoPopup .modal-content {
             border: none;
             border-radius: 24px;
             box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
             overflow: hidden;
+            background-color: #fff;
         }
 
         /* Penataan Gambar agar Proporsional */
@@ -1063,83 +1065,99 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            position: relative; /* Penting untuk z-index tombol close */
         }
 
         #promoPopup img {
             width: 100%;
             height: auto;
-            max-height: 400px; /* Batasi tinggi agar tidak memakan seluruh layar laptop */
-            object-fit: cover; /* Gambar akan terpotong rapi jika ukurannya tidak pas */
-            transition: transform 0.5s ease;
+            max-height: 450px; /* Sedikit lebih tinggi agar proposional di layar besar */
+            object-fit: cover; 
+            display: block; /* Menghilangkan gap putih di bawah gambar */
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Efek Hover Gambar */
         #promoPopup:hover img {
-            transform: scale(1.02);
+            transform: scale(1.05); /* Sedikit lebih besar untuk efek dramatis */
         }
 
         /* Tipografi */
         #promoPopup h4 {
-            color: #333;
+            color: #2d3436;
+            font-weight: 700;
             letter-spacing: -0.5px;
             margin-bottom: 12px;
         }
 
         #promoPopup p {
-            color: #6c757d;
+            color: #636e72;
             font-size: 0.95rem;
             line-height: 1.6;
+            margin-bottom: 0;
         }
 
         /* Tombol Tutup (Close Button) */
         #promoPopup .btn-close {
-            background-color: white;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 1055; /* Pastikan di atas gambar */
+            background-color: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
             opacity: 0.8;
-            padding: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: 0.3s;
         }
 
         #promoPopup .btn-close:hover {
             opacity: 1;
-            transform: rotate(90deg);
+            transform: rotate(90deg) scale(1.1);
+            background-color: #fff;
         }
 
         /* Tombol Aksi di Bawah */
         #promoPopup .btn-primary {
-            background: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
+            background: linear-gradient(135deg, #8a3033 0%, #bd3030 100%);
             border: none;
-            padding: 10px 40px;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(138, 48, 51, 0.2);
+            padding: 12px 45px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 50px; /* Konsisten dengan gaya tombol janji temu */
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 6px 20px rgba(138, 48, 51, 0.25);
         }
 
         #promoPopup .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(138, 48, 51, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(138, 48, 51, 0.35);
+            filter: brightness(1.1);
         }
 
         /* Animasi Masuk Popup */
         .modal.fade .modal-dialog {
-            transform: scale(0.8);
-            transition: transform 0.4s ease-out;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); /* Efek membal/bounce */
         }
 
         .modal.show .modal-dialog {
-            transform: scale(1);
+            transform: scale(1) translateY(0);
         }
 
         /* Responsif Mobile */
         @media (max-width: 576px) {
             #promoPopup .modal-dialog {
-                margin: 20px;
+                margin: 15px;
             }
             
             #promoPopup img {
-                max-height: 250px; /* Lebih pendek di layar HP */
+                max-height: 280px; 
+            }
+
+            #promoPopup .btn-primary {
+                width: 100%; /* Tombol full width di HP agar mudah ditekan */
             }
         }
     </style>
@@ -1657,14 +1675,15 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                     </p>
                     
                     <button type="button" 
-                            class="btn btn-detail-dokter rounded-pill px-4 shadow-sm" 
+                            class="btn btn-detail-dokter" 
                             data-bs-toggle="modal" 
                             data-bs-target="#modalDetailDokter"
-                            data-name="<?php echo htmlspecialchars($doc['name']); ?>"
-                            data-specialty="<?php echo htmlspecialchars($doc['specialty']); ?>"
-                            data-desc="<?php echo htmlspecialchars($doc['description'] ?? 'Profil profesional dokter di JHC.'); ?>"
-                            data-img="public/<?php echo htmlspecialchars(!empty($doc['photo_path']) ? $doc['photo_path'] : 'assets/img/gallery/jane.png'); ?>">
-                      <i class="fas fa-id-card me-2"></i>Lihat Profil
+                            data-name="<?= htmlspecialchars($doc['name']); ?>"
+                            data-specialty="<?= htmlspecialchars($doc['specialty']); ?>"
+                            data-desc="<?= htmlspecialchars($doc['description']); ?>"
+                            data-img="public/<?= htmlspecialchars($doc['photo_path']); ?>"
+                            data-schedule="<?= htmlspecialchars($doc['schedule'] ?? ''); ?>">
+                        Lihat Profil
                     </button>
                   </div>
                 </div>
@@ -1678,23 +1697,30 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       <!-- Modal Detail Dokter -->
       <div class="modal fade" id="modalDetailDokter" tabindex="-1" aria-labelledby="modalDetailDokterLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title fw-bold" id="modalDetailDokterLabel">Profil Dokter</h5>
+          <div class="modal-content border-0" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 bg-light">
+              <h5 class="modal-title fw-bold text-dark" id="modalDetailDokterLabel">Profil Dokter</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4 text-center">
-              <img id="mdl-img" src="" class="rounded-circle mb-4 border border-4 border-light shadow-lg" 
-                   style="width: 130px; height: 130px; object-fit: cover;" alt="Doctor">
+              <img id="mdl-img" src="" class="rounded-circle mb-4 border border-4 border-white shadow-sm" 
+                  style="width: 140px; height: 140px; object-fit: cover; margin-top: -70px; background: white;" alt="Doctor">
               
-              <h4 id="mdl-name" class="fw-bold text-dark mb-2"></h4>
-              <p id="mdl-specialty" class="text-primary small fw-bold text-uppercase mb-4"></p>
+              <h4 id="mdl-name" class="fw-bold text-dark mb-1"></h4>
+              <p id="mdl-specialty" class="text-primary small fw-bold text-uppercase mb-4" style="letter-spacing: 1px;"></p>
               
-              <div class="text-start bg-light p-3 p-md-4 rounded-4">
+              <div class="text-start bg-light p-3 p-md-4 rounded-4 mb-3">
                 <h6 class="fw-bold small text-muted text-uppercase mb-2">
                   <i class="fas fa-info-circle me-2"></i>Tentang Dokter:
                 </h6>
                 <p id="mdl-desc" class="small text-secondary mb-0" style="line-height: 1.7;"></p>
+              </div>
+
+              <div class="text-start bg-info-subtle p-3 p-md-4 rounded-4 border border-info-subtle">
+                <h6 class="fw-bold small text-info text-uppercase mb-3">
+                  <i class="fas fa-calendar-alt me-2"></i>Jadwal Praktik:
+                </h6>
+                <div id="mdl-schedule" class="d-flex flex-wrap gap-2"></div>
               </div>
               
               <div class="d-grid mt-4">
@@ -1876,18 +1902,22 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       </section>
 
       <?php 
-        $popup_res = $mysqli->query("SELECT * FROM settings2 WHERE setting_key LIKE 'popup_%'");
-        $p_data = [];
-        while($row = $popup_res->fetch_assoc()) {
-            $p_data[$row['setting_key']] = $row['setting_value'];
-        }
+  // 1. Ambil semua data settings terkait popup
+      $popup_res = $mysqli->query("SELECT * FROM settings2 WHERE setting_key LIKE 'popup_%'");
+      $p_data = [];
+      while($row = $popup_res->fetch_assoc()) {
+          $p_data[$row['setting_key']] = $row['setting_value'];
+      }
 
-        if (($p_data['popup_status'] ?? '') === 'active'): 
-            $raw_path = $p_data['popup_image_path'] ?? '';
-            
-            // Karena index.php di luar folder public, kita arahkan masuk ke public/
-            $final_image_url = "public/" . $raw_path;
+      // 2. Cek apakah status popup aktif
+      if (($p_data['popup_status'] ?? '') === 'active'): 
+          // Ambil path gambar (misal: assets/img/popups/file.jpg)
+          $raw_path = $p_data['popup_image_path'] ?? '';
+          
+          // Karena index.php di luar, kita arahkan ke folder public/
+          $final_image_url = "public/" . $raw_path;
       ?>
+
       <div class="modal fade" id="promoPopup" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
@@ -1897,12 +1927,11 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
             <div class="modal-body p-0">
               <?php if (!empty($raw_path)): ?>
-                <div class="w-100 bg-light">
+                <div class="popup-image-container">
                   <img src="<?php echo $final_image_url; ?>" 
                       class="w-100 d-block" 
-                      style="max-height: 450px; object-fit: cover;" 
                       onerror="this.src='public/assets/img/gallery/JHC_Logo.png'; this.style.padding='40px';"
-                      alt="Promo">
+                      alt="Promo Image">
                 </div>
               <?php endif; ?>
               
@@ -1919,15 +1948,12 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
               </div>
             </div>
             
-            <div class="modal-footer border-0 p-3 justify-content-center bg-white">
-              <button type="button" class="btn btn-primary px-5 rounded-pill fw-bold" data-bs-dismiss="modal">
-                  Tutup
-              </button>
+            <div class="modal-footer border-0 p-3 justify-content-center">
+              <button type="button" class="btn btn-primary px-5 rounded-pill fw-bold" data-bs-dismiss="modal">Tutup</button>
             </div>
           </div>
         </div>
       </div>
-      <?php endif; ?>
 
 <footer class="py-0 bg-primary position-relative overflow-hidden">
     <div class="bg-holder opacity-10" 
@@ -2068,7 +2094,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
     .footer-logo-main {
         filter: brightness(0) invert(1); /* Pastikan logo putih jika background gelap */
     }
-</style>
+  </style>
     </main>
     <!-- ==================== SCRIPTS ==================== -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -2137,23 +2163,42 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
         // Detail Dokter Modal
         const doctorButtons = document.querySelectorAll('.btn-detail-dokter');
-        
+
         doctorButtons.forEach(button => {
           button.addEventListener('click', function() {
             const name = this.getAttribute('data-name');
             const specialty = this.getAttribute('data-specialty');
             const desc = this.getAttribute('data-desc') || "Tidak ada deskripsi tersedia.";
             const img = this.getAttribute('data-img');
-            
+            const scheduleRaw = this.getAttribute('data-schedule') || "";
+
             document.getElementById('mdl-name').innerText = name;
             document.getElementById('mdl-specialty').innerText = specialty;
             document.getElementById('mdl-desc').innerText = desc;
             document.getElementById('mdl-img').src = img;
 
-            const bookingUrl = `booking.php?dokter=${encodeURIComponent(name)}&spesialis=${encodeURIComponent(specialty)}`;
+            // Render Jadwal
+            const scheduleContainer = document.getElementById('mdl-schedule');
+            if (scheduleContainer) {
+              scheduleContainer.innerHTML = '';
+              if (scheduleRaw.trim() !== "") {
+                const schedules = scheduleRaw.split(',');
+                schedules.forEach(item => {
+                  const span = document.createElement('span');
+                  span.className = 'badge bg-white text-info border border-info-subtle rounded-pill px-3 py-2 small fw-bold mb-1 me-1';
+                  span.innerHTML = `<i class="far fa-clock me-2"></i>${item.trim()}`;
+                  scheduleContainer.appendChild(span);
+                });
+              } else {
+                scheduleContainer.innerHTML = '<small class="text-muted italic">Jadwal belum tersedia</small>';
+              }
+            }
+
+            // PERBAIKAN: Update link agar tetap di web yang sama (booking.php)
             const bookBtn = document.getElementById('mdl-book-link');
             if(bookBtn) {
-              bookBtn.href = bookingUrl;
+              // Mengirimkan parameter dokter dan spesialis ke halaman booking internal
+              bookBtn.href = `booking.php?dokter=${encodeURIComponent(name)}&spesialis=${encodeURIComponent(specialty)}`;
             }
           });
         });
@@ -2234,9 +2279,10 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           var myModal = new bootstrap.Modal(myModalEl);
           setTimeout(function() {
             myModal.show();
-          }, 1000); 
+          }, 1000); // Popup muncul setelah 1 detik
         }
       });
+      <?php endif; ?>
     </script>
   </body>
 </html>
