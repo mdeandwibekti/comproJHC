@@ -2,31 +2,41 @@
 require_once "../../config.php";
 
 // --- LOGIKA PENGHAPUSAN ---
-if (isset($_GET['delete'])) {
-    $id_to_delete = intval($_GET['delete']);
-    
-    // Ambil path ikon untuk dihapus dari storage
-    $stmt_get = $mysqli->prepare("SELECT icon_path FROM departments WHERE id = ?");
-    $stmt_get->bind_param("i", $id_to_delete);
-    $stmt_get->execute();
-    $res_icon = $stmt_get->get_result()->fetch_assoc();
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+    // ... ambil input teks lainnya ...
 
-    $sql = "DELETE FROM departments WHERE id = ?";
-    if ($stmt = $mysqli->prepare($sql)) {
-        $stmt->bind_param("i", $id_to_delete);
-        if ($stmt->execute()) {
-            // Hapus file fisik jika bukan default
-            if (!empty($res_icon['icon_path']) && file_exists("../" . $res_icon['icon_path'])) {
-                unlink("../" . $res_icon['icon_path']);
-            }
-            header("location: departments.php?status=deleted");
-            exit();
+    // Ambil path lama jika sedang edit
+    $image_path = $_POST['old_image'] ?? '';
+
+    // LOGIKA UPLOAD GAMBAR UTAMA
+    if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] == 0) {
+        $upload_dir = "../assets/img/departments/";
+        if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+
+        $ext = pathinfo($_FILES['image_file']['name'], PATHINFO_EXTENSION);
+        $new_name = "dept_" . time() . "_" . uniqid() . "." . $ext;
+        $target = $upload_dir . $new_name;
+
+        if (move_uploaded_file($_FILES['image_file']['tmp_name'], $target)) {
+            // Hapus file lama jika ada
+            if (!empty($image_path) && file_exists("../" . $image_path)) unlink("../" . $image_path);
+            $image_path = "assets/img/departments/" . $new_name;
         }
+    }
+
+    // Eksekusi Update/Insert (Sesuaikan query Anda)
+    if ($id > 0) {
+        $stmt = $mysqli->prepare("UPDATE departments SET name=?, category=?, image_path=?, ... WHERE id=?");
+        // ... bind_param ...
+    } else {
+        $stmt = $mysqli->prepare("INSERT INTO departments (name, category, image_path, ...) VALUES (?, ?, ?, ...)");
+        // ... bind_param ...
     }
 }
 
 // Ambil data lengkap
-$sql = "SELECT id, name, category, icon_path, display_order, description, special_skills, additional_info 
+$sql = "SELECT id, name, category, icon_path, image_path, display_order, description, special_skills, additional_info 
         FROM departments 
         ORDER BY category DESC, display_order ASC";
 $result = $mysqli->query($sql);
@@ -102,94 +112,54 @@ require_once 'layout/header.php';
 </style>
 
 <div class="container-fluid py-4">
-    <div class="admin-wrapper">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center page-header-jhc">
-            <div>
-                <h4 class="fw-bold mb-1 text-dark">Departments & Services</h4>
-                <p class="text-muted small mb-0">Kelola informasi publik, layanan unggulan, dan profil poliklinik.</p>
-            </div>
-            <a href="department_edit.php" class="btn btn-jhc-add mt-3 mt-md-0">
-                <i class="fas fa-plus-circle me-2"></i> Tambah Data Baru
+    <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0">Departments & Services</h4>
+            <a href="department_edit.php" class="btn btn-primary" style="background: #8a3033; border: none; border-radius: 10px;">
+                <i class="fas fa-plus me-2"></i> Tambah Data
             </a>
         </div>
 
-        <?php if (isset($_GET['status'])): ?>
-            <div class="alert alert-success border-0 shadow-sm border-start border-success border-4 mb-4 alert-dismissible fade show">
-                <i class="fas fa-check-circle me-2"></i> 
-                Data berhasil <?= $_GET['status'] == 'deleted' ? 'dihapus' : 'diperbarui'; ?>!
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        <?php endif; ?>
-
-        <div class="table-responsive shadow-sm">
-            <table class="table table-hover mb-0">
-                <thead>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
                     <tr>
-                        <th class="text-center" style="width: 60px;">Urutan</th>
-                        <th style="width: 80px;">Ikon</th>
-                        <th>Departemen & Deskripsi</th>
-                        <th>Info Publik</th>
-                        <th style="width: 150px;">Kategori</th>
-                        <th class="text-center" style="width: 150px;">Aksi</th>
+                        <th class="text-center">Order</th>
+                        <th>Media</th>
+                        <th>Departemen</th>
+                        <th>Kategori</th>
+                        <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if ($result && $result->num_rows > 0): ?>
-                        <?php while($row = $result->fetch_assoc()): ?>
-                            <tr>
-                                <td class="text-center fw-bold text-muted"><?= $row['display_order']; ?></td>
-                                <td>
-                                    <div class="icon-box">
-                                        <img src="../<?= !empty($row['icon_path']) ? htmlspecialchars($row['icon_path']) : 'assets/img/icons/default.png'; ?>" alt="icon">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold text-dark mb-1"><?= htmlspecialchars($row['name']); ?></div>
-                                    <div class="text-muted text-truncate-2">
-                                        <?= !empty($row['description']) ? htmlspecialchars(strip_tags($row['description'])) : '<em class="small text-danger">Deskripsi belum diisi...</em>'; ?>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex flex-column gap-1">
-                                        <?php if(!empty($row['special_skills'])): ?>
-                                            <span class="text-success small"><i class="fas fa-check-circle me-1"></i> Keahlian Khusus</span>
-                                        <?php endif; ?>
-                                        <?php if(!empty($row['additional_info'])): ?>
-                                            <span class="text-primary small"><i class="fas fa-info-circle me-1"></i> Info Tambahan</span>
-                                        <?php endif; ?>
-                                        <?php if(empty($row['special_skills']) && empty($row['additional_info'])): ?>
-                                            <span class="text-muted small italic">Data kosong</span>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="badge-jhc <?= ($row['category'] == 'Layanan') ? 'badge-layanan' : 'badge-poli'; ?>">
-                                        <i class="fas <?= ($row['category'] == 'Layanan') ? 'fa-star' : 'fa-stethoscope'; ?> me-2"></i>
-                                        <?= strtoupper($row['category']); ?>
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <div class="d-flex gap-2 justify-content-center">
-                                        <a href="department_edit.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-outline-primary border-0 shadow-sm" style="border-radius: 8px;">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="departments.php?delete=<?= $row['id']; ?>" 
-                                           class="btn btn-sm btn-outline-danger border-0 shadow-sm" 
-                                           style="border-radius: 8px;"
-                                           onclick="return confirm('Apakah Anda yakin? Data deskripsi dan keahlian juga akan terhapus.');">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="6" class="text-center py-5">
-                                <p class="text-muted mb-0">Belum ada data departemen.</p>
-                            </td>
-                        </tr>
-                    <?php endif; ?>
+                    <?php while($row = $result->fetch_assoc()): ?>
+                    <tr>
+                        <td class="text-center fw-bold"><?= $row['display_order']; ?></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-light p-2 rounded" style="width: 50px; height: 50px;">
+                                    <img src="../<?= $row['icon_path'] ?: 'assets/img/icons/default.png'; ?>" style="width: 100%; height: 100%; object-fit: contain;">
+                                </div>
+                                <?php if($row['image_path']): ?>
+                                    <img src="../<?= $row['image_path']; ?>" class="rounded" style="width: 60px; height: 40px; object-fit: cover;">
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-bold"><?= $row['name']; ?></div>
+                            <div class="text-muted small"><?= substr(strip_tags($row['description']), 0, 50); ?>...</div>
+                        </td>
+                        <td>
+                            <span class="badge <?= $row['category'] == 'Layanan' ? 'bg-danger' : 'bg-primary'; ?> rounded-pill">
+                                <?= $row['category']; ?>
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <a href="department_edit.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-light rounded-circle text-primary"><i class="fas fa-edit"></i></a>
+                            <a href="?delete=<?= $row['id']; ?>" class="btn btn-sm btn-light rounded-circle text-danger" onclick="return confirm('Hapus data?')"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                    <?php endwhile; ?>
                 </tbody>
             </table>
         </div>

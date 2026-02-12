@@ -1,69 +1,73 @@
 <?php
 require_once "../../config.php";
 
-// --- LOGIKA PEMROSESAN DATA ---
-$name = $category = $description = $special_skills = $additional_info = $icon_path = $icon_hover_path = "";
-$display_order = 0;
-$name_err = "";
-$id = isset($_POST['id']) ? trim($_POST['id']) : (isset($_GET['id']) ? trim($_GET['id']) : null);
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$data = [
+    'name' => '', 'category' => 'Poliklinik', 'display_order' => 0, 
+    'description' => '', 'special_skills' => '', 'additional_info' => '',
+    'icon_path' => '', 'image_path' => ''
+];
 
-// Ambil data jika mode Edit
-if (isset($_GET['id']) && $_SERVER["REQUEST_METHOD"] != "POST") {
-    $sql = "SELECT name, category, description, special_skills, additional_info, icon_path, icon_hover_path, display_order FROM departments WHERE id = ?";
-    if ($stmt = $mysqli->prepare($sql)) {
-        $stmt->bind_param("i", $id);
-        if ($stmt->execute()) {
-            $stmt->bind_result($name, $category, $description, $special_skills, $additional_info, $icon_path, $icon_hover_path, $display_order);
-            $stmt->fetch();
-        }
-        $stmt->close();
+// Jika ID ada, ambil data untuk diedit
+if ($id > 0) {
+    $stmt = $mysqli->prepare("SELECT * FROM departments WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $data = $row;
     }
 }
 
-// Proses Simpan (Insert/Update)
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = trim($_POST["name"]);
-    $category = trim($_POST["category"]);
-    $description = trim($_POST["description"] ?? ''); 
-    $special_skills = trim($_POST["special_skills"] ?? ''); 
-    $additional_info = trim($_POST["additional_info"] ?? ''); 
-    $display_order = (int)$_POST["display_order"];
-    $icon_path = $_POST['current_icon'];
-    $icon_hover_path = $_POST['current_icon_hover'];
+// Proses Simpan Data
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id             = intval($_POST['id']);
+    $name           = $_POST['name'];
+    $category       = $_POST['category'];
+    $display_order  = intval($_POST['display_order']);
+    $description    = $_POST['description'];
+    $special_skills = $_POST['special_skills'];
+    $additional_info = $_POST['additional_info'];
+    
+    $icon_path  = $_POST['old_icon'];
+    $image_path = $_POST['old_image'];
 
-    // Handle File Upload Ikon Utama
-    if (isset($_FILES["icon"]) && $_FILES["icon"]["error"] == 0) {
-        $upload_dir = "../assets/img/icons/";
-        if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
-        $new_filename = uniqid() . '-icon-' . basename($_FILES["icon"]["name"]);
-        if (move_uploaded_file($_FILES["icon"]["tmp_name"], $upload_dir . $new_filename)) {
-            if (!empty($_POST['current_icon']) && file_exists("../" . $_POST['current_icon'])) unlink("../" . $_POST['current_icon']);
-            $icon_path = "assets/img/icons/" . $new_filename;
+    $upload_dir = "../assets/img/departments/";
+    if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+
+    // 1. Handle Upload Ikon
+    if (isset($_FILES['icon_file']) && $_FILES['icon_file']['error'] == 0) {
+        $ext = pathinfo($_FILES['icon_file']['name'], PATHINFO_EXTENSION);
+        $icon_name = "icon_" . time() . "." . $ext;
+        if (move_uploaded_file($_FILES['icon_file']['tmp_name'], $upload_dir . $icon_name)) {
+            if (!empty($_POST['old_icon']) && file_exists("../" . $_POST['old_icon'])) unlink("../" . $_POST['old_icon']);
+            $icon_path = "assets/img/departments/" . $icon_name;
         }
     }
 
-    if (empty($name)) {
-        $name_err = "Silakan masukkan nama layanan.";
-    } else {
-        if (empty($id)) {
-            $sql = "INSERT INTO departments (name, category, description, special_skills, additional_info, icon_path, icon_hover_path, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        } else {
-            $sql = "UPDATE departments SET name=?, category=?, description=?, special_skills=?, additional_info=?, icon_path=?, icon_hover_path=?, display_order=? WHERE id=?";
+    // 2. Handle Upload Gambar Utama
+    if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] == 0) {
+        $ext = pathinfo($_FILES['image_file']['name'], PATHINFO_EXTENSION);
+        $img_name = "img_" . time() . "." . $ext;
+        if (move_uploaded_file($_FILES['image_file']['tmp_name'], $upload_dir . $img_name)) {
+            if (!empty($_POST['old_image']) && file_exists("../" . $_POST['old_image'])) unlink("../" . $_POST['old_image']);
+            $image_path = "assets/img/departments/" . $img_name;
         }
+    }
 
-        if ($stmt = $mysqli->prepare($sql)) {
-            if (empty($id)) {
-                $stmt->bind_param("sssssssi", $name, $category, $description, $special_skills, $additional_info, $icon_path, $icon_hover_path, $display_order);
-            } else {
-                $stmt->bind_param("sssssssii", $name, $category, $description, $special_skills, $additional_info, $icon_path, $icon_hover_path, $display_order, $id);
-            }
-            
-            if ($stmt->execute()) {
-                header("location: departments.php?status=saved");
-                exit();
-            }
-            $stmt->close();
-        }
+    if ($id > 0) {
+        $sql = "UPDATE departments SET name=?, category=?, icon_path=?, image_path=?, display_order=?, description=?, special_skills=?, additional_info=? WHERE id=?";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("ssssisssi", $name, $category, $icon_path, $image_path, $display_order, $description, $special_skills, $additional_info, $id);
+    } else {
+        $sql = "INSERT INTO departments (name, category, icon_path, image_path, display_order, description, special_skills, additional_info) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("ssssisss", $name, $category, $icon_path, $image_path, $display_order, $description, $special_skills, $additional_info);
+    }
+
+    if ($stmt->execute()) {
+        header("Location: departments.php?status=saved");
+        exit();
     }
 }
 
@@ -120,91 +124,66 @@ $page_title_form = empty($id) ? "Tambah Unit Baru" : "Edit Unit & Layanan";
 </style>
 
 <div class="container-fluid py-4">
-    <div class="main-wrapper">
-        <div class="page-header-jhc d-flex justify-content-between align-items-center">
-            <div>
-                <h3 class="fw-bold mb-1 text-dark"><?= $page_title_form; ?></h3>
-                <p class="text-muted small mb-0">Lengkapi detail layanan untuk ditampilkan di portal publik RS JHC.</p>
-            </div>
-            <a href="departments.php" class="btn btn-light rounded-pill px-4 btn-sm fw-bold border shadow-sm">
-                <i class="fas fa-arrow-left me-2"></i> Kembali
-            </a>
-        </div>
-
-        <form action="department_edit.php<?= $id ? '?id='.$id : ''; ?>" method="post" enctype="multipart/form-data">
+    <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
+        <h4 class="fw-bold mb-4"><?= $id > 0 ? 'Edit' : 'Tambah'; ?> Departemen</h4>
+        
+        <form action="" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?= $id; ?>">
-            
-            <div class="row g-5">
+            <input type="hidden" name="old_icon" value="<?= $data['icon_path']; ?>">
+            <input type="hidden" name="old_image" value="<?= $data['image_path']; ?>">
+
+            <div class="row g-4">
                 <div class="col-lg-8">
-                    <div class="form-section-title">Informasi Dasar</div>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-8">
-                            <label class="form-label fw-bold small">Nama Poliklinik / Layanan <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control form-control-lg shadow-sm <?= (!empty($name_err)) ? 'is-invalid' : ''; ?>" value="<?= htmlspecialchars($name); ?>" placeholder="Contoh: Poliklinik Jantung" required>
-                            <div class="invalid-feedback"><?= $name_err; ?></div>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold small">Kategori</label>
-                            <select name="category" class="form-select form-select-lg shadow-sm">
-                                <option value="Poliklinik" <?= ($category == 'Poliklinik') ? 'selected' : ''; ?>>Poliklinik</option>
-                                <option value="Layanan" <?= ($category == 'Layanan') ? 'selected' : ''; ?>>Layanan Unggulan</option>
-                            </select>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nama Departemen / Layanan</label>
+                        <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($data['name']); ?>" required>
                     </div>
-
-                    <div class="form-section-title mt-5">Konten Publik</div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold small">Deskripsi Utama</label>
-                        <textarea name="description" class="form-control shadow-sm" rows="5" placeholder="Jelaskan secara umum mengenai unit/layanan ini..."><?= htmlspecialchars($description ?? ''); ?></textarea>
+                    <div class="mb-3">
+                        <label class="form-label">Deskripsi Lengkap</label>
+                        <textarea name="description" class="form-control" rows="5"><?= htmlspecialchars($data['description']); ?></textarea>
                     </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold small">Keahlian Khusus & Fasilitas</label>
-                            <textarea name="special_skills" class="form-control shadow-sm" rows="5" placeholder="Contoh: &#10;• Operasi Katarak&#10;• Laser Mata&#10;• USG 4D"><?= htmlspecialchars($special_skills ?? ''); ?></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold small">Informasi Tambahan</label>
-                            <textarea name="additional_info" class="form-control shadow-sm" rows="5" placeholder="Contoh: &#10;• Melayani BPJS&#10;• Jam operasional 08:00 - 20:00"><?= htmlspecialchars($additional_info ?? ''); ?></textarea>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">Keahlian Khusus (Pisahkan dengan koma)</label>
+                        <textarea name="special_skills" class="form-control" rows="2"><?= htmlspecialchars($data['special_skills']); ?></textarea>
                     </div>
                 </div>
 
-                <div class="col-lg-4 border-start ps-lg-5">
-                    <div class="form-section-title">Visual & Urutan</div>
+                <div class="col-lg-4">
+                    <div class="mb-3 p-3 bg-light rounded">
+                        <label class="form-label">Kategori</label>
+                        <select name="category" class="form-select">
+                            <option value="Poliklinik" <?= $data['category'] == 'Poliklinik' ? 'selected' : ''; ?>>Poliklinik</option>
+                            <option value="Layanan" <?= $data['category'] == 'Layanan' ? 'selected' : ''; ?>>Layanan Unggulan</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Urutan Tampil</label>
+                        <input type="number" name="display_order" class="form-control" value="<?= $data['display_order']; ?>">
+                    </div>
+
+                    <hr>
                     
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold">Ikon Departemen</label>
-                        <div class="img-preview-box mb-3">
-                            <?php if(!empty($icon_path)): ?>
-                                <img src="../<?= htmlspecialchars($icon_path); ?>" alt="Preview">
-                            <?php else: ?>
-                                <i class="fas fa-cloud-upload-alt fa-2x text-muted opacity-25"></i>
-                                <p class="small text-muted mb-0 mt-2">Belum ada ikon</p>
-                            <?php endif; ?>
-                        </div>
-                        <input type="hidden" name="current_icon" value="<?= $icon_path; ?>">
-                        <input type="file" name="icon" class="form-control form-control-sm border-0 bg-light shadow-sm">
-                        <div class="form-text x-small">Format: PNG/SVG transparan, max 500kb.</div>
+                    <div class="mb-3">
+                        <label class="form-label">Ikon (PNG/SVG)</label>
+                        <?php if($data['icon_path']): ?>
+                            <div class="mb-2"><img src="../<?= $data['icon_path']; ?>" width="40"></div>
+                        <?php endif; ?>
+                        <input type="file" name="icon_file" class="form-control">
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold">Nomor Urut Tampilan</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white"><i class="fas fa-sort-numeric-down text-muted"></i></span>
-                            <input type="number" name="display_order" class="form-control" value="<?= $display_order; ?>">
-                        </div>
-                        <div class="form-text x-small">Urutan terkecil akan tampil paling depan.</div>
+                    <div class="mb-3">
+                        <label class="form-label">Gambar Utama / Foto</label>
+                        <?php if($data['image_path']): ?>
+                            <div class="mb-2"><img src="../<?= $data['image_path']; ?>" class="img-fluid rounded border"></div>
+                        <?php endif; ?>
+                        <input type="file" name="image_file" class="form-control">
                     </div>
-
-                    <input type="hidden" name="current_icon_hover" value="<?= $icon_hover_path; ?>">
                 </div>
             </div>
 
-            <div class="mt-5 border-top pt-4 text-end">
-                <button type="submit" class="btn btn-jhc-save shadow">
-                    <i class="fas fa-check-circle me-2"></i> Simpan Konten Departemen
-                </button>
+            <div class="mt-4 text-end">
+                <a href="departments.php" class="btn btn-light px-4">Batal</a>
+                <button type="submit" class="btn btn-primary px-5" style="background: #8a3033; border: none;">Simpan Data</button>
             </div>
         </form>
     </div>
