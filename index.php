@@ -1380,7 +1380,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                               </h5>
 
                               <?php if(!$is_layanan): // Jika ini Poliklinik Spesialis ?>
-                                  <a href="doctors_list.php?specialty=<?= urlencode($item['name']); ?>" 
+                                  <a href="doctors_list.php?dept_id=<?= $item['id']; ?>" 
                                     class="btn btn-detail-layanan btn-sm rounded-pill px-3 py-2 shadow-sm">
                                       <i class="fas fa-user-md me-1"></i> Lihat Dokter
                                   </a>
@@ -1697,6 +1697,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         </div>
       </section>
       <?php endif; ?>
+
       
       <!-- ==================== NEWS SECTION ==================== -->
       <section class="py-5 bg-white" id="news">
