@@ -1378,17 +1378,23 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                               <h5 class="card-title fw-bold text-dark mb-3" style="font-size: clamp(0.875rem, 2vw, 1rem);">
                                   <?= htmlspecialchars($item['name']); ?>
                               </h5>
-                              <a href="javascript:void(0)" 
-                                 class="btn btn-detail-layanan btn-sm rounded-pill px-3 py-2 shadow-sm btn-buka-detail" 
-                                 data-bs-toggle="modal" 
-                                 data-bs-target="#modalLayanan" 
-                                 data-name="<?= htmlspecialchars($item['name']); ?>" 
-                                 data-desc="<?= htmlspecialchars($item['description']); ?>" 
-                                 data-expertise="<?= htmlspecialchars($item['special_skills']); ?>" 
-                                 data-info="<?= htmlspecialchars($item['additional_info']); ?>" 
-                                 data-icon="public/<?= htmlspecialchars($item['icon_path']); ?>">
-                                  <i class="fas fa-info-circle me-1"></i> Detail
-                              </a>
+
+                              <?php if(!$is_layanan): // Jika ini Poliklinik Spesialis ?>
+                                  <a href="doctors_list.php?specialty=<?= urlencode($item['name']); ?>" 
+                                    class="btn btn-detail-layanan btn-sm rounded-pill px-3 py-2 shadow-sm">
+                                      <i class="fas fa-user-md me-1"></i> Lihat Dokter
+                                  </a>
+                              <?php else: // Jika ini Layanan Utama, tetap gunakan modal jika perlu ?>
+                                  <a href="javascript:void(0)" 
+                                    class="btn btn-detail-layanan btn-sm rounded-pill px-3 py-2 shadow-sm btn-buka-detail" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#modalLayanan"
+                                    data-name="<?= htmlspecialchars($item['name']); ?>"
+                                    data-desc="<?= htmlspecialchars($item['description']); ?>"
+                                    data-icon="public/<?= htmlspecialchars($item['icon_path']); ?>">
+                                      <i class="fas fa-info-circle me-1"></i> Detail
+                                  </a>
+                              <?php endif; ?>
                           </div>
                       </div>
                   </div>
@@ -1691,100 +1697,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         </div>
       </section>
       <?php endif; ?>
-
-      <!-- ==================== DOCTORS SECTION ==================== -->
-      <section class="py-5 bg-white" id="doctors">
-        <div class="container">
-          <div class="row justify-content-center mb-5">
-            <div class="col-lg-8 text-center">
-              <p class="section-subtitle">
-                <i class="fas fa-user-md me-2"></i>TIM TERBAIK
-              </p>
-              <h2 class="section-title">Tim Dokter Spesialis</h2>
-              <p class="text-muted mt-3">Ditangani oleh tenaga medis profesional dengan dedikasi tinggi dan pengalaman luas.</p>
-            </div>
-          </div>
-          
-          <div class="row g-4 justify-content-center">
-            <?php foreach($doctors_data as $doc): ?>
-            <div class="col-6 col-md-4 col-lg-3">
-              <div class="card doctor-card h-100 border-0">
-                <div class="card-body p-4">
-                  <div class="doctor-img-container">
-                    <div class="img-bg-decoration"></div>
-                    <div class="doctor-img-wrapper shadow-sm">
-                      <img src="public/<?php echo htmlspecialchars(!empty($doc['photo_path']) ? $doc['photo_path'] : 'assets/img/gallery/jane.png'); ?>" 
-                          alt="<?php echo htmlspecialchars($doc['name']); ?>">
-                    </div>
-                  </div>
-                  
-                  <div class="doctor-info-wrapper mt-3">
-                    <h5 class="doctor-name fw-bold text-dark mb-1">
-                      <?php echo htmlspecialchars($doc['name']); ?>
-                    </h5>
-                    <p class="doctor-specialty mb-3">
-                      <?php echo htmlspecialchars($doc['specialty']); ?>
-                    </p>
-                    
-                    <button type="button" 
-                            class="btn btn-detail-dokter" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#modalDetailDokter"
-                            data-name="<?= htmlspecialchars($doc['name']); ?>"
-                            data-specialty="<?= htmlspecialchars($doc['specialty']); ?>"
-                            data-desc="<?= htmlspecialchars($doc['description']); ?>"
-                            data-img="public/<?= htmlspecialchars($doc['photo_path']); ?>"
-                            data-schedule="<?= htmlspecialchars($doc['schedule'] ?? ''); ?>">
-                        Lihat Profil
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <?php endforeach; ?>
-          </div>
-        </div>
-      </section>
-
-      <!-- Modal Detail Dokter -->
-      <div class="modal fade" id="modalDetailDokter" tabindex="-1" aria-labelledby="modalDetailDokterLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content border-0" style="border-radius: 20px; overflow: hidden;">
-            <div class="modal-header border-0 bg-light">
-              <h5 class="modal-title fw-bold text-dark" id="modalDetailDokterLabel">Profil Dokter</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4 text-center">
-              <img id="mdl-img" src="" class="rounded-circle mb-4 border border-4 border-white shadow-sm" 
-                  style="width: 140px; height: 140px; object-fit: cover; margin-top: -70px; background: white;" alt="Doctor">
-              
-              <h4 id="mdl-name" class="fw-bold text-dark mb-1"></h4>
-              <p id="mdl-specialty" class="text-primary small fw-bold text-uppercase mb-4" style="letter-spacing: 1px;"></p>
-              
-              <div class="text-start bg-light p-3 p-md-4 rounded-4 mb-3">
-                <h6 class="fw-bold small text-muted text-uppercase mb-2">
-                  <i class="fas fa-info-circle me-2"></i>Tentang Dokter:
-                </h6>
-                <p id="mdl-desc" class="small text-secondary mb-0" style="line-height: 1.7;"></p>
-              </div>
-
-              <div class="text-start bg-info-subtle p-3 p-md-4 rounded-4 border border-info-subtle">
-                <h6 class="fw-bold small text-info text-uppercase mb-3">
-                  <i class="fas fa-calendar-alt me-2"></i>Jadwal Praktik:
-                </h6>
-                <div id="mdl-schedule" class="d-flex flex-wrap gap-2"></div>
-              </div>
-              
-              <div class="d-grid mt-4">
-                <a id="mdl-book-link" href="booking.php" class="btn btn-janji-modal rounded-pill py-3 fw-bold shadow-sm">
-                  <i class="fas fa-calendar-check me-2"></i>Buat Janji Temu
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       
       <!-- ==================== NEWS SECTION ==================== -->
       <section class="py-5 bg-white" id="news">
