@@ -1189,7 +1189,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
               <li class="nav-item"><a class="nav-link" href="index.php#about_us">Tentang Kami</a></li>
               <li class="nav-item"><a class="nav-link" href="index.php#departments">Layanan</a></li>
               <li class="nav-item"><a class="nav-link" href="index.php#facilities">Fasilitas</a></li>
-              <li class="nav-item"><a class="nav-link" href="index.php#package">Paket MCU</a></li>
+              <li class="nav-item"><a class="nav-link" href="index.php#mcu_packages_data">Paket MCU</a></li>
               <li class="nav-item"><a class="nav-link" href="index.php#virtual_room">Virtual Room</a></li>
               <li class="nav-item"><a class="nav-link" href="index.php#doctors">Dokter Kami</a></li>
               <li class="nav-item"><a class="nav-link" href="index.php#news">Berita</a></li>
@@ -1515,7 +1515,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
 
       <?php if (!empty($mcu_packages_data)): ?>
-      <section class="py-5 bg-light" id="mcu-section">
+      <section class="py-5 bg-light" id="mcu_packages_data">
         <div class="container">
           <div class="row mb-5 align-items-end">
             <div class="col-lg-7">

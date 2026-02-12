@@ -153,6 +153,7 @@ while($setting = $settings_result->fetch_assoc()){
                     <a href="<?php echo BASE_URL; ?>#about">Tentang Kami</a>
                     <a href="<?php echo BASE_URL; ?>#our-doctors">Dokter</a>
                     <a href="<?php echo BASE_URL; ?>#facilities">Fasilitas</a>
+                    <a href="<?php echo BASE_URL; ?>#mcu_packages_data">Paket MCU</a>
                     <a href="<?php echo BASE_URL; ?>#careers">Karir</a>
                     <a href="<?php echo BASE_URL; ?>#virtual-room">Virtual Room</a>
                     <a href="<?php echo BASE_URL; ?>#news">Berita</a>
