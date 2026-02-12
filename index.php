@@ -391,6 +391,13 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             z-index: 1;
         }
 
+        .banner-image {
+            width: 100%;
+            height: auto;
+            object-fit: cover; /* Ini kunci agar gambar tidak gepeng */
+            aspect-ratio: 16/7; /* Mengunci rasio agar konsisten */
+        }
+
         .hero-content {
             position: relative;
             z-index: 2;
