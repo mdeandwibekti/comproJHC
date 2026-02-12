@@ -1186,11 +1186,12 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li class="nav-item"><a class="nav-link" href="index.php#departments">Layanan</a></li>
-              <li class="nav-item"><a class="nav-link" href="index.php#virtual_room">Virtual Room</a></li>
               <li class="nav-item"><a class="nav-link" href="index.php#about_us">Tentang Kami</a></li>
-              <li class="nav-item"><a class="nav-link" href="index.php#doctors">Dokter Kami</a></li>
+              <li class="nav-item"><a class="nav-link" href="index.php#departments">Layanan</a></li>
               <li class="nav-item"><a class="nav-link" href="index.php#facilities">Fasilitas</a></li>
+              <li class="nav-item"><a class="nav-link" href="index.php#package">Paket MCU</a></li>
+              <li class="nav-item"><a class="nav-link" href="index.php#virtual_room">Virtual Room</a></li>
+              <li class="nav-item"><a class="nav-link" href="index.php#doctors">Dokter Kami</a></li>
               <li class="nav-item"><a class="nav-link" href="index.php#news">Berita</a></li>
             </ul>
 
@@ -1246,6 +1247,100 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
             </button>
         </div>
     </section>
+
+
+    <!-- ==================== ABOUT US ==================== -->
+      <section class="py-5" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);" id="about_us">
+        <div class="container">
+          <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+              <p class="section-subtitle">
+                <i class="fas fa-hospital me-2"></i>TENTANG KAMI
+              </p>
+              <h2 class="section-title">Mengenal Lebih Dekat RS JHC</h2>
+              <p class="text-muted mt-3">Dedikasi kami untuk pelayanan kesehatan terbaik bagi Anda dan keluarga.</p>
+            </div>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-lg-3">
+              <div class="nav flex-column nav-pills shadow-sm rounded-4 bg-white overflow-hidden sticky-top" 
+                   id="v-pills-tab" role="tablist" style="top: 100px;">
+                <?php 
+                $no = 0;
+                foreach ($tabs_config as $key => $info): 
+                  $active = ($no === 0) ? 'active' : '';
+                ?>
+                  <button class="nav-link <?php echo $active; ?> text-start py-3 py-md-4 px-3 px-md-4 fw-bold border-bottom" 
+                          id="v-pills-<?php echo $key; ?>-tab" 
+                          data-bs-toggle="pill" 
+                          data-bs-target="#v-pills-<?php echo $key; ?>" 
+                          type="button"
+                          role="tab"
+                          aria-controls="v-pills-<?php echo $key; ?>"
+                          aria-selected="<?php echo $active ? 'true' : 'false'; ?>">
+                    <i class="fas <?php echo $info['icon']; ?> me-2 me-md-3 text-danger"></i> 
+                    <span class="d-none d-sm-inline"><?php echo $info['label']; ?></span>
+                  </button>
+                <?php $no++; endforeach; ?>
+              </div>
+            </div>
+
+            <div class="col-lg-9">
+              <div class="tab-content p-4 p-md-5 bg-white rounded-4 shadow-sm" style="min-height: 450px;">
+                <?php 
+                $no = 0;
+                foreach ($tabs_config as $key => $info): 
+                  $show_active = ($no === 0) ? 'show active' : '';
+                  $row = isset($about_sections[$key]) ? $about_sections[$key] : null;
+                  $judul = ($row && !empty($row['title'])) ? $row['title'] : $info['label'];
+                  $isi = ($row && !empty($row['content'])) ? nl2br($row['content']) : "Konten belum tersedia.";
+                  $img_src = ($row && !empty($row['image_path'])) ? 'public/' . $row['image_path'] : '';
+                  $img_display = !empty($img_src) ? $img_src : "https://via.placeholder.com/800x400/f8f9fa/dee2e6?text=No+Image";
+                ?>
+                  <div class="tab-pane fade <?php echo $show_active; ?>" 
+                       id="v-pills-<?php echo $key; ?>"
+                       role="tabpanel"
+                       aria-labelledby="v-pills-<?php echo $key; ?>-tab">
+                    
+                    <?php if ($key === 'salam-direktur'): ?>
+                      <div class="text-center">
+                        <img src="<?php echo htmlspecialchars($img_display); ?>" 
+                             class="rounded-circle shadow-lg mb-4 border border-4 border-white" 
+                             style="width: 150px; height: 150px; object-fit: cover;"
+                             onerror="this.src='https://via.placeholder.com/150';"
+                             alt="Direktur">
+                        <h3 class="text-danger fw-bold mb-3"><?php echo htmlspecialchars($judul); ?></h3>
+                        <div class="text-muted fst-italic px-lg-4" style="line-height: 1.8;">
+                          <i class="fas fa-quote-left fa-2x text-danger opacity-25 me-2"></i>
+                          <?php echo $isi; ?>
+                          <i class="fas fa-quote-right fa-2x text-danger opacity-25 ms-2"></i>
+                        </div>
+                      </div>
+                    <?php else: ?>
+                      <div class="row align-items-center g-4">
+                        <div class="col-md-5">
+                          <img src="<?php echo htmlspecialchars($img_display); ?>" 
+                               class="img-fluid rounded-4 shadow w-100" 
+                               style="object-fit: cover; height: 280px;"
+                               onerror="this.src='https://via.placeholder.com/800x400';"
+                               alt="<?php echo htmlspecialchars($judul); ?>">
+                        </div>
+                        <div class="col-md-7">
+                          <h3 class="text-danger fw-bold mb-3"><?php echo htmlspecialchars($judul); ?></h3>
+                          <div class="text-secondary text-justify" style="line-height: 1.8;">
+                            <?php echo $isi; ?>
+                          </div>
+                        </div>
+                      </div>
+                    <?php endif; ?>
+                  </div>
+                <?php $no++; endforeach; ?>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <!-- ==================== SERVICES SECTION ==================== -->
       <section class="py-5 bg-white" id="departments">
@@ -1375,6 +1470,49 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
           </div>
         </div>
       </div>
+
+      <!-- ==================== FACILITIES ==================== -->
+      <?php if (!empty($facilities_data)): ?>
+      <section class="py-5" style="background: linear-gradient(135deg, #F8FDFF 0%, #E3F2FD 100%);" id="facilities">
+        <div class="container">
+          <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+              <p class="section-subtitle">
+                <i class="fas fa-building me-2"></i>FASILITAS
+              </p>
+              <h2 class="section-title">Fasilitas Unggulan</h2>
+              <p class="text-muted mt-3">Fasilitas modern dan lengkap untuk kenyamanan Anda.</p>
+            </div>
+          </div>
+
+          <div class="row g-4">
+            <?php foreach($facilities_data as $fac): ?>
+            <div class="col-md-6 col-lg-4">
+              <div class="card h-100 border-0 shadow-sm hover-lift overflow-hidden" style="border-radius: 20px;">
+                <div class="position-relative" style="height: 240px; overflow: hidden;">
+                  <img src="public/<?php echo htmlspecialchars($fac['image_path']); ?>" 
+                       class="w-100 h-100" style="object-fit: cover; transition: transform 0.6s;" 
+                       alt="<?php echo htmlspecialchars($fac['name']); ?>">
+                  <div class="position-absolute bottom-0 start-0 w-100 p-3 p-md-4" 
+                       style="background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);">
+                    <h5 class="text-white mb-0 fw-bold" style="font-size: clamp(0.95rem, 2vw, 1.125rem);">
+                      <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($fac['name']); ?>
+                    </h5>
+                  </div>
+                </div>
+                <div class="card-body p-3 p-md-4">
+                  <p class="card-text text-muted" style="line-height: 1.7; font-size: clamp(0.875rem, 1.5vw, 0.95rem);">
+                    <?php echo nl2br(htmlspecialchars($fac['description'])); ?>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      </section>
+      <?php endif; ?>
+
 
       <?php if (!empty($mcu_packages_data)): ?>
       <section class="py-5 bg-light" id="mcu-section">
@@ -1547,99 +1685,6 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
       </section>
       <?php endif; ?>
 
-      <!-- ==================== ABOUT US ==================== -->
-      <section class="py-5" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);" id="about_us">
-        <div class="container">
-          <div class="row justify-content-center mb-5">
-            <div class="col-lg-8 text-center">
-              <p class="section-subtitle">
-                <i class="fas fa-hospital me-2"></i>TENTANG KAMI
-              </p>
-              <h2 class="section-title">Mengenal Lebih Dekat RS JHC</h2>
-              <p class="text-muted mt-3">Dedikasi kami untuk pelayanan kesehatan terbaik bagi Anda dan keluarga.</p>
-            </div>
-          </div>
-
-          <div class="row g-4">
-            <div class="col-lg-3">
-              <div class="nav flex-column nav-pills shadow-sm rounded-4 bg-white overflow-hidden sticky-top" 
-                   id="v-pills-tab" role="tablist" style="top: 100px;">
-                <?php 
-                $no = 0;
-                foreach ($tabs_config as $key => $info): 
-                  $active = ($no === 0) ? 'active' : '';
-                ?>
-                  <button class="nav-link <?php echo $active; ?> text-start py-3 py-md-4 px-3 px-md-4 fw-bold border-bottom" 
-                          id="v-pills-<?php echo $key; ?>-tab" 
-                          data-bs-toggle="pill" 
-                          data-bs-target="#v-pills-<?php echo $key; ?>" 
-                          type="button"
-                          role="tab"
-                          aria-controls="v-pills-<?php echo $key; ?>"
-                          aria-selected="<?php echo $active ? 'true' : 'false'; ?>">
-                    <i class="fas <?php echo $info['icon']; ?> me-2 me-md-3 text-danger"></i> 
-                    <span class="d-none d-sm-inline"><?php echo $info['label']; ?></span>
-                  </button>
-                <?php $no++; endforeach; ?>
-              </div>
-            </div>
-
-            <div class="col-lg-9">
-              <div class="tab-content p-4 p-md-5 bg-white rounded-4 shadow-sm" style="min-height: 450px;">
-                <?php 
-                $no = 0;
-                foreach ($tabs_config as $key => $info): 
-                  $show_active = ($no === 0) ? 'show active' : '';
-                  $row = isset($about_sections[$key]) ? $about_sections[$key] : null;
-                  $judul = ($row && !empty($row['title'])) ? $row['title'] : $info['label'];
-                  $isi = ($row && !empty($row['content'])) ? nl2br($row['content']) : "Konten belum tersedia.";
-                  $img_src = ($row && !empty($row['image_path'])) ? 'public/' . $row['image_path'] : '';
-                  $img_display = !empty($img_src) ? $img_src : "https://via.placeholder.com/800x400/f8f9fa/dee2e6?text=No+Image";
-                ?>
-                  <div class="tab-pane fade <?php echo $show_active; ?>" 
-                       id="v-pills-<?php echo $key; ?>"
-                       role="tabpanel"
-                       aria-labelledby="v-pills-<?php echo $key; ?>-tab">
-                    
-                    <?php if ($key === 'salam-direktur'): ?>
-                      <div class="text-center">
-                        <img src="<?php echo htmlspecialchars($img_display); ?>" 
-                             class="rounded-circle shadow-lg mb-4 border border-4 border-white" 
-                             style="width: 150px; height: 150px; object-fit: cover;"
-                             onerror="this.src='https://via.placeholder.com/150';"
-                             alt="Direktur">
-                        <h3 class="text-danger fw-bold mb-3"><?php echo htmlspecialchars($judul); ?></h3>
-                        <div class="text-muted fst-italic px-lg-4" style="line-height: 1.8;">
-                          <i class="fas fa-quote-left fa-2x text-danger opacity-25 me-2"></i>
-                          <?php echo $isi; ?>
-                          <i class="fas fa-quote-right fa-2x text-danger opacity-25 ms-2"></i>
-                        </div>
-                      </div>
-                    <?php else: ?>
-                      <div class="row align-items-center g-4">
-                        <div class="col-md-5">
-                          <img src="<?php echo htmlspecialchars($img_display); ?>" 
-                               class="img-fluid rounded-4 shadow w-100" 
-                               style="object-fit: cover; height: 280px;"
-                               onerror="this.src='https://via.placeholder.com/800x400';"
-                               alt="<?php echo htmlspecialchars($judul); ?>">
-                        </div>
-                        <div class="col-md-7">
-                          <h3 class="text-danger fw-bold mb-3"><?php echo htmlspecialchars($judul); ?></h3>
-                          <div class="text-secondary text-justify" style="line-height: 1.8;">
-                            <?php echo $isi; ?>
-                          </div>
-                        </div>
-                      </div>
-                    <?php endif; ?>
-                  </div>
-                <?php $no++; endforeach; ?>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <!-- ==================== DOCTORS SECTION ==================== -->
       <section class="py-5 bg-white" id="doctors">
         <div class="container">
@@ -1733,48 +1778,7 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
         </div>
       </div>
 
-      <!-- ==================== FACILITIES ==================== -->
-      <?php if (!empty($facilities_data)): ?>
-      <section class="py-5" style="background: linear-gradient(135deg, #F8FDFF 0%, #E3F2FD 100%);" id="facilities">
-        <div class="container">
-          <div class="row justify-content-center mb-5">
-            <div class="col-lg-8 text-center">
-              <p class="section-subtitle">
-                <i class="fas fa-building me-2"></i>FASILITAS
-              </p>
-              <h2 class="section-title">Fasilitas Unggulan</h2>
-              <p class="text-muted mt-3">Fasilitas modern dan lengkap untuk kenyamanan Anda.</p>
-            </div>
-          </div>
-
-          <div class="row g-4">
-            <?php foreach($facilities_data as $fac): ?>
-            <div class="col-md-6 col-lg-4">
-              <div class="card h-100 border-0 shadow-sm hover-lift overflow-hidden" style="border-radius: 20px;">
-                <div class="position-relative" style="height: 240px; overflow: hidden;">
-                  <img src="public/<?php echo htmlspecialchars($fac['image_path']); ?>" 
-                       class="w-100 h-100" style="object-fit: cover; transition: transform 0.6s;" 
-                       alt="<?php echo htmlspecialchars($fac['name']); ?>">
-                  <div class="position-absolute bottom-0 start-0 w-100 p-3 p-md-4" 
-                       style="background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);">
-                    <h5 class="text-white mb-0 fw-bold" style="font-size: clamp(0.95rem, 2vw, 1.125rem);">
-                      <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($fac['name']); ?>
-                    </h5>
-                  </div>
-                </div>
-                <div class="card-body p-3 p-md-4">
-                  <p class="card-text text-muted" style="line-height: 1.7; font-size: clamp(0.875rem, 1.5vw, 0.95rem);">
-                    <?php echo nl2br(htmlspecialchars($fac['description'])); ?>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <?php endforeach; ?>
-          </div>
-        </div>
-      </section>
-      <?php endif; ?>
-
+      
       <!-- ==================== NEWS SECTION ==================== -->
       <section class="py-5 bg-white" id="news">
         <div class="container">
@@ -1998,8 +2002,8 @@ if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[]
                 <h5 class="fw-bold text-white mb-4 border-start border-3 border-danger ps-3">Informasi</h5>
                 <ul class="list-unstyled footer-nav">
                     <li><a href="index.php#about_us" class="footer-link">Tentang Kami</a></li>
-                    <li><a href="index.php#doctors" class="footer-link">Tim Dokter</a></li>
                     <li><a href="index.php#facilities" class="footer-link">Fasilitas</a></li>
+                    <li><a href="index.php#doctors" class="footer-link">Tim Dokter</a></li>
                     <li><a href="index.php#news" class="footer-link">Berita & Artikel</a></li>
                     <li><a href="career.php" class="footer-link">Karir / Lowongan</a></li>
                 </ul>
