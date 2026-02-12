@@ -1,47 +1,65 @@
 <?php
 require_once "../../config.php";
 
-// --- LOGIKA PEMROSESAN POST ---
-$job_title = $description = $location = $deadline = ""; // Ubah end_date jadi deadline
-$status = 'open';
+// Inisialisasi variabel kosong untuk form
+$job_title = $description = $location = $deadline = "";
+$status = 'open'; // Default status
 $job_title_err = $description_err = $location_err = ""; 
-$id = isset($_POST['id']) ? trim($_POST['id']) : (isset($_GET['id']) ? trim($_GET['id']) : null);
 
+// Cek apakah ada ID di URL (Mode Edit)
+$id = isset($_GET['id']) ? intval($_GET['id']) : null;
+
+// --- A. JIKA FORM DI-SUBMIT (POST) ---
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validasi Judul, Deskripsi, Lokasi (Tetap sama)
-    if (empty(trim($_POST["job_title"]))) { $job_title_err = "Silakan masukkan judul."; } else { $job_title = trim($_POST["job_title"]); }
-    if (empty(trim($_POST["description"]))) { $description_err = "Silakan masukkan deskripsi."; } else { $description = trim($_POST["description"]); }
-    if (empty(trim($_POST["location"]))) { $location_err = "Silakan masukkan lokasi."; } else { $location = trim($_POST["location"]); }
+    
+    // Ambil ID dari hidden input jika ada
+    if(isset($_POST['id']) && !empty($_POST['id'])){
+        $id = intval($_POST['id']);
+    }
+
+    // 1. Validasi Input
+    if (empty(trim($_POST["job_title"]))) { $job_title_err = "Silakan masukkan judul pekerjaan."; } else { $job_title = trim($_POST["job_title"]); }
+    if (empty(trim($_POST["description"]))) { $description_err = "Silakan masukkan deskripsi pekerjaan."; } else { $description = trim($_POST["description"]); }
+    if (empty(trim($_POST["location"]))) { $location_err = "Silakan masukkan lokasi penempatan."; } else { $location = trim($_POST["location"]); }
 
     $status = trim($_POST["status"]);
-    // Ambil nilai deadline dari input 'deadline'
+    // Jika deadline kosong, set NULL agar tidak error date format di DB
     $deadline = !empty($_POST["deadline"]) ? trim($_POST["deadline"]) : NULL;
 
+    // 2. Proses Database jika tidak ada error
     if (empty($job_title_err) && empty($description_err) && empty($location_err)) {
+        
         if (empty($id)) {
-            // Gunakan kolom 'deadline' sesuai database
-            $sql = "INSERT INTO careers (job_title, description, location, status, deadline) VALUES (?, ?, ?, ?, ?)";
-        } else {
-            $sql = "UPDATE careers SET job_title = ?, description = ?, location = ?, status = ?, deadline = ? WHERE id = ?";
-        }
-
-        if ($stmt = $mysqli->prepare($sql)) {
-            if (empty($id)) {
+            // -- INSERT (Tambah Baru) --
+            $sql = "INSERT INTO careers (job_title, description, location, status, deadline, post_date) VALUES (?, ?, ?, ?, ?, NOW())";
+            if ($stmt = $mysqli->prepare($sql)) {
                 $stmt->bind_param("sssss", $job_title, $description, $location, $status, $deadline);
-            } else {
-                $stmt->bind_param("sssssi", $job_title, $description, $location, $status, $deadline, $id);
+                if ($stmt->execute()) {
+                    header("location: careers.php?msg=saved");
+                    exit();
+                } else {
+                    $db_err = "Gagal menyimpan data: " . $stmt->error;
+                }
+                $stmt->close();
             }
-            
-            if ($stmt->execute()) {
-                header("location: careers.php?saved=true");
-                exit();
-            } else {
-                $db_err = "Gagal menyimpan: " . $stmt->error;
+        } else {
+            // -- UPDATE (Edit Data) --
+            $sql = "UPDATE careers SET job_title = ?, description = ?, location = ?, status = ?, deadline = ? WHERE id = ?";
+            if ($stmt = $mysqli->prepare($sql)) {
+                $stmt->bind_param("sssssi", $job_title, $description, $location, $status, $deadline, $id);
+                if ($stmt->execute()) {
+                    header("location: careers.php?msg=saved");
+                    exit();
+                } else {
+                    $db_err = "Gagal mengupdate data: " . $stmt->error;
+                }
+                $stmt->close();
             }
         }
     }
-} elseif (isset($_GET['id'])) {
-    // Mode EDIT: Ambil data deadline
+} 
+// --- B. JIKA HALAMAN DIBUKA PERTAMA KALI (GET - EDIT MODE) ---
+elseif (!empty($id)) {
     $sql = "SELECT job_title, description, location, status, deadline FROM careers WHERE id = ?";
     if ($stmt = $mysqli->prepare($sql)) {
         $stmt->bind_param("i", $id);
@@ -53,7 +71,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $description = $row['description'];
                 $location = $row['location'];
                 $status = $row['status'];
-                $deadline = $row['deadline']; // Pastikan ini 'deadline'
+                $deadline = $row['deadline'];
+            } else {
+                // ID tidak ditemukan
+                header("location: careers.php");
+                exit();
             }
         }
     }
@@ -70,7 +92,7 @@ $page_title_form = empty($id) ? "Tambah Lowongan Baru" : "Edit Lowongan Pekerjaa
         --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
     }
     
-    /* Card Wrapper bergaya Neumorphism */
+    /* Card Wrapper */
     .main-wrapper {
         background: #ffffff;
         border-radius: 20px;
@@ -116,8 +138,11 @@ $page_title_form = empty($id) ? "Tambah Lowongan Baru" : "Edit Lowongan Pekerjaa
             <div class="alert alert-danger shadow-sm border-0 mb-4"><i class="fas fa-exclamation-circle me-2"></i> <?php echo $db_err; ?></div>
         <?php endif; ?>
 
-        <form action="career_edit.php<?php echo $id ? '?id='.$id : '' ?>" method="post">
-            <input type="hidden" name="id" value="<?php echo $id; ?>">
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?><?php echo $id ? '?id='.$id : '' ?>" method="post">
+            
+            <?php if(!empty($id)): ?>
+                <input type="hidden" name="id" value="<?php echo $id; ?>">
+            <?php endif; ?>
             
             <div class="row g-4">
                 <div class="col-md-8">
@@ -161,7 +186,7 @@ $page_title_form = empty($id) ? "Tambah Lowongan Baru" : "Edit Lowongan Pekerjaa
                               rows="10" placeholder="Tuliskan detail pekerjaan, syarat pendidikan, pengalaman, dan kualifikasi lainnya..."><?php echo htmlspecialchars($description); ?></textarea>
                     <div class="invalid-feedback"><?php echo $description_err; ?></div>
                     <div class="form-text mt-2 italic text-muted">
-                        <i class="fas fa-info-circle me-1"></i> Gunakan baris baru untuk memisahkan poin-poin kualifikasi agar tampilan rapi di website.
+                        <i class="fas fa-info-circle me-1"></i> Gunakan baris baru (Enter) untuk memisahkan poin-poin kualifikasi agar tampilan rapi di website.
                     </div>
                 </div>
             </div>
