@@ -1,15 +1,17 @@
 <?php
 require_once "../../config.php";
 
-// --- LOGIKA PEMROSESAN (Harus SEBELUM require layout/header.php untuk mencegah error header) ---
+// --- 1. LOGIKA HAPUS DATA (DELETE) ---
 if (isset($_GET['delete'])) {
     $id_to_delete = intval($_GET['delete']);
+    
+    // Hapus data berdasarkan ID
     $sql = "DELETE FROM careers WHERE id = ?";
     if ($stmt = $mysqli->prepare($sql)) {
         $stmt->bind_param("i", $id_to_delete);
         if ($stmt->execute()) {
-            // Pengalihan sukses menggunakan PHP header (Aman karena belum ada output HTML)
-            header("location: careers.php?deleted=true");
+            // Redirect agar URL bersih
+            header("location: careers.php?msg=deleted");
             exit();
         } else {
             $error_msg = "Gagal menghapus data: " . $stmt->error;
@@ -18,7 +20,8 @@ if (isset($_GET['delete'])) {
     }
 }
 
-// Ambil data karir dari database (Tambahkan kolom deadline)
+// --- 2. AMBIL DATA (READ) ---
+// Mengambil semua kolom yang diperlukan, diurutkan dari yang terbaru
 $sql = "SELECT id, job_title, location, status, post_date, deadline FROM careers ORDER BY post_date DESC";
 $result = $mysqli->query($sql);
 
@@ -32,7 +35,7 @@ require_once 'layout/header.php';
         --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
     }
 
-    /* Card Wrapper bergaya Neumorphism */
+    /* Wrapper Utama */
     .main-wrapper {
         background: #ffffff;
         border-radius: 20px;
@@ -42,13 +45,14 @@ require_once 'layout/header.php';
         border: 1px solid rgba(0,0,0,0.05);
     }
 
+    /* Header Halaman */
     .page-header-jhc {
         border-left: 4px solid var(--jhc-red-dark);
         padding-left: 20px;
         margin-bottom: 30px;
     }
 
-    /* Tombol Utama Gradasi JHC */
+    /* Tombol Utama */
     .btn-jhc-main { 
         background: var(--jhc-gradient) !important; 
         color: white !important; 
@@ -64,9 +68,10 @@ require_once 'layout/header.php';
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(138, 48, 51, 0.4); 
         opacity: 0.95;
+        color: white !important;
     }
 
-    /* Tabel Styling sesuai referensi visual */
+    /* Tabel Styling */
     .table thead th { 
         background-color: #f8f9fa; 
         color: #6c757d; 
@@ -85,21 +90,24 @@ require_once 'layout/header.php';
         font-size: 0.9rem;
     }
 
+    /* Badge Deadline */
     .deadline-badge {
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    display: inline-block;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-block;
     }
     .deadline-safe { background-color: #f0f7ff; color: #0056b3; }
     .deadline-urgent { background-color: #fff4e6; color: #d97706; }
     .deadline-passed { background-color: #f4f4f5; color: #71717a; text-decoration: line-through; }
         
+    /* Badge Status */
     .status-badge { padding: 6px 14px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; }
     .status-open { background-color: #e6f4ea; color: #1e7e34; }
     .status-closed { background-color: #fceaea; color: #c53030; }
 
+    /* Tombol Aksi Kecil */
     .btn-action-jhc { border-radius: 8px; font-weight: 600; padding: 6px 12px; }
 </style>
 
@@ -113,14 +121,14 @@ require_once 'layout/header.php';
             <a href="career_edit.php" class="btn btn-jhc-main"><i class="fas fa-plus me-2"></i> Tambah Lowongan</a>
         </div>
 
-        <?php if (isset($_GET['deleted'])): ?>
+        <?php if (isset($_GET['msg']) && $_GET['msg'] == 'deleted'): ?>
             <div class="alert alert-warning alert-dismissible fade show border-0 shadow-sm border-start border-warning border-4" role="alert">
                 <i class="fas fa-trash-alt me-2"></i> Lowongan berhasil dihapus.
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
 
-        <?php if (isset($_GET['saved'])): ?>
+        <?php if (isset($_GET['msg']) && $_GET['msg'] == 'saved'): ?>
             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm border-start border-success border-4" role="alert">
                 <i class="fas fa-check-circle me-2"></i> Data berhasil disimpan!
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -134,7 +142,8 @@ require_once 'layout/header.php';
                         <th class="ps-4">Judul Pekerjaan</th>
                         <th>Lokasi</th>
                         <th class="text-center">Status</th>
-                        <th>Batas Pendaftaran</th> <th class="text-center">Aksi</th>
+                        <th>Batas Pendaftaran</th>
+                        <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -165,7 +174,7 @@ require_once 'layout/header.php';
                                             $d_text = "Berakhir";
                                         } elseif ($diff <= 7) {
                                             $d_class = "deadline-urgent";
-                                            $d_text = $diff . " Hari Lagi";
+                                            $d_text = ceil($diff) . " Hari Lagi";
                                         } else {
                                             $d_class = "deadline-safe";
                                             $d_text = date('d M Y', $deadline_ts);
@@ -179,8 +188,8 @@ require_once 'layout/header.php';
 
                                 <td class="text-center pe-4">
                                     <div class="d-flex gap-2 justify-content-center">
-                                        <a href="career_edit.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-outline-primary btn-action-jhc"><i class="fas fa-edit"></i></a>
-                                        <a href="careers.php?delete=<?= $row['id']; ?>" class="btn btn-sm btn-outline-danger btn-action-jhc" onclick="return confirm('Hapus?');"><i class="fas fa-trash-alt"></i></a>
+                                        <a href="career_edit.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-outline-primary btn-action-jhc" title="Edit"><i class="fas fa-edit"></i></a>
+                                        <a href="careers.php?delete=<?= $row['id']; ?>" class="btn btn-sm btn-outline-danger btn-action-jhc" onclick="return confirm('Apakah Anda yakin ingin menghapus lowongan ini?');" title="Hapus"><i class="fas fa-trash-alt"></i></a>
                                     </div>
                                 </td>
                             </tr>
