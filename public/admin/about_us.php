@@ -82,128 +82,287 @@ require_once 'layout/header.php';
 <style>
     :root { 
         --jhc-red-dark: #8a3033;
-        --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
+        --jhc-red-light: #bd3030;
+        --jhc-gradient: linear-gradient(135deg, #8a3033 0%, #bd3030 100%);
+        --admin-bg: #f0f2f5;
+        --glass-bg: rgba(255, 255, 255, 0.9);
     }
 
+    body { 
+        background-color: var(--admin-bg); 
+        color: #2d3436;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* Header & Hero Style */
     .page-header { 
-        background: white; padding: 1.5rem; border-radius: 15px; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid var(--jhc-red-dark); 
+        background: white; 
+        padding: 2.5rem; 
+        border-radius: 24px; 
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02); 
         margin-bottom: 2rem; 
+        position: relative;
+        border: 1px solid rgba(0,0,0,0.05);
     }
 
-    .main-card { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); overflow: hidden; background: #fff; }
+    .header-icon-box {
+        width: 64px;
+        height: 64px;
+        background: var(--jhc-gradient);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: 0 10px 20px rgba(138, 48, 51, 0.2);
+    }
 
-    /* Custom Nav Tabs */
-    .nav-tabs-jhc { border-bottom: 2px solid #f1f1f1; padding: 0 1.5rem; background: #fafafa; }
+    /* Modern Card Layout */
+    .main-card { 
+        border: none; 
+        border-radius: 24px; 
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04); 
+        background: #fff; 
+        overflow: hidden;
+    }
+
+    /* Tabs Styling - Sidebar Style on Large Screens */
+    .nav-tabs-container {
+        background: #fdfdfd;
+        border-right: 1px solid #f1f3f5;
+    }
+
+    .nav-tabs-jhc { 
+        border-bottom: none; 
+        padding: 1.5rem;
+        flex-direction: column;
+    }
+
     .nav-tabs-jhc .nav-link { 
-        border: none; color: #777; padding: 1.2rem 1.5rem; font-weight: 600; 
-        transition: 0.3s; position: relative;
+        border: none !important; 
+        color: #636e72; 
+        padding: 1rem 1.5rem; 
+        font-weight: 600; 
+        font-size: 0.95rem;
+        transition: 0.3s;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        text-align: left;
     }
+
+    .nav-tabs-jhc .nav-link i {
+        width: 24px;
+        font-size: 1.1rem;
+    }
+
+    .nav-tabs-jhc .nav-link:hover {
+        background: rgba(138, 48, 51, 0.05);
+        color: var(--jhc-red-dark);
+    }
+
     .nav-tabs-jhc .nav-link.active { 
-        color: var(--jhc-red-dark); background: transparent; 
+        color: white; 
+        background: var(--jhc-gradient);
+        box-shadow: 0 8px 15px rgba(138, 48, 51, 0.2);
     }
-    .nav-tabs-jhc .nav-link.active::after {
-        content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--jhc-gradient);
+
+    /* Form Design */
+    .form-section-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #2d3436;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #eee;
+        margin-left: 1rem;
+    }
+
+    .form-control {
+        border: 1.5px solid #e9ecef;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        background: #f8f9fa;
+    }
+
+    .form-control:focus {
+        border-color: var(--jhc-red-dark);
+        box-shadow: 0 0 0 4px rgba(138, 48, 51, 0.1);
+        background: #fff;
+    }
+
+    /* Image Preview Modern */
+    .img-preview-card {
+        border: 2px dashed #cbd5e0;
+        border-radius: 20px;
+        padding: 20px;
+        background: #f8fafc;
+        transition: 0.3s;
+        position: relative;
+    }
+
+    .img-preview-card:hover {
+        border-color: var(--jhc-red-dark);
+        background: #fff;
+    }
+
+    .preview-img-tag {
+        width: 100%;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     }
 
     .btn-jhc-save { 
-        background: var(--jhc-gradient); color: white !important; 
-        border-radius: 50px; padding: 0.7rem 2.5rem; font-weight: 700; 
-        border: none; transition: 0.3s; box-shadow: 0 4px 12px rgba(138, 48, 51, 0.3);
+        background: var(--jhc-gradient); 
+        color: white !important; 
+        border-radius: 14px; 
+        padding: 0.8rem 2.5rem; 
+        font-weight: 700; 
+        border: none; 
+        transition: 0.3s; 
     }
-    .btn-jhc-save:hover { transform: translateY(-2px); opacity: 0.9; }
 
-    .img-preview-container {
-        border: 2px dashed #ddd; border-radius: 15px; padding: 20px; background: #fdfdfd; transition: 0.3s;
+    .btn-jhc-save:hover { 
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(138, 48, 51, 0.3);
     }
-    .img-preview-container img { max-height: 200px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+    /* Success Alert Modern */
+    .custom-alert {
+        background: #d1e7dd;
+        color: #0f5132;
+        border-radius: 16px;
+        border: none;
+        padding: 1.25rem;
+    }
 </style>
 
-<div class="container-fluid py-4">
-    <div class="page-header d-flex align-items-center justify-content-between">
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="dashboard.php" class="text-decoration-none text-muted">Dashboard</a></li>
+            <li class="breadcrumb-item active fw-bold" style="color: var(--jhc-red-dark);">Tentang Kami</li>
+        </ol>
+    </nav>
+
+    <div class="page-header d-flex align-items-center">
+        <div class="header-icon-box me-4 d-none d-md-flex">
+            <i class="fas fa-building fa-lg"></i>
+        </div>
         <div>
-            <h3 class="mb-1 text-dark fw-bold"><i class="fas fa-hospital-user me-2" style="color: var(--jhc-red-dark);"></i> Manage About Us</h3>
-            <p class="text-muted mb-0 small">Perbarui informasi profil perusahaan, sejarah, visi & misi secara dinamis.</p>
+            <h2 class="mb-1 fw-800">About Us Content</h2>
+            <p class="text-muted mb-0">Kelola narasi visi, misi, dan sejarah RS JHC secara real-time.</p>
         </div>
     </div>
 
     <?php if (isset($_GET['success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm border-start border-success border-4 mb-4">
-            <i class="fas fa-check-circle me-2"></i> Konten berhasil diperbarui!
+        <div class="alert custom-alert alert-dismissible fade show shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle me-3 fa-lg"></i>
+                <div><strong>Pembaruan Berhasil!</strong> Perubahan telah diterapkan di website publik.</div>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
 
-    <div class="card main-card">
-        <ul class="nav nav-tabs nav-tabs-jhc" id="aboutTab" role="tablist">
-            <?php $active_tab = $_GET['tab'] ?? 'visi-misi'; ?>
-            <?php foreach ($sections as $key => $label): ?>
-                <li class="nav-item">
-                    <button class="nav-link <?php echo ($active_tab == $key) ? 'active' : ''; ?>" 
-                            id="<?php echo $key; ?>-tab" data-bs-toggle="tab" data-bs-target="#tab-<?php echo $key; ?>" type="button">
-                        <i class="fas <?php echo $section_icons[$key]; ?> me-2"></i> <?php echo $label; ?>
-                    </button>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+    <div class="main-card">
+        <div class="row g-0">
+            <div class="col-lg-3 nav-tabs-container">
+                <ul class="nav nav-tabs nav-tabs-jhc" id="aboutTab" role="tablist">
+                    <?php $active_tab = $_GET['tab'] ?? 'visi-misi'; ?>
+                    <?php foreach ($sections as $key => $label): ?>
+                        <li class="nav-item">
+                            <button class="nav-link w-100 <?php echo ($active_tab == $key) ? 'active' : ''; ?>" 
+                                    id="<?php echo $key; ?>-tab" data-bs-toggle="tab" data-bs-target="#tab-<?php echo $key; ?>" type="button">
+                                <i class="fas <?php echo $section_icons[$key]; ?> me-3"></i> 
+                                <span><?php echo $label; ?></span>
+                            </button>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <div class="p-4 d-none d-lg-block">
+                    <div class="card bg-light border-0 rounded-4 p-3">
+                        <small class="text-muted d-block mb-2">Terakhir diupdate:</small>
+                        <span class="fw-bold small text-dark"><i class="far fa-clock me-1"></i> <?php echo date('d M Y, H:i'); ?></span>
+                    </div>
+                </div>
+            </div>
 
-        <div class="card-body p-4 p-md-5">
-            <div class="tab-content" id="aboutTabContent">
-                <?php foreach ($sections as $key => $label): 
-                    $data = $all_sections_data[$key] ?? ['title' => '', 'content' => '', 'image_path' => ''];
-                    $s_errors = $errors[$key] ?? [];
-                ?>
-                <div class="tab-pane fade <?php echo ($active_tab == $key) ? 'show active' : ''; ?>" id="tab-<?php echo $key; ?>">
-                    <form action="about_us.php?tab=<?php echo $key; ?>" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="section_key" value="<?php echo $key; ?>">
-                        
-                        <div class="row g-5">
-                            <div class="col-lg-7">
+            <div class="col-lg-9">
+                <div class="card-body p-4 p-md-5">
+                    <div class="tab-content" id="aboutTabContent">
+                        <?php foreach ($sections as $key => $label): 
+                            $data = $all_sections_data[$key] ?? ['title' => '', 'content' => '', 'image_path' => ''];
+                            $s_errors = $errors[$key] ?? [];
+                        ?>
+                        <div class="tab-pane fade <?php echo ($active_tab == $key) ? 'show active' : ''; ?>" id="tab-<?php echo $key; ?>">
+                            <form action="about_us.php?tab=<?php echo $key; ?>" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="section_key" value="<?php echo $key; ?>">
+                                
+                                <div class="form-section-title">
+                                    <i class="fas fa-pen-nib me-2 text-muted"></i> Konten Teks
+                                </div>
+
                                 <div class="mb-4">
-                                    <label class="form-label">Judul Bagian</label>
+                                    <label class="form-label">Judul Utama Halaman</label>
                                     <input type="text" name="title" class="form-control form-control-lg <?php echo isset($s_errors['title']) ? 'is-invalid' : ''; ?>" 
-                                           value="<?php echo htmlspecialchars($data['title']); ?>" placeholder="Masukkan judul...">
+                                           value="<?php echo htmlspecialchars($data['title']); ?>" placeholder="Masukkan judul yang menarik...">
                                     <div class="invalid-feedback"><?php echo $s_errors['title'] ?? ''; ?></div>
                                 </div>
                                 
-                                <div class="mb-4">
-                                    <label class="form-label">Isi Konten</label>
+                                <div class="mb-5">
+                                    <label class="form-label">Deskripsi / Narasi Lengkap</label>
                                     <textarea name="content" class="form-control <?php echo isset($s_errors['content']) ? 'is-invalid' : ''; ?>" 
-                                              rows="10" placeholder="Tuliskan isi informasi di sini..."><?php echo htmlspecialchars($data['content']); ?></textarea>
+                                              rows="10" style="resize: none;"><?php echo htmlspecialchars($data['content']); ?></textarea>
                                     <div class="invalid-feedback"><?php echo $s_errors['content'] ?? ''; ?></div>
-                                    <div class="form-text mt-2"><i class="fas fa-info-circle me-1"></i> Tips: Gunakan paragraf baru agar tampilan di web user tetap rapi.</div>
                                 </div>
-                            </div>
 
-                            <div class="col-lg-5">
-                                <label class="form-label">Gambar Ilustrasi</label>
-                                <div class="img-preview-container text-center mb-3">
-                                    <?php if (!empty($data['image_path'])): ?>
-                                        <img src="../<?php echo htmlspecialchars($data['image_path']); ?>" class="img-fluid mb-3">
-                                    <?php else: ?>
-                                        <div class="py-5 text-muted">
-                                            <i class="fas fa-image fa-4x mb-3 opacity-25"></i><br>Belum ada gambar
+                                <div class="form-section-title">
+                                    <i class="fas fa-image me-2 text-muted"></i> Media & Visual
+                                </div>
+
+                                <div class="row align-items-center">
+                                    <div class="col-md-5 mb-3 mb-md-0">
+                                        <div class="img-preview-card text-center">
+                                            <?php if (!empty($data['image_path'])): ?>
+                                                <img src="../<?php echo htmlspecialchars($data['image_path']); ?>" class="preview-img-tag mb-3">
+                                            <?php else: ?>
+                                                <div class="py-5 opacity-50">
+                                                    <i class="fas fa-image fa-3x mb-2"></i><br>
+                                                    <small>Belum ada gambar</small>
+                                                </div>
+                                            <?php endif; ?>
+                                            <input type="hidden" name="current_image" value="<?php echo htmlspecialchars($data['image_path']); ?>">
                                         </div>
-                                    <?php endif; ?>
-                                    
-                                    <input type="hidden" name="current_image" value="<?php echo htmlspecialchars($data['image_path']); ?>">
-                                    <div class="px-3">
-                                        <input type="file" name="image" class="form-control form-control-sm <?php echo isset($s_errors['image']) ? 'is-invalid' : ''; ?>">
-                                        <div class="invalid-feedback text-start"><?php echo $s_errors['image'] ?? ''; ?></div>
-                                        <div class="form-text text-start x-small mt-2">Format: JPG/PNG. Maks: 5MB.</div>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <div class="p-3 bg-light rounded-4 border">
+                                            <label class="form-label mb-2">Ganti Gambar</label>
+                                            <input type="file" name="image" class="form-control mb-2 <?php echo isset($s_errors['image']) ? 'is-invalid' : ''; ?>">
+                                            <small class="text-muted">Format: JPG, PNG, WEBP. Maks: 5MB.</small>
+                                            <div class="invalid-feedback d-block"><?php echo $s_errors['image'] ?? ''; ?></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="mt-5 border-top pt-4 text-end">
-                            <button type="submit" class="btn btn-jhc-save shadow">
-                                <i class="fas fa-save me-2"></i> Simpan Perubahan <?php echo $label; ?>
-                            </button>
+                                <div class="mt-5 pt-4 border-top">
+                                    <button type="submit" class="btn btn-jhc-save float-end">
+                                        <i class="fas fa-check-circle me-2"></i> Simpan Perubahan
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-                <?php endforeach; ?>
             </div>
         </div>
     </div>
