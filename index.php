@@ -614,67 +614,93 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
     /* ============================================================
        ABOUT TABS
     ============================================================ */
+    /* Wrapper Gambar Tetap Sesuai Input */
     .about-image-wrapper {
-    position: relative;
-    height: 450px;
-    background: #f8f9fa;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        position: relative;
+        height: 450px;
+        background: #f8f9fa;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
     }
 
     #main-about-image {
         width: 100%;
         height: 100%;
-        object-fit: cover; /* Menjaga proporsi gambar */
+        object-fit: cover;
         transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
     }
 
+    /* Tab Button: Dibuat sangat ramping */
     .custom-tab-btn {
-        position: relative;
-        padding: 10px 20px;
+        font-size: 0.75rem !important; /* Ukuran menu diperkecil (±12px) */
+        font-weight: 600;
+        padding: 5px 10px !important;
+        letter-spacing: 0.2px;
         color: #6c757d !important;
-        font-weight: 700;
-        transition: all 0.3s ease;
-        border: none !important;
+        text-transform: uppercase; /* Membuat menu kecil tetap terbaca tegas */
     }
 
     .custom-tab-btn.active {
         color: #8a3033 !important;
     }
 
-    .custom-tab-btn::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        width: 0;
-        height: 3px;
-        background: #8a3033;
-        transition: 0.3s;
-        transform: translateX(-50%);
-    }
-
-    .custom-tab-btn.active::after {
-        width: 80%;
-    }
-
+    /* Content Card */
     #aboutTabContent {
         background: #ffffff;
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        border-left: 6px solid #8a3033;
-        min-height: 350px;
-        padding: 2rem;
+        border-left: 5px solid #8a3033;
+        height: 350px; 
+        overflow: hidden;
+        padding: 0;
+    }
+
+    .tab-pane-scroll {
+        height: 100%;
+        overflow-y: auto;
+        padding: 1.25rem 1.5rem; /* Padding lebih ramping */
+    }
+
+    /* Judul di dalam box konten */
+    .tab-pane-scroll h3 {
+        font-size: 1rem !important; /* Judul diturunkan ke 16px */
+        margin-bottom: 0.6rem;
+        font-weight: 700;
+        color: #8a3033;
+    }
+
+    /* PERBAIKAN UTAMA: Teks Penjelasan Kecil & Rapi */
+    .text-description {
+        font-size: 0.8rem !important; /* Ukuran ideal ±12.8px */
+        line-height: 1.6 !important;  /* Spasi baris lega agar nyaman dibaca meski kecil */
+        color: #555;
+        text-align: justify;
+        letter-spacing: 0.1px;
+    }
+
+    /* Scrollbar Minimalis */
+    .tab-pane-scroll::-webkit-scrollbar {
+        width: 3px;
+    }
+    .tab-pane-scroll::-webkit-scrollbar-track {
+        background: #f9f9f9;
+    }
+    .tab-pane-scroll::-webkit-scrollbar-thumb {
+        background: #d1d1d1;
+        border-radius: 10px;
+    }
+    .tab-pane-scroll::-webkit-scrollbar-thumb:hover {
+        background: #8a3033;
     }
 
     @keyframes slideFromRight {
-        from { opacity: 0; transform: translateX(50px); }
+        from { opacity: 0; transform: translateX(15px); }
         to { opacity: 1; transform: translateX(0); }
     }
 
     .slide-from-right.active {
-        animation: slideFromRight 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        animation: slideFromRight 0.4s ease-out forwards;
     }
 
     /* ============================================================
@@ -1106,8 +1132,10 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
 
             <div class="tab-content" id="aboutTabContent">
               <?php $no = 0; foreach ($tabs_config as $key => $info): $show = ($no === 0) ? 'show active' : ''; ?>
-                <div class="tab-pane fade <?= $show; ?> slide-from-right" id="content-<?= $key; ?>" role="tabpanel">
+                <div class="tab-pane fade <?= $show; ?> slide-from-right tab-pane-scroll" id="content-<?= $key; ?>" role="tabpanel">
+                  
                   <h3 class="text-danger fw-bold mb-3"><?= htmlspecialchars($about_sections[$key]['title'] ?? $info['label']); ?></h3>
+                  
                   <div class="text-secondary lh-lg fs-5" style="text-align: justify;">
                     <?= (isset($about_sections[$key]['content']) && $about_sections[$key]['content'] !== '') 
                         ? nl2br(htmlspecialchars((string)$about_sections[$key]['content'])) 
@@ -1116,6 +1144,17 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
                 </div>
               <?php $no++; endforeach; ?>
             </div>
+            
+            <div class="tab-pane-scroll">
+              <h3 class="text-danger fw-bold">
+                  <?= htmlspecialchars($about_sections[$key]['title'] ?? $info['label']); ?>
+              </h3>
+              
+              <div class="text-description">
+                  <?= (isset($about_sections[$key]['content']) && $about_sections[$key]['content'] !== '') 
+                      ? nl2br(htmlspecialchars((string)$about_sections[$key]['content'])) 
+                      : 'Konten belum tersedia.'; ?>
+              </div>
           </div>
 
         </div>
