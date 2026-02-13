@@ -40,23 +40,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_appointment']))
 }
 
 // --- FETCH DATA ---
-$about_sections = [];
-$sql_about = "SELECT * FROM about_us_sections"; 
-$result_about = $mysqli->query($sql_about);
+$tabs_config = [
+    'visi-misi'      => ['label' => 'Visi & Misi', 'icon' => 'fa-bullseye'],
+    'sejarah'        => ['label' => 'Sejarah',     'icon' => 'fa-history'],
+    'salam-direktur' => ['label' => 'Salam Direktur','icon' => 'fa-user-tie'],
+    'budaya-kerja'   => ['label' => 'Budaya Kerja', 'icon' => 'fa-hand-holding-heart']
+];
 
-if ($result_about) {
-    while ($row = $result_about->fetch_assoc()) {
-        $clean_key = strtolower(trim($row['section_key']));
-        $about_sections[$clean_key] = $row;
+// 2. Ambil data dari tabel 'about_us_sections'
+$about_sections = []; // Kita gunakan nama ini agar sinkron dengan kode HTML sebelumnya
+$res = $mysqli->query("SELECT * FROM about_us_sections");
+if ($res) {
+    while($row = $res->fetch_assoc()) { 
+        // Menggunakan section_key sebagai indeks (visi-misi, sejarah, dll)
+        $about_sections[$row['section_key']] = $row; 
     }
 }
-
-$tabs_config = [
-    'visi-misi'      => ['label' => 'Visi & Misi',    'icon' => 'fa-bullseye'],
-    'sejarah'        => ['label' => 'Sejarah',        'icon' => 'fa-history'],
-    'salam-direktur' => ['label' => 'Salam Direktur', 'icon' => 'fa-user-tie'],
-    'budaya-kerja'   => ['label' => 'Budaya Kerja',   'icon' => 'fa-hand-holding-heart']
-];
 
 $settings = [];
 $set_result = $mysqli->query("SELECT * FROM settings2");
@@ -615,20 +614,67 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
     /* ============================================================
        ABOUT TABS
     ============================================================ */
-    #v-pills-tab .nav-link {
-      color: var(--navy);
-      font-weight: 600;
-      font-size: .88rem;
-      border-radius: 0;
-      padding: .9rem 1.25rem;
-      transition: all .25s var(--ease);
+    .about-image-wrapper {
+    position: relative;
+    height: 450px;
+    background: #f8f9fa;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
     }
 
-    #v-pills-tab .nav-link.active,
-    #v-pills-tab .nav-link:hover {
-      background: linear-gradient(90deg, #fff5f5 0%, #fff 100%);
-      color: var(--red);
-      border-left: 3px solid var(--red);
+    #main-about-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Menjaga proporsi gambar */
+        transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+    }
+
+    .custom-tab-btn {
+        position: relative;
+        padding: 10px 20px;
+        color: #6c757d !important;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        border: none !important;
+    }
+
+    .custom-tab-btn.active {
+        color: #8a3033 !important;
+    }
+
+    .custom-tab-btn::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 3px;
+        background: #8a3033;
+        transition: 0.3s;
+        transform: translateX(-50%);
+    }
+
+    .custom-tab-btn.active::after {
+        width: 80%;
+    }
+
+    #aboutTabContent {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        border-left: 6px solid #8a3033;
+        min-height: 350px;
+        padding: 2rem;
+    }
+
+    @keyframes slideFromRight {
+        from { opacity: 0; transform: translateX(50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .slide-from-right.active {
+        animation: slideFromRight 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
     /* ============================================================
@@ -1011,98 +1057,70 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
     </div>
   </section>
 
-  <!-- ============================================================
-       ABOUT US
-  ============================================================ -->
-  <section id="about_us" style="background:linear-gradient(135deg,#fff 0%,#f8f9fa 100%);">
-    <div class="container">
-      <div class="row justify-content-center mb-5">
-        <div class="col-lg-7 text-center">
-          <span class="section-label"><i class="fas fa-hospital me-2"></i>Tentang Kami</span>
-          <h2 class="section-title">Mengenal Lebih Dekat RS JHC</h2>
-          <div class="section-divider mx-auto"></div>
-          <p class="text-muted mt-4">Dedikasi kami untuk pelayanan kesehatan terbaik bagi Anda dan keluarga.</p>
-        </div>
-      </div>
-
-      <div class="row g-4">
-        <!-- Tab Nav -->
-        <div class="col-lg-3">
-          <div class="nav flex-column nav-pills bg-white shadow-sm overflow-hidden rounded-3 sticky-top"
-               id="v-pills-tab" role="tablist" style="top:90px;">
-            <?php 
-            $no = 0;
-            foreach ($tabs_config as $key => $info):
-              $active = ($no === 0) ? 'active' : '';
-            ?>
-              <button class="nav-link <?= $active; ?> text-start py-3 px-4 fw-semibold border-bottom"
-                      id="v-pills-<?= $key; ?>-tab"
-                      data-bs-toggle="pill"
-                      data-bs-target="#v-pills-<?= $key; ?>"
-                      type="button" role="tab"
-                      aria-controls="v-pills-<?= $key; ?>"
-                      aria-selected="<?= $active ? 'true' : 'false'; ?>">
-                <i class="fas <?= $info['icon']; ?> me-2 text-danger"></i>
-                <span><?= $info['label']; ?></span>
-              </button>
-            <?php $no++; endforeach; ?>
-          </div>
-        </div>
-
-        <!-- Tab Content -->
-        <div class="col-lg-9">
-          <div class="tab-content p-4 p-md-5 bg-white rounded-3 shadow-sm" style="min-height:440px;">
-            <?php 
-            $no = 0;
-            foreach ($tabs_config as $key => $info):
-              $show = ($no === 0) ? 'show active' : '';
-              $row  = isset($about_sections[$key]) ? $about_sections[$key] : null;
-              $judul   = ($row && !empty($row['title']))      ? $row['title']   : $info['label'];
-              $isi     = ($row && !empty($row['content']))    ? nl2br($row['content']) : 'Konten belum tersedia.';
-              $img_src = ($row && !empty($row['image_path'])) ? 'public/'.$row['image_path'] : 'https://via.placeholder.com/800x400/f8f9fa/dee2e6?text=No+Image';
-            ?>
-            <div class="tab-pane fade <?= $show; ?>"
-                 id="v-pills-<?= $key; ?>" role="tabpanel">
-
-              <?php if ($key === 'salam-direktur'): ?>
-                <div class="text-center">
-                  <img src="<?= htmlspecialchars($img_src); ?>"
-                       class="rounded-circle shadow-lg mb-4 border border-4 border-white"
-                       style="width:140px;height:140px;object-fit:cover;"
-                       onerror="this.src='https://via.placeholder.com/150';" alt="Direktur">
-                  <h3 class="text-danger fw-bold mb-3"><?= htmlspecialchars($judul); ?></h3>
-                  <div class="text-muted fst-italic px-lg-5" style="line-height:1.85;">
-                    <i class="fas fa-quote-left fa-2x text-danger opacity-25 me-2"></i>
-                    <?= $isi; ?>
-                    <i class="fas fa-quote-right fa-2x text-danger opacity-25 ms-2"></i>
-                  </div>
-                </div>
-              <?php else: ?>
-                <div class="row align-items-center g-4">
-                  <div class="col-md-5">
-                    <img src="<?= htmlspecialchars($img_src); ?>"
-                         class="img-fluid rounded-3 shadow w-100"
-                         style="object-fit:cover;height:275px;"
-                         onerror="this.src='https://via.placeholder.com/800x400';"
-                         alt="<?= htmlspecialchars($judul); ?>">
-                  </div>
-                  <div class="col-md-7">
-                    <h3 class="text-danger fw-bold mb-3"><?= htmlspecialchars($judul); ?></h3>
-                    <div class="text-secondary" style="line-height:1.85;text-align:justify;">
-                      <?= $isi; ?>
-                    </div>
-                  </div>
-                </div>
-              <?php endif; ?>
-
+    <!-- ============================================================
+        ABOUT US
+    ============================================================ -->
+    <section id="about_us" class="py-5 overflow-hidden">
+      <div class="container">
+        <div class="row g-5 align-items-center">
+          
+          <div class="col-lg-4">
+            <div class="about-image-wrapper">
+              <?php 
+                $first_key = array_key_first($tabs_config);
+                
+                // Ambil path yang tersimpan di database (contoh: assets/img/gallery/nama_file.jpg)
+                $db_path = $about_sections[$first_key]['image_path'] ?? '';
+                
+                // Gabungkan dengan prefix 'public/' agar mengarah ke folder yang benar
+                // Jika kolom image_path di DB sudah menyertakan 'assets/img/gallery/', tinggal tambah 'public/'
+                if (!empty($db_path)) {
+                    $display_img = 'public/' . $db_path;
+                } else {
+                    // Gambar default jika data di database kosong
+                    $display_img = 'public/assets/img/default-about.jpg'; 
+                }
+              ?>
+              <img src="<?= $display_img; ?>" 
+                  id="main-about-image" 
+                  alt="Tentang JHC" 
+                  style="width: 100%; height: 100%; object-fit: cover;">
             </div>
-            <?php $no++; endforeach; ?>
           </div>
+
+          <div class="col-lg-8">
+            <ul class="nav nav-tabs border-0 mb-4 flex-nowrap overflow-auto pb-2" id="aboutTab" role="tablist">
+              <?php $no = 0; foreach ($tabs_config as $key => $info): $active = ($no === 0) ? 'active' : ''; ?>
+                <li class="nav-item">
+                  <button class="nav-link <?= $active; ?> custom-tab-btn" 
+                          data-bs-toggle="tab" 
+                          data-bs-target="#content-<?= $key; ?>" 
+                          type="button" role="tab"
+                          /* Atribut data-img mengambil path murni dari kolom image_path di database */
+                          data-img="<?= $about_sections[$key]['image_path'] ?? ''; ?>">
+                    <i class="fas <?= $info['icon']; ?> me-2"></i><?= $info['label']; ?>
+                  </button>
+                </li>
+              <?php $no++; endforeach; ?>
+            </ul>
+
+            <div class="tab-content" id="aboutTabContent">
+              <?php $no = 0; foreach ($tabs_config as $key => $info): $show = ($no === 0) ? 'show active' : ''; ?>
+                <div class="tab-pane fade <?= $show; ?> slide-from-right" id="content-<?= $key; ?>" role="tabpanel">
+                  <h3 class="text-danger fw-bold mb-3"><?= htmlspecialchars($about_sections[$key]['title'] ?? $info['label']); ?></h3>
+                  <div class="text-secondary lh-lg fs-5" style="text-align: justify;">
+                    <?= (isset($about_sections[$key]['content']) && $about_sections[$key]['content'] !== '') 
+                        ? nl2br(htmlspecialchars((string)$about_sections[$key]['content'])) 
+                        : 'Konten belum tersedia.'; ?>
+                  </div>
+                </div>
+              <?php $no++; endforeach; ?>
+            </div>
+          </div>
+
         </div>
       </div>
-    </div>
-  </section>
-
+    </section>
   <!-- ============================================================
        SERVICES / DEPARTMENTS
   ============================================================ -->
@@ -1751,6 +1769,35 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
       const offset = navbar.offsetHeight + 20;
       window.scrollTo({ top: target.offsetTop - offset, behavior: 'smooth' });
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.custom-tab-btn');
+    const mainImg = document.getElementById('main-about-image');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('shown.bs.tab', function (event) {
+            const newImgPath = event.target.getAttribute('data-img');
+            
+            // Debugging: Cek path yang terpanggil di F12 Console browser
+            console.log("Memuat path gambar: " + newImgPath);
+
+            if(newImgPath && newImgPath.trim() !== "") {
+                // Beri efek transisi memudar
+                mainImg.style.opacity = '0';
+                
+                setTimeout(() => {
+                    // Update SRC gambar
+                    mainImg.src = newImgPath;
+                    
+                    // Pastikan gambar muncul kembali setelah sumbernya berubah
+                    mainImg.onload = function() {
+                        mainImg.style.opacity = '1';
+                    };
+                }, 300);
+            }
+        });
     });
   });
 
