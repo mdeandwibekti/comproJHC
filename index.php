@@ -39,7 +39,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_appointment']))
     }
 }
 
-// --- FETCH DATA ---
 $tabs_config = [
     'visi-misi'      => ['label' => 'Visi & Misi', 'icon' => 'fa-bullseye'],
     'sejarah'        => ['label' => 'Sejarah',     'icon' => 'fa-history'],
@@ -47,12 +46,10 @@ $tabs_config = [
     'budaya-kerja'   => ['label' => 'Budaya Kerja', 'icon' => 'fa-hand-holding-heart']
 ];
 
-// 2. Ambil data dari tabel 'about_us_sections'
-$about_sections = []; // Kita gunakan nama ini agar sinkron dengan kode HTML sebelumnya
+$about_sections = [];
 $res = $mysqli->query("SELECT * FROM about_us_sections");
 if ($res) {
     while($row = $res->fetch_assoc()) { 
-        // Menggunakan section_key sebagai indeks (visi-misi, sejarah, dll)
         $about_sections[$row['section_key']] = $row; 
     }
 }
@@ -125,7 +122,6 @@ $facilities_data = [];
 $fac_result = $mysqli->query("SELECT * FROM facilities ORDER BY display_order ASC");
 if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[] = $row; } }
 
-// Popup settings
 $popup_res = $mysqli->query("SELECT * FROM settings2 WHERE setting_key LIKE 'popup_%'");
 $p_data = [];
 if ($popup_res) {
@@ -148,837 +144,1634 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
   ?>
   <link rel="shortcut icon" type="image/x-icon" href="public/<?php echo htmlspecialchars($favicon); ?>">
   <link href="public/assets/css/theme.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 
   <style>
     /* ============================================================
-       ROOT & GLOBAL
+       TOKENS & RESET
     ============================================================ */
     :root {
-      --red-dark:  #8a3033;
-      --red:       #C8102E;
-      --red-light: #bd3030;
-      --navy:      #002855;
-      --blue:      #1B71A1;
-      --grad:      linear-gradient(135deg, #8a3033 0%, #bd3030 100%);
-      --ease:      cubic-bezier(.4,0,.2,1);
-      --shadow-sm: 0 2px 8px rgba(0,0,0,.07);
-      --shadow-md: 0 4px 18px rgba(0,0,0,.10);
-      --shadow-lg: 0 10px 35px rgba(0,0,0,.12);
+      --crimson:      #C8102E;
+      --crimson-deep: #8C0D20;
+      --crimson-soft: #F4D0D5;
+      --navy:         #0A1628;
+      --navy-mid:     #1E3A5F;
+      --slate:        #4A5568;
+      --mist:         #F7F8FC;
+      --white:        #FFFFFF;
+      --gold:         #D4A942;
+
+      --grad-primary: linear-gradient(135deg, #C8102E 0%, #8C0D20 100%);
+      --grad-subtle:  linear-gradient(135deg, #FFF0F2 0%, #FFE4E8 100%);
+      --grad-dark:    linear-gradient(160deg, #0A1628 0%, #1E3A5F 100%);
+      --grad-mesh:    radial-gradient(ellipse at 20% 50%, rgba(200,16,46,0.12) 0%, transparent 50%),
+                      radial-gradient(ellipse at 80% 20%, rgba(26,58,95,0.1) 0%, transparent 50%);
+
+      --shadow-xs:    0 1px 3px rgba(10,22,40,.06), 0 1px 2px rgba(10,22,40,.04);
+      --shadow-sm:    0 4px 12px rgba(10,22,40,.07), 0 2px 6px rgba(10,22,40,.04);
+      --shadow-md:    0 8px 28px rgba(10,22,40,.10), 0 4px 10px rgba(10,22,40,.06);
+      --shadow-lg:    0 20px 60px rgba(10,22,40,.13), 0 8px 20px rgba(10,22,40,.08);
+      --shadow-xl:    0 32px 80px rgba(10,22,40,.18), 0 12px 28px rgba(10,22,40,.10);
+      --shadow-red:   0 8px 28px rgba(200,16,46,.30);
+
+      --radius-sm:  8px;
+      --radius-md:  14px;
+      --radius-lg:  20px;
+      --radius-xl:  28px;
+      --radius-2xl: 40px;
+
+      --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in:    cubic-bezier(0.4, 0, 1, 1);
+      --ease-both:  cubic-bezier(0.4, 0, 0.2, 1);
+
+      --font-display: 'Outfit', sans-serif;
+      --font-serif:   'Lora', serif;
+
+      --nav-height: 76px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
+    html { scroll-behavior: smooth; font-size: 16px; }
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: var(--font-display);
+      color: var(--navy);
+      background: var(--white);
       overflow-x: hidden;
-      background: #fff;
+      -webkit-font-smoothing: antialiased;
     }
-
-    img { max-width: 100%; display: block; }
-
-    a { text-decoration: none; }
-
-    section { padding: 5rem 0; }
+    img { max-width: 100%; display: block; height: auto; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; cursor: pointer; }
+    section { padding: 6rem 0; }
 
     /* ============================================================
-       NAVBAR
+       SCROLLBAR
     ============================================================ */
-    .navbar {
-      padding: .75rem 0;
-      background: rgba(255,255,255,.98) !important;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: var(--shadow-sm);
-      transition: all .35s var(--ease);
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--mist); }
+    ::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 10px; }
+
+    /* ============================================================
+       NAVBAR  —  Logo kiri · Menu tengah (center) · CTA kanan
+    ============================================================ */
+    .site-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1040;
+      height: var(--nav-height);
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+      transition: all 0.38s var(--ease-out);
     }
 
-    .navbar.scrolled {
-      padding: .5rem 0;
-      box-shadow: 0 2px 0 var(--red), var(--shadow-md);
+    .site-nav.scrolled {
+      height: 64px;
+      background: #fff;
+      border-bottom: 1px solid rgba(200,16,46,0.15);
+      box-shadow: 0 2px 16px rgba(10,22,40,0.08);
     }
 
-    .navbar .container { max-width: 1320px; }
+    /* Three-column grid: brand | links (center) | cta */
+    .nav-inner {
+      max-width: 1340px;
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 2.5rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      grid-template-areas: "brand links cta";
+      align-items: center;
+      gap: 1.5rem;
+    }
 
-    .navbar-brand img {
-      height: 60px;
+    .nav-brand   { grid-area: brand; }
+    .nav-links   { grid-area: links; }
+    .nav-cta-wrap { grid-area: cta; }
+    .nav-hamburger { display: none; grid-area: cta; }
+
+    /* ── Brand ── */
+    .nav-brand {
+      display: flex;
+      align-items: center;
+    }
+    .nav-brand img {
+      height: 56px;
       width: auto;
       object-fit: contain;
-      transition: all .35s var(--ease);
+      transition: height 0.3s var(--ease-out);
+    }
+    .site-nav.scrolled .nav-brand img { height: 46px; }
+
+    /* ── Center links ── */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.1rem;
+      list-style: none;
     }
 
-    .navbar.scrolled .navbar-brand img { height: 50px; }
-
-    /* Nav links */
-    .navbar-nav .nav-link {
-      color: var(--navy) !important;
-      font-weight: 600;
-      font-size: .875rem;
-      padding: .6rem .85rem !important;
+    .nav-links a {
+      display: block;
+      padding: 0.52rem 0.9rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      border-radius: var(--radius-sm);
+      transition: color 0.22s var(--ease-both);
+      white-space: nowrap;
       position: relative;
-      transition: color .25s var(--ease);
+      letter-spacing: 0.005em;
     }
 
-    .navbar-nav .nav-link::after {
+    .nav-links a::after {
       content: '';
       position: absolute;
-      bottom: 2px;
-      left: 50%;
+      bottom: 4px; left: 50%;
       transform: translateX(-50%);
-      width: 0;
-      height: 2.5px;
-      background: var(--grad);
-      border-radius: 3px;
-      transition: width .3s var(--ease);
+      width: 0; height: 2.5px;
+      background: var(--crimson);
+      border-radius: 2px;
+      transition: width 0.28s var(--ease-out);
+    }
+    .nav-links a:hover { color: var(--crimson); }
+    .nav-links a:hover::after { width: 65%; }
+
+    /* ── CTA Button — matches reference exactly ── */
+    .nav-cta-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
     }
 
-    .navbar-nav .nav-link:hover { color: var(--red) !important; }
-    .navbar-nav .nav-link:hover::after { width: 75%; }
-
-    /* Navbar toggler */
-    .navbar-toggler {
-      border: 2px solid var(--red);
-      border-radius: 8px;
-      padding: .35rem .55rem;
-    }
-
-    .navbar-toggler:focus { box-shadow: 0 0 0 3px rgba(200,16,46,.2); }
-
-    /* Apply Job button */
-    .btn-nav-cta {
-      background: var(--grad);
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.72rem 1.6rem;
+      background: var(--crimson);
       color: #fff !important;
+      font-size: 0.9rem;
+      font-weight: 800;
       border-radius: 50px;
-      padding: .55rem 1.5rem;
-      font-size: .85rem;
-      font-weight: 700;
-      border: 2px solid transparent;
-      transition: all .3s var(--ease);
-      box-shadow: 0 4px 14px rgba(200,16,46,.22);
+      border: none;
+      box-shadow: 0 6px 22px rgba(200,16,46,.35);
+      transition: all 0.28s var(--ease-out);
       white-space: nowrap;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      text-decoration: none;
     }
-
-    .btn-nav-cta:hover {
-      background: #fff;
-      color: var(--red) !important;
-      border-color: var(--red);
+    .nav-cta i { font-size: 0.88rem; }
+    .nav-cta:hover {
+      background: var(--crimson-deep);
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(200,16,46,.28);
+      box-shadow: 0 10px 28px rgba(200,16,46,.45);
+      color: #fff !important;
     }
 
-    /* Mobile nav */
-    @media (max-width: 991px) {
-      .navbar-collapse {
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: var(--shadow-lg);
-        margin-top: .75rem;
-        padding: 1rem;
-        border-top: 3px solid var(--red);
+    /* ── Hamburger ── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px;
+      background: none;
+      border: 2px solid var(--crimson);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--crimson);
+      border-radius: 2px;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    /* ── Mobile Nav ── */
+    @media (max-width: 1080px) {
+      /* 2-col: brand | hamburger */
+      .nav-inner {
+        grid-template-columns: auto 1fr;
+        grid-template-areas: "brand ham";
+        padding: 0 1.25rem;
+        gap: 0;
       }
 
-      .navbar-nav .nav-link {
-        padding: .75rem 1rem !important;
-        border-radius: 10px;
+      /* Desktop-only items hidden */
+      .nav-links    { display: none !important; grid-area: unset; }
+      .nav-cta-wrap { display: none !important; grid-area: unset; }
+
+      /* Hamburger takes the right cell */
+      .nav-hamburger {
+        display: flex;
+        grid-area: ham;
+        justify-self: end;
       }
 
-      .navbar-nav .nav-link:hover { background: #fff5f5; }
-
-      .btn-nav-cta {
-        display: block;
-        text-align: center;
-        margin-top: .5rem;
+      /* Mobile dropdown panel — nav-links */
+      .nav-links.mobile-open {
+        display: flex !important;
+        position: absolute;
+        top: calc(var(--nav-height) + 6px);
+        left: 1rem; right: 1rem;
+        background: var(--white);
+        border-top: 3px solid var(--crimson);
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        box-shadow: var(--shadow-xl);
+        padding: 0.65rem;
+        flex-direction: column;
+        gap: 0.1rem;
+        justify-content: flex-start;
+        z-index: 200;
       }
+
+      /* Mobile CTA panel */
+      .nav-cta-wrap.mobile-open {
+        display: flex !important;
+        position: absolute;
+        left: 1rem; right: 1rem;
+        background: var(--white);
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        border-top: 1px solid rgba(0,0,0,0.07);
+        padding: 0.65rem;
+        z-index: 200;
+        justify-content: stretch;
+        box-shadow: 0 20px 40px rgba(10,22,40,.15);
+      }
+
+      .nav-links.mobile-open a {
+        padding: 0.78rem 1rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.93rem;
+        font-weight: 700;
+        color: var(--navy);
+      }
+      .nav-links.mobile-open a:hover { background: var(--crimson-soft); color: var(--crimson); }
+      .nav-links.mobile-open a::after { display: none !important; }
+
+      .nav-cta-wrap.mobile-open .nav-cta { width: 100%; justify-content: center; }
+    }
+
+    @media (max-width: 575px) {
+      .nav-inner { padding: 0 1rem; }
     }
 
     /* ============================================================
        FLOATING BUTTONS
     ============================================================ */
-    .float-wrap {
+    .float-dock {
       position: fixed;
-      bottom: 22px;
-      right: 22px;
+      bottom: 28px; right: 24px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       z-index: 1030;
     }
 
-    .float-btn {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
+    .float-pill {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      border: 3px solid #fff;
+      gap: 0.65rem;
+      padding: 0.7rem 1.1rem 0.7rem 0.85rem;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      border: 2.5px solid rgba(255,255,255,0.8);
       box-shadow: var(--shadow-lg);
-      transition: all .3s var(--ease);
-      cursor: pointer;
+      transition: all 0.3s var(--ease-out);
+      white-space: nowrap;
+      overflow: hidden;
+      max-width: 54px;
     }
 
-    .float-igd { background: var(--grad); color: #fff !important; }
-    .float-wa  { background: #25D366;      color: #fff !important; }
-
-    .float-igd:hover { transform: scale(1.12) rotate(8deg); box-shadow: 0 8px 30px rgba(200,16,46,.45); }
-    .float-wa:hover  { transform: scale(1.12);               box-shadow: 0 8px 30px rgba(37,211,102,.45); }
-
-    @keyframes pulse-igd {
-      0%,100% { box-shadow: 0 0 0 0 rgba(200,16,46,.65), var(--shadow-lg); }
-      60%      { box-shadow: 0 0 0 16px rgba(200,16,46,0),  var(--shadow-lg); }
+    .float-pill .fp-icon {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
     }
-    .float-igd { animation: pulse-igd 2.2s infinite; }
+
+    .float-pill .fp-text { 
+      opacity: 0; 
+      transition: opacity 0.25s var(--ease-both);
+      pointer-events: none;
+    }
+
+    .float-pill:hover {
+      max-width: 200px;
+      padding-right: 1.3rem;
+    }
+    .float-pill:hover .fp-text { opacity: 1; }
+
+    .float-igd {
+      background: var(--grad-primary);
+      color: #fff;
+    }
+    .float-igd .fp-icon { background: rgba(255,255,255,0.2); }
+
+    .float-wa {
+      background: #25D366;
+      color: #fff;
+    }
+    .float-wa .fp-icon { background: rgba(255,255,255,0.2); }
+
+    @keyframes float-pulse {
+      0%, 100% { box-shadow: var(--shadow-lg), 0 0 0 0 rgba(200,16,46,0.5); }
+      60%       { box-shadow: var(--shadow-lg), 0 0 0 14px rgba(200,16,46,0); }
+    }
+    .float-igd { animation: float-pulse 2.4s infinite; }
 
     @media (max-width: 575px) {
-      .float-btn { width: 48px; height: 48px; font-size: 19px; }
+      .float-pill { padding: 0 !important; width: 50px; height: 50px; max-width: 50px !important; justify-content: center; border-radius: 50%; }
+      .float-pill .fp-text { display: none; }
     }
 
     /* ============================================================
        HERO SECTION
     ============================================================ */
-    .hero-section {
+    .hero-wrap {
       position: relative;
       width: 100%;
       height: 100vh;
-      min-height: 560px;
-      max-height: 920px;
+      min-height: 580px;
+      max-height: 960px;
       overflow: hidden;
-      background: #000;
     }
 
-    #heroCarousel, .carousel-inner, .carousel-item { height: 100%; }
+    #heroCarousel,
+    .hero-carousel-inner,
+    .hero-item { height: 100%; }
 
-    .bg-holder {
+    .hero-item { position: relative; overflow: hidden; }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      transform-origin: center;
+    }
+
+    .hero-item.active .hero-bg {
+      animation: hero-ken 15s ease-in-out forwards;
+    }
+    @keyframes hero-ken {
+      from { transform: scale(1.0); }
+      to   { transform: scale(1.08); }
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        115deg,
+        rgba(8,14,28,0.90) 0%,
+        rgba(10,22,40,0.70) 40%,
+        rgba(140,13,32,0.20) 75%,
+        transparent 100%
+      );
+      z-index: 1;
+    }
+
+    /* Noise grain overlay */
+    .hero-overlay::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+
+    .hero-body {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      max-width: 1340px;
+      margin: 0 auto;
+    }
+
+    .hero-text {
+      max-width: 680px;
+      padding-top: var(--nav-height);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 1rem;
+      background: rgba(200,16,46,0.25);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(200,16,46,0.4);
+      border-radius: 50px;
+      color: #FFB3BE;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.1rem, 5.5vw, 3.8rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.25rem;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+    .hero-title em {
+      font-style: normal;
+      color: #FF8A9B;
+      font-family: var(--font-serif);
+    }
+
+    .hero-desc {
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      color: rgba(255,255,255,0.82);
+      line-height: 1.8;
+      margin-bottom: 2.25rem;
+      max-width: 520px;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    /* Carousel controls */
+    .carousel-ctrl {
+      position: absolute;
+      bottom: 2.5rem;
+      right: 2rem;
+      z-index: 10;
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .carousel-ctrl button {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s var(--ease-out);
+      cursor: pointer;
+    }
+
+    .carousel-ctrl button:hover {
+      background: var(--crimson);
+      border-color: var(--crimson);
+    }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .carousel-dots button {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      border: none;
+      padding: 0;
+      transition: all 0.3s var(--ease-out);
+      cursor: pointer;
+    }
+    .carousel-dots button.active {
+      width: 26px;
+      border-radius: 4px;
+      background: var(--crimson);
+    }
+
+    @media (max-width: 767px) {
+      .hero-wrap { height: 80vh; min-height: 480px; }
+      .hero-body { padding: 0 1.25rem; }
+    }
+    @media (max-width: 480px) {
+      .carousel-ctrl { display: none; }
+    }
+
+    /* ============================================================
+       SECTION HEADERS
+    ============================================================ */
+    .sec-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--crimson);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .sec-eyebrow::before,
+    .sec-eyebrow::after {
+      content: '';
+      display: block;
+      width: 20px; height: 2px;
+      background: var(--crimson);
+      border-radius: 2px;
+    }
+
+    .sec-title {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+    }
+
+    .sec-title em {
+      font-style: normal;
+      font-family: var(--font-serif);
+      color: var(--crimson-deep);
+    }
+
+    .sec-subtitle {
+      color: var(--slate);
+      font-size: 0.975rem;
+      line-height: 1.75;
+      max-width: 520px;
+      margin-top: 0.75rem;
+    }
+
+    .sec-header-center { text-align: center; }
+    .sec-header-center .sec-eyebrow { justify-content: center; }
+    .sec-header-center .sec-subtitle { margin: 0.75rem auto 0; }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn-primary-jhc {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      background: var(--grad-primary);
+      color: #fff;
+      font-size: 0.875rem;
+      font-weight: 700;
+      border-radius: 50px;
+      border: 2px solid transparent;
+      box-shadow: var(--shadow-red);
+      transition: all 0.3s var(--ease-out);
+      letter-spacing: 0.01em;
+      cursor: pointer;
+    }
+    .btn-primary-jhc:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 36px rgba(200,16,46,.38);
+      color: #fff;
+    }
+
+    .btn-ghost-jhc {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.72rem 1.75rem;
+      background: transparent;
+      color: #fff;
+      font-size: 0.875rem;
+      font-weight: 700;
+      border-radius: 50px;
+      border: 2px solid rgba(255,255,255,0.5);
+      transition: all 0.3s var(--ease-out);
+      letter-spacing: 0.01em;
+      cursor: pointer;
+    }
+    .btn-ghost-jhc:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.8);
+      transform: translateY(-2px);
+      color: #fff;
+    }
+
+    .btn-outline-jhc {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      background: transparent;
+      color: var(--crimson);
+      font-size: 0.82rem;
+      font-weight: 700;
+      border-radius: 50px;
+      border: 2px solid var(--crimson);
+      transition: all 0.3s var(--ease-out);
+      letter-spacing: 0.01em;
+      cursor: pointer;
+    }
+    .btn-outline-jhc:hover {
+      background: var(--grad-primary);
+      color: #fff;
+      border-color: transparent;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-red);
+    }
+
+    .btn-sm-jhc {
+      padding: 0.5rem 1.15rem;
+      font-size: 0.78rem;
+    }
+
+    /* ============================================================
+       HOVER LIFT
+    ============================================================ */
+    .lift {
+      transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
+      will-change: transform;
+    }
+    .lift:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg) !important;
+    }
+
+    /* ============================================================
+       ABOUT SECTION
+    ============================================================ */
+    .about-section { background: var(--mist); }
+
+    .about-img-frame {
+      position: relative;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      height: 480px;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .about-img-frame img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s var(--ease-out), opacity 0.35s ease;
+    }
+
+    /* Decorative corner accent */
+    .about-img-frame::before {
+      content: '';
+      position: absolute;
+      bottom: -2px; right: -2px;
+      width: 80px; height: 80px;
+      background: var(--crimson);
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
+      z-index: 5;
+      opacity: 0.85;
+    }
+    .about-img-frame::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px; height: 60%;
+      background: var(--grad-primary);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .about-tabs {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 50px;
+      border: 2px solid #E2E8F0;
+      background: var(--white);
+      color: var(--slate);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      transition: all 0.25s var(--ease-out);
+      cursor: pointer;
+    }
+    .about-tab-btn i { font-size: 0.7rem; }
+    .about-tab-btn:hover { border-color: var(--crimson); color: var(--crimson); background: var(--crimson-soft); }
+    .about-tab-btn.active {
+      background: var(--grad-primary);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: var(--shadow-red);
+    }
+
+    .about-content-box {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border-left: 4px solid var(--crimson);
+      box-shadow: var(--shadow-md);
+      height: 320px;
+      overflow: hidden;
+    }
+
+    .about-tab-pane {
+      height: 100%;
+      padding: 1.75rem 2rem;
+      overflow-y: auto;
+      display: none;
+    }
+    .about-tab-pane.active { display: block; animation: fadeSlide 0.35s var(--ease-out); }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateX(12px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .about-tab-pane::-webkit-scrollbar { width: 3px; }
+    .about-tab-pane::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 10px; }
+
+    .about-tab-pane h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--crimson-deep);
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1.5px solid var(--crimson-soft);
+    }
+
+    .about-tab-pane .tab-text {
+      font-size: 0.87rem;
+      line-height: 1.75;
+      color: var(--slate);
+      text-align: justify;
+    }
+
+    @media (max-width: 991px) {
+      .about-img-frame { height: 320px; }
+      .about-content-box { height: auto; min-height: 280px; }
+      .about-tab-pane { height: auto; }
+    }
+    @media (max-width: 575px) {
+      .about-tabs { gap: 0.25rem; }
+      .about-tab-btn { font-size: 0.7rem; padding: 0.4rem 0.75rem; }
+    }
+
+    /* ============================================================
+       SERVICE CARDS  —  Image-background style (reference design)
+    ============================================================ */
+    .services-section { background: var(--white); }
+
+    .dept-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .dept-divider-line { flex: 1; height: 1px; background: #E2E8F0; }
+    .dept-divider-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.25rem;
+      background: var(--mist);
+      border: 1.5px solid #E2E8F0;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--slate);
+    }
+
+    /* ============================================================
+       LAYANAN UNGGULAN  —  Clean white icon-card (sesuai referensi)
+    ============================================================ */
+
+    /* Section heading override for Layanan Unggulan */
+    .layanan-section-head {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .layanan-section-head .lu-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .layanan-section-head .lu-eyebrow i { font-size: 0.78rem; }
+    .layanan-section-head .lu-title {
+      font-size: clamp(1.25rem, 3vw, 1.6rem);
+      font-weight: 900;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+    }
+    .layanan-section-head .lu-divider {
+      width: 48px; height: 3px;
+      background: var(--crimson-deep);
+      border-radius: 3px;
+      margin: 0.65rem auto 0;
+    }
+
+    /* Grid: 4 cols desktop → 3 tablet → 2 small → 1 mobile */
+    .layanan-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+    @media (max-width: 1100px) { .layanan-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 767px)  { .layanan-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
+    @media (max-width: 420px)  { .layanan-grid { grid-template-columns: 1fr; } }
+
+    /* Card base */
+    .lu-card {
+      background: var(--white);
+      border: 1.5px solid #E8ECF4;
+      border-radius: 18px;
+      padding: 2rem 1.25rem 1.6rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      cursor: pointer;
+      transition: transform 0.32s var(--ease-out),
+                  box-shadow 0.32s var(--ease-out),
+                  border-color 0.32s var(--ease-out);
+      box-shadow: 0 2px 12px rgba(10,22,40,.05);
+    }
+    .lu-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(10,22,40,.12);
+      border-color: rgba(200,16,46,.18);
+    }
+
+    /* Icon circle */
+    .lu-icon {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: #F1F3F8;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.1rem;
+      transition: background 0.3s, transform 0.3s;
+      flex-shrink: 0;
+    }
+    .lu-card:hover .lu-icon {
+      background: var(--crimson-soft);
+      transform: scale(1.07);
+    }
+    .lu-icon img {
+      width: 44px; height: 44px;
+      object-fit: contain;
+      display: block;
+    }
+    .lu-icon .lu-fallback-icon {
+      font-size: 1.6rem;
+      color: var(--gold);
+    }
+
+    /* Name */
+    .lu-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.4;
+      margin-bottom: 1.1rem;
+      flex: 1;
+    }
+
+    /* Detail button — merah solid seperti referensi */
+    .lu-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.3rem;
+      background: var(--crimson-deep);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 800;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s var(--ease-out);
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+    .lu-btn i { font-size: 0.72rem; }
+    .lu-btn:hover {
+      background: var(--crimson);
+      box-shadow: 0 6px 20px rgba(200,16,46,.35);
+      transform: translateY(-2px);
+      color: #fff;
+    }
+
+    /* ── Poliklinik: same clean white card ── */
+    .service-card {
+      background: var(--white);
+      border: 1.5px solid #E8ECF4;
+      border-radius: 18px;
+      padding: 1.75rem 1.25rem 1.5rem;
+      text-align: center;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.32s var(--ease-out);
+      box-shadow: 0 2px 12px rgba(10,22,40,.05);
+    }
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 38px rgba(10,22,40,.11);
+      border-color: rgba(200,16,46,.18);
+    }
+
+    .svc-card-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      flex: 1;
+    }
+
+    .svc-icon-wrap {
+      width: 72px; height: 72px;
+      background: #F1F3F8;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .service-card:hover .svc-icon-wrap { background: var(--crimson-soft); transform: scale(1.07); }
+    .svc-icon-wrap img { width: 40px; height: 40px; object-fit: contain; }
+    .svc-icon-wrap i { font-size: 1.4rem; }
+
+    .svc-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .btn-svc {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.52rem 1.1rem;
+      background: var(--crimson-deep);
+      color: #fff;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      border: none;
+      transition: all 0.25s var(--ease-out);
+      cursor: pointer;
+    }
+    .btn-svc:hover {
+      background: var(--crimson);
+      box-shadow: 0 5px 16px rgba(200,16,46,.32);
+      transform: translateY(-2px);
+      color: #fff;
+    }
+
+    /* ============================================================
+       FACILITIES  —  Full image-background card + expand/collapse
+    ============================================================ */
+    .facilities-section { background: linear-gradient(160deg, var(--mist) 0%, #EEF5FB 100%); }
+
+    .fac-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    @media (max-width: 991px) { .fac-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 575px) { .fac-grid { grid-template-columns: 1fr; gap: 1rem; } }
+
+    /* Card expands height when description is shown */
+    .fac-card {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      height: 340px;
+      cursor: default;
+      transition: transform 0.38s var(--ease-out),
+                  box-shadow 0.38s var(--ease-out),
+                  height 0.45s var(--ease-out);
+    }
+    .fac-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 56px rgba(10,22,40,.18);
+    }
+    /* Expanded card grows taller */
+    .fac-card.expanded { height: auto; min-height: 340px; }
+
+    .fac-bg {
       position: absolute;
       inset: 0;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      background-color: #1a2a4a;
+      transition: transform 0.55s var(--ease-out);
     }
+    .fac-card:hover .fac-bg { transform: scale(1.04); }
+    /* Don't zoom when expanded */
+    .fac-card.expanded .fac-bg { transform: scale(1); }
 
-    .carousel-item.active .bg-holder {
-      animation: hero-zoom 14s ease-in-out forwards;
-    }
-
-    @keyframes hero-zoom {
-      from { transform: scale(1); }
-      to   { transform: scale(1.08); }
-    }
-
-    .banner-overlay {
+    .fac-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(100deg, rgba(0,16,36,.88) 0%, rgba(138,48,51,.42) 65%, transparent 100%);
-      z-index: 1;
+      background: linear-gradient(
+        180deg,
+        rgba(5,10,22,0.10) 0%,
+        rgba(5,10,22,0.45) 40%,
+        rgba(5,10,22,0.90) 100%
+      );
+      transition: background 0.4s;
+    }
+    /* Darker overlay when expanded for readability */
+    .fac-card.expanded .fac-overlay {
+      background: rgba(5,10,22,0.82);
     }
 
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      height: 100%;
-    }
-
-    .carousel-item h1 {
-      font-size: clamp(1.9rem, 5vw, 3.4rem);
-      font-weight: 800;
-      color: #fff !important;
-      text-shadow: 0 3px 14px rgba(0,0,0,.45);
-      line-height: 1.2;
-    }
-
-    .carousel-item p.lead {
-      font-size: clamp(.95rem, 2vw, 1.1rem);
-      color: rgba(255,255,255,.92) !important;
-      text-shadow: 0 2px 6px rgba(0,0,0,.4);
-      max-width: 600px;
-      line-height: 1.75;
-    }
-
-    /* Carousel controls */
-    .carousel-control-prev,
-    .carousel-control-next {
-      width: 44px;
-      height: 44px;
-      top: 50%;
-      transform: translateY(-50%);
-      border-radius: 50%;
-      background: rgba(200,16,46,.7);
-      opacity: .85;
-      transition: all .3s var(--ease);
-    }
-
-    .carousel-control-prev { left: 18px; }
-    .carousel-control-next { right: 18px; }
-
-    .carousel-control-prev:hover,
-    .carousel-control-next:hover {
-      opacity: 1;
-      background: rgba(200,16,46,.95);
-      transform: translateY(-50%) scale(1.08);
-    }
-
-    .carousel-indicators {
-      bottom: 1.5rem;
-      gap: 6px;
-    }
-
-    .carousel-indicators button {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.55);
-      border: 2px solid rgba(255,255,255,.8);
-      transition: all .3s;
-      padding: 0;
-    }
-
-    .carousel-indicators button.active {
-      background: var(--red);
-      width: 24px;
-      border-radius: 5px;
-    }
-
-    @media (max-width: 767px) {
-      .hero-section { height: 75vh; min-height: 450px; }
-    }
-
-    /* ============================================================
-       SECTION HEADINGS
-    ============================================================ */
-    .section-label {
-      display: inline-block;
-      color: var(--red);
-      font-weight: 700;
-      font-size: .78rem;
-      letter-spacing: 1.8px;
-      text-transform: uppercase;
-      margin-bottom: .6rem;
-    }
-
-    .section-title {
-      font-size: clamp(1.7rem, 4vw, 2.4rem);
-      font-weight: 800;
-      color: var(--navy);
-      margin-bottom: .5rem;
-    }
-
-    .section-divider {
-      width: 52px;
-      height: 4px;
-      background: var(--grad);
-      border-radius: 10px;
-      margin: .9rem auto 0;
-    }
-
-    /* ============================================================
-       BUTTONS
-    ============================================================ */
-    .btn-jhc {
-      background: var(--grad);
-      color: #fff !important;
-      border: 2px solid transparent;
-      border-radius: 50px;
-      padding: .55rem 1.5rem;
-      font-size: .85rem;
-      font-weight: 700;
-      transition: all .3s var(--ease);
-      box-shadow: 0 4px 14px rgba(200,16,46,.22);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .btn-jhc:hover {
-      background: #fff;
-      color: var(--red) !important;
-      border-color: var(--red);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(200,16,46,.28);
-    }
-
-    .btn-jhc-sm {
-      padding: .45rem 1.1rem;
-      font-size: .8rem;
-    }
-
-    .btn-jhc-outline {
-      background: transparent;
-      color: var(--red) !important;
-      border: 2px solid var(--red);
-      border-radius: 50px;
-      padding: .5rem 1.3rem;
-      font-size: .82rem;
-      font-weight: 700;
-      transition: all .3s var(--ease);
-      display: inline-flex;
-      align-items: center;
-      cursor: pointer;
-    }
-
-    .btn-jhc-outline:hover {
-      background: var(--grad);
-      color: #fff !important;
-      border-color: transparent;
-      transform: translateY(-2px);
-    }
-
-    /* ============================================================
-       CARDS — HOVER LIFT
-    ============================================================ */
-    .hover-lift {
-      transition: transform .35s var(--ease), box-shadow .35s var(--ease);
-    }
-
-    .hover-lift:hover {
-      transform: translateY(-7px);
-      box-shadow: var(--shadow-lg) !important;
-    }
-
-    /* ============================================================
-       SERVICE CARDS
-    ============================================================ */
-    .service-card {
-      border-radius: 18px;
-      border: 2px solid transparent;
-      box-shadow: var(--shadow-sm);
-      overflow: hidden;
-      height: 100%;
-      transition: all .35s var(--ease);
-    }
-
-    .service-card:hover {
-      border-color: rgba(200,16,46,.18);
-      box-shadow: var(--shadow-md);
-    }
-
-    .icon-wrap {
-      width: 76px;
-      height: 76px;
-      background: linear-gradient(135deg,#f8f9fa,#e9ecef);
-      border-radius: 50%;
+    .fac-body {
+      position: absolute;
+      inset: 0;
       display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.75rem 1.6rem;
+      z-index: 2;
+    }
+
+    .fac-badge {
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      margin: 0 auto 1.1rem;
-      transition: all .35s var(--ease);
+      gap: 0.4rem;
+      padding: 0.32rem 0.85rem;
+      background: rgba(200,16,46,0.82);
+      backdrop-filter: blur(6px);
+      border-radius: 50px;
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      width: fit-content;
     }
 
-    .service-card:hover .icon-wrap {
-      background: linear-gradient(135deg,#fff5f5,#ffe0e0);
-      transform: scale(1.1) rotate(5deg);
+    .fac-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 0.6rem;
+      text-shadow: 0 1px 8px rgba(0,0,0,.4);
     }
 
-    .icon-wrap img { width: 44px; height: 44px; object-fit: contain; }
-
-    /* ============================================================
-       DOCTOR CARDS
-    ============================================================ */
-    .doctor-card {
-      border-radius: 22px;
-      background: #fff;
-      box-shadow: 0 8px 28px rgba(0,0,0,.06);
-      transition: all .4s var(--ease);
-      text-align: center;
+    /* Description — collapsed: 3 lines, expanded: full */
+    .fac-desc-wrap {
       overflow: hidden;
+      transition: max-height 0.45s var(--ease-out);
+      max-height: 0;
+    }
+    .fac-card.expanded .fac-desc-wrap {
+      max-height: 400px;
     }
 
-    .doctor-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 18px 40px rgba(138,48,51,.12);
+    .fac-desc {
+      font-size: 0.83rem;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.7;
+      text-shadow: 0 1px 4px rgba(0,0,0,.3);
+      padding-bottom: 0.75rem;
     }
 
-    .doctor-img-ring {
-      width: 128px;
-      height: 128px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 5px solid #fff;
-      box-shadow: 0 4px 16px rgba(0,0,0,.12);
-      margin: 0 auto;
-      transition: transform .4s var(--ease);
+    /* Read more / collapse button */
+    .fac-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.75);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: color 0.22s;
+      letter-spacing: 0.02em;
+      margin-top: 0.25rem;
     }
+    .fac-toggle:hover { color: #fff; }
+    .fac-toggle i { font-size: 0.65rem; transition: transform 0.3s var(--ease-out); }
+    .fac-card.expanded .fac-toggle i.fa-chevron-down { transform: rotate(180deg); }
 
-    .doctor-card:hover .doctor-img-ring { transform: scale(1.06); }
-
-    .doctor-img-ring img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    /* ============================================================
-       ABOUT TABS
-    ============================================================ */
-    /* Wrapper Gambar Tetap Sesuai Input */
-    .about-image-wrapper {
-        position: relative;
-        height: 450px;
-        background: #f8f9fa;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    }
-
-    #main-about-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
-    }
-
-    /* Tab Button: Dibuat sangat ramping */
-    .custom-tab-btn {
-        font-size: 0.75rem !important; /* Ukuran menu diperkecil (±12px) */
-        font-weight: 600;
-        padding: 5px 10px !important;
-        letter-spacing: 0.2px;
-        color: #6c757d !important;
-        text-transform: uppercase; /* Membuat menu kecil tetap terbaca tegas */
-    }
-
-    .custom-tab-btn.active {
-        color: #8a3033 !important;
-    }
-
-    /* Content Card */
-    #aboutTabContent {
-        background: #ffffff;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        border-left: 5px solid #8a3033;
-        height: 350px; 
-        overflow: hidden;
-        padding: 0;
-    }
-
-    .tab-pane-scroll {
-        height: 100%;
-        overflow-y: auto;
-        padding: 1.25rem 1.5rem; /* Padding lebih ramping */
-    }
-
-    /* Judul di dalam box konten */
-    .tab-pane-scroll h3 {
-        font-size: 1rem !important; /* Judul diturunkan ke 16px */
-        margin-bottom: 0.6rem;
-        font-weight: 700;
-        color: #8a3033;
-    }
-
-    /* PERBAIKAN UTAMA: Teks Penjelasan Kecil & Rapi */
-    .text-description {
-        font-size: 0.8rem !important; /* Ukuran ideal ±12.8px */
-        line-height: 1.6 !important;  /* Spasi baris lega agar nyaman dibaca meski kecil */
-        color: #555;
-        text-align: justify;
-        letter-spacing: 0.1px;
-    }
-
-    /* Scrollbar Minimalis */
-    .tab-pane-scroll::-webkit-scrollbar {
-        width: 3px;
-    }
-    .tab-pane-scroll::-webkit-scrollbar-track {
-        background: #f9f9f9;
-    }
-    .tab-pane-scroll::-webkit-scrollbar-thumb {
-        background: #d1d1d1;
-        border-radius: 10px;
-    }
-    .tab-pane-scroll::-webkit-scrollbar-thumb:hover {
-        background: #8a3033;
-    }
-
-    @keyframes slideFromRight {
-        from { opacity: 0; transform: translateX(15px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
-
-    .slide-from-right.active {
-        animation: slideFromRight 0.4s ease-out forwards;
+    .fac-number {
+      position: absolute;
+      top: 1.25rem; right: 1.4rem;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: rgba(255,255,255,0.06);
+      line-height: 1;
+      font-family: var(--font-display);
+      pointer-events: none;
+      z-index: 2;
+      user-select: none;
     }
 
     /* ============================================================
-       MCU CARDS
+       MCU PACKAGES
     ============================================================ */
+    .mcu-section { background: var(--white); }
+
     .mcu-card {
-      border-radius: 18px;
+      border-radius: var(--radius-xl);
       overflow: hidden;
-      transition: all .32s var(--ease);
-    }
-
-    .mcu-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg) !important; }
-
-    .mcu-img-wrap { position: relative; height: 195px; overflow: hidden; }
-
-    .mcu-img-wrap img {
-      width: 100%;
+      border: 1.5px solid #EDF0F5;
+      transition: all 0.38s var(--ease-out);
       height: 100%;
-      object-fit: cover;
-      transition: transform .5s var(--ease);
+      background: var(--white);
     }
+    .mcu-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-xl); border-color: rgba(200,16,46,0.15); }
 
+    .mcu-img-wrap {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+    }
+    .mcu-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.55s var(--ease-out);
+    }
     .mcu-card:hover .mcu-img-wrap img { transform: scale(1.07); }
 
-    .mcu-price-tag {
+    .mcu-price-badge {
       position: absolute;
-      bottom: 12px;
-      left: 12px;
-      background: rgba(255,255,255,.95);
-      backdrop-filter: blur(6px);
-      color: #0066cc;
+      bottom: 1rem; left: 1rem;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      color: var(--navy-mid);
       font-weight: 800;
-      padding: 5px 14px;
-      border-radius: 10px;
-      font-size: .88rem;
-    }
-
-    /* ============================================================
-       FACILITIES
-    ============================================================ */
-    .fac-card {
-      border-radius: 18px;
-      overflow: hidden;
+      font-size: 0.9rem;
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-sm);
       box-shadow: var(--shadow-sm);
     }
 
-    .fac-img { height: 235px; overflow: hidden; }
+    .mcu-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .mcu-title { font-size: 1rem; font-weight: 800; color: var(--navy); line-height: 1.3; }
+    .mcu-desc {
+      font-size: 0.82rem;
+      color: var(--slate);
+      line-height: 1.65;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .mcu-actions { display: flex; gap: 0.75rem; margin-top: 0.25rem; }
 
-    .fac-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform .55s var(--ease);
+    /* ============================================================
+       VIRTUAL ROOM
+    ============================================================ */
+    .vr-section { background: var(--mist); }
+
+    .vr-video-wrap {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-xl);
+      border: 3px solid var(--white);
     }
 
-    .fac-card:hover .fac-img img { transform: scale(1.08); }
+    .vr-feature-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--white);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-xs);
+      border: 1.5px solid #EDF0F5;
+    }
+    .vr-feature-icon {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .vr-feature-icon.red-bg { background: rgba(200,16,46,0.08); color: var(--crimson); }
+    .vr-feature-icon.blue-bg { background: rgba(30,58,95,0.08); color: var(--navy-mid); }
+    .vr-feature-card h6 { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.15rem; color: var(--navy); }
+    .vr-feature-card small { font-size: 0.75rem; color: var(--slate); }
 
     /* ============================================================
        NEWS CARDS
     ============================================================ */
-    .news-date-badge {
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
-      background: var(--grad);
-      color: #fff !important;
-      padding: .4rem .9rem;
-      border-radius: 50px;
-      font-size: .7rem;
-      font-weight: 700;
-      z-index: 5;
-      box-shadow: var(--shadow-md);
-    }
+    .news-section { background: var(--white); }
 
-    .news-card { border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-sm); }
-    .news-img   { height: 235px; overflow: hidden; }
-
-    .news-img img {
-      width: 100%;
+    .news-card {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      background: var(--white);
+      border: 1.5px solid #EDF0F5;
       height: 100%;
+      transition: all 0.38s var(--ease-out);
+    }
+    .news-card:hover { transform: translateY(-7px); box-shadow: var(--shadow-xl); border-color: rgba(200,16,46,0.1); }
+
+    .news-img-wrap {
+      height: 230px;
+      overflow: hidden;
+      position: relative;
+    }
+    .news-img-wrap img {
+      width: 100%; height: 100%;
       object-fit: cover;
-      transition: transform .5s var(--ease);
+      transition: transform 0.55s var(--ease-out);
+    }
+    .news-card:hover .news-img-wrap img { transform: scale(1.06); }
+
+    .news-date-tag {
+      position: absolute;
+      top: 1rem; left: 1rem;
+      background: var(--grad-primary);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      padding: 0.35rem 0.9rem;
+      border-radius: 50px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
     }
 
-    .news-card:hover .news-img img { transform: scale(1.07); }
+    .news-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
 
-    .news-read-more {
-      color: var(--blue);
-      font-weight: 700;
-      font-size: .85rem;
+    .news-category {
       display: inline-flex;
       align-items: center;
-      gap: .35rem;
-      transition: all .25s var(--ease);
+      gap: 0.35rem;
+      background: rgba(200,16,46,0.07);
+      color: var(--crimson);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      padding: 0.3rem 0.85rem;
+      border-radius: 50px;
     }
 
-    .news-read-more:hover { color: var(--red); transform: translateX(4px); }
+    .news-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.45;
+    }
+
+    .news-excerpt {
+      font-size: 0.82rem;
+      color: var(--slate);
+      line-height: 1.7;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .news-read-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--crimson);
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: all 0.25s var(--ease-out);
+    }
+    .news-read-link:hover { gap: 0.65rem; }
+    .news-read-link i { font-size: 0.7rem; }
 
     /* ============================================================
        PARTNERS
     ============================================================ */
-    .partner-logo {
-      max-height: 65px;
+    .partners-section { background: var(--mist); }
+
+    .partner-item {
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.25rem;
+      background: var(--white);
+      border: 1.5px solid #EDF0F5;
+      border-radius: var(--radius-md);
+      transition: all 0.3s var(--ease-out);
+      min-height: 88px;
+    }
+    .partner-item:hover {
+      box-shadow: var(--shadow-md);
+      border-color: rgba(200,16,46,0.15);
+      transform: translateY(-3px);
+    }
+    .partner-item img {
+      max-height: 52px;
       width: auto;
       object-fit: contain;
-      transition: transform .3s var(--ease), filter .3s;
-      filter: grayscale(0%);
+      filter: grayscale(30%);
+      transition: filter 0.3s;
     }
-
-    .partner-logo:hover { transform: scale(1.08); filter: grayscale(0%); }
+    .partner-item:hover img { filter: grayscale(0%); }
 
     /* ============================================================
        MODALS
     ============================================================ */
     .modal-content {
-      border-radius: 20px;
       border: none;
+      border-radius: var(--radius-xl) !important;
       overflow: hidden;
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--shadow-xl);
     }
 
-    .modal-header {
-      background: var(--grad);
-      color: #fff !important;
-      border: none;
-      padding: 1.1rem 1.75rem;
+    .jhc-modal-header {
+      background: var(--grad-dark);
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
+    .jhc-modal-header .modal-title {
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .jhc-modal-header .modal-title i { color: #FF8A9B; }
+    .jhc-modal-header .btn-close { filter: brightness(0) invert(1); opacity: 0.8; }
+    .jhc-modal-header .btn-close:hover { opacity: 1; }
 
-    .modal-header .modal-title { color: #fff !important; font-weight: 700; }
-
-    .modal-header .btn-close {
-      filter: brightness(0) invert(1);
-      opacity: 1;
+    .info-panel {
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      border-left: 3px solid;
+    }
+    .info-panel.warning { background: #FFFBEB; border-color: var(--gold); }
+    .info-panel.primary { background: #EFF8FF; border-color: var(--navy-mid); }
+    .info-panel .panel-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.5rem;
     }
 
     /* ============================================================
        FORM CONTROLS
     ============================================================ */
-    .form-control {
-      border-radius: 12px;
-      padding: .75rem 1.1rem;
-      border: 2px solid #e5e9f0;
-      font-size: .9rem;
-      transition: all .25s var(--ease);
+    .jhc-input {
+      width: 100%;
+      padding: 0.8rem 1.1rem;
+      border: 1.5px solid #E2E8F0;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      color: var(--navy);
+      background: var(--white);
+      transition: all 0.25s var(--ease-out);
+      outline: none;
     }
-
-    .form-control:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 4px rgba(27,113,161,.1);
-      background: #fff;
-    }
+    .jhc-input:focus { border-color: var(--crimson); box-shadow: 0 0 0 3px rgba(200,16,46,0.1); }
 
     /* ============================================================
        FOOTER
     ============================================================ */
-    footer { background: var(--grad); color: #fff; }
-
-    .footer-link {
-      color: rgba(255,255,255,.72);
-      font-size: .88rem;
-      display: inline-block;
-      transition: all .25s var(--ease);
+    .site-footer {
+      background: var(--grad-dark);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
     }
-
-    .footer-link:hover { color: #fff; transform: translateX(5px); }
-
-    .footer-icon-circle {
-      width: 34px;
-      height: 34px;
-      background: rgba(255,255,255,.12);
+    .site-footer::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(200,16,46,0.12) 0%, transparent 70%);
       border-radius: 50%;
+      pointer-events: none;
+    }
+    .site-footer::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(27,113,161,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .footer-inner { position: relative; z-index: 1; }
+    .footer-main { padding: 5rem 0 3.5rem; }
+
+    .footer-brand-logo {
+      height: 56px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-tagline {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.62);
+      line-height: 1.85;
+      max-width: 300px;
+      margin-bottom: 1.75rem;
+    }
+
+    .footer-contact-item {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: .85rem;
+      gap: 0.85rem;
+      margin-bottom: 0.9rem;
+    }
+    .fci-icon {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
       flex-shrink: 0;
+      color: #FF8A9B;
+    }
+    .fci-label { font-size: 0.7rem; color: rgba(255,255,255,0.45); margin-bottom: 0.1rem; }
+    .fci-value { font-size: 0.875rem; font-weight: 700; }
+
+    .social-cluster { display: flex; gap: 0.6rem; margin-top: 1.5rem; }
+    .social-btn {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.28s var(--ease-out);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .social-btn:hover { background: var(--crimson); border-color: var(--crimson); transform: translateY(-3px); color: #fff; }
+
+    .footer-heading {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 1.25rem;
+      padding-left: 0.75rem;
+      border-left: 2.5px solid var(--crimson);
     }
 
-    .social-btn {
-      width: 40px;
-      height: 40px;
-      background: rgba(255,255,255,.12);
-      color: #fff;
-      border-radius: 10px;
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .footer-links a {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.65);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.25s var(--ease-out);
+    }
+    .footer-links a::before {
+      content: '';
+      display: block;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--crimson);
+      opacity: 0.6;
+      transition: all 0.25s;
+    }
+    .footer-links a:hover { color: #fff; padding-left: 0.35rem; }
+    .footer-links a:hover::before { opacity: 1; }
+
+    .footer-map-wrap {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+    .footer-map-label {
+      padding: 0.65rem 1rem;
+      background: rgba(255,255,255,0.07);
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.7);
       display: flex;
       align-items: center;
-      justify-content: center;
-      transition: all .28s var(--ease);
+      gap: 0.5rem;
     }
+    .footer-map-label i { color: var(--crimson); }
 
-    .social-btn:hover {
-      background: rgba(255,255,255,.28);
-      color: #fff;
-      transform: translateY(-3px);
+    .footer-bottom {
+      padding: 1.25rem 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
     }
+    .footer-bottom p { font-size: 0.8rem; color: rgba(255,255,255,0.38); margin: 0; }
 
     /* ============================================================
        PROMO POPUP
     ============================================================ */
-    #promoPopup .modal-content {
-      border-radius: 22px;
-      overflow: hidden;
-    }
-
-    #promoPopup .modal-body { padding: 0; }
-
-    .popup-img-wrap {
-      overflow: hidden;
-      max-height: 420px;
-    }
-
-    .popup-img-wrap img {
-      width: 100%;
-      height: auto;
-      object-fit: cover;
-      transition: transform .6s var(--ease);
-    }
-
-    #promoPopup:hover .popup-img-wrap img { transform: scale(1.04); }
-
-    #promoPopup .btn-close {
+    #promoPopup .modal-content { border-radius: var(--radius-xl) !important; overflow: hidden; }
+    #promoPopup .popup-close {
       position: absolute;
-      top: 12px;
-      right: 12px;
+      top: 12px; right: 12px;
       z-index: 60;
-      background: rgba(255,255,255,.9);
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.92);
       border-radius: 50%;
-      padding: 9px;
+      display: flex; align-items: center; justify-content: center;
+      border: none;
       box-shadow: var(--shadow-md);
-      opacity: .85;
-      transition: all .25s;
+      transition: all 0.25s var(--ease-out);
+      cursor: pointer;
     }
+    #promoPopup .popup-close:hover { transform: rotate(90deg) scale(1.1); background: #fff; }
 
-    #promoPopup .btn-close:hover { opacity: 1; transform: rotate(90deg) scale(1.1); }
+    .popup-img { width: 100%; max-height: 400px; object-fit: cover; display: block; }
+    .popup-body { padding: 1.5rem 1.75rem; text-align: center; }
+    .popup-title { font-size: 1.15rem; font-weight: 800; color: var(--navy); margin-bottom: 0.5rem; }
+    .popup-text { font-size: 0.875rem; color: var(--slate); line-height: 1.7; }
 
     .modal.fade .modal-dialog {
-      transform: scale(.92) translateY(18px);
-      transition: transform .45s cubic-bezier(.34,1.56,.64,1);
+      transform: scale(0.92) translateY(20px);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-
     .modal.show .modal-dialog { transform: scale(1) translateY(0); }
 
     /* ============================================================
-       LOADING SPINNER
+       SPINNER
     ============================================================ */
     .spinner-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(255,255,255,.9);
+      background: rgba(255,255,255,0.9);
       z-index: 9999;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
     }
-
     .spinner-overlay.active { display: flex; }
 
     /* ============================================================
        UTILITIES
     ============================================================ */
-    .text-jhc-red  { color: var(--red) !important; }
-    .text-jhc-navy { color: var(--navy) !important; }
-    .bg-jhc        { background: var(--grad); }
-    .rounded-xl    { border-radius: 18px; }
-    .rounded-2xl   { border-radius: 22px; }
+    .text-crimson { color: var(--crimson) !important; }
+    .text-navy    { color: var(--navy) !important; }
+    .bg-mist      { background: var(--mist) !important; }
+    .gap-container { max-width: 1340px; margin: 0 auto; padding: 0 2rem; }
 
     @media (max-width: 575px) {
-      section { padding: 3rem 0; }
-      .section-title { font-size: 1.55rem; }
+      section { padding: 4rem 0; }
+      .gap-container { padding: 0 1.1rem; }
+    }
+    @media (max-width: 768px) {
+      .gap-container { padding: 0 1.25rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── Loading Spinner ───────────────────────────────────────── -->
+<!-- Spinner -->
 <div class="spinner-overlay" id="loadingSpinner">
-  <div class="spinner-border text-danger" style="width:3rem;height:3rem;" role="status">
-    <span class="visually-hidden">Loading…</span>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;">
+    <div class="spinner-border text-danger" style="width:2.5rem;height:2.5rem;" role="status">
+      <span class="visually-hidden">Loading…</span>
+    </div>
+    <p style="font-size:0.8rem;color:var(--slate);font-weight:600;letter-spacing:0.05em;">MEMUAT…</p>
   </div>
 </div>
 
@@ -987,37 +1780,37 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
   <!-- ============================================================
        NAVBAR
   ============================================================ -->
-  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNavbar">
-    <div class="container">
+  <nav class="site-nav" id="mainNavbar" role="navigation" aria-label="Navigasi Utama">
+    <div class="nav-inner">
 
-      <a class="navbar-brand" href="index.php">
+      <!-- Col 1: Brand / Logo -->
+      <a class="nav-brand" href="index.php" aria-label="RS JHC Tasikmalaya - Home">
         <?php $header_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/JHC_Logo.png'; ?>
-        <img src="public/<?php echo htmlspecialchars($header_logo); ?>" alt="JHC Logo">
+        <img src="public/<?= htmlspecialchars($header_logo); ?>" alt="JHC Logo">
       </a>
 
-      <button class="navbar-toggler border-0" type="button"
-              data-bs-toggle="collapse" data-bs-target="#navMain"
-              aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+      <!-- Col 2: Center Navigation Links -->
+      <ul class="nav-links" id="navMenu" role="list">
+        <li><a href="index.php#about_us">Tentang Kami</a></li>
+        <li><a href="index.php#departments">Layanan</a></li>
+        <li><a href="index.php#facilities">Fasilitas</a></li>
+        <li><a href="index.php#mcu_packages_data">Paket MCU</a></li>
+        <li><a href="index.php#virtual_room">Virtual Room</a></li>
+        <li><a href="index.php#doctors">Dokter Kami</a></li>
+        <li><a href="index.php#news">Berita</a></li>
+      </ul>
 
-      <div class="collapse navbar-collapse" id="navMain">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-          <li class="nav-item"><a class="nav-link" href="index.php#about_us">Tentang Kami</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.php#departments">Layanan</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.php#facilities">Fasilitas</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.php#mcu_packages_data">Paket MCU</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.php#virtual_room">Virtual Room</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.php#doctors">Dokter Kami</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.php#news">Berita</a></li>
-        </ul>
-
-        <div class="ms-lg-3 mt-2 mt-lg-0">
-          <a class="btn-nav-cta" href="career.php">
-            <i class="fas fa-briefcase me-2"></i>Apply Job
-          </a>
-        </div>
+      <!-- Col 3: CTA (desktop) + Hamburger (mobile) -->
+      <div class="nav-cta-wrap" id="navCta">
+        <a class="nav-cta" href="career.php">
+          <i class="fas fa-briefcase"></i>
+          Apply Job
+        </a>
       </div>
+
+      <button class="nav-hamburger" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
 
     </div>
   </nav>
@@ -1025,36 +1818,55 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
   <!-- ============================================================
        FLOATING BUTTONS
   ============================================================ -->
-  <div class="float-wrap">
-    <a href="tel:<?php echo $no_igd; ?>" class="float-btn float-igd"
-       title="Darurat IGD: <?php echo $no_igd; ?>" aria-label="Telepon IGD">
-      <i class="fas fa-ambulance"></i>
+  <div class="float-dock" role="complementary" aria-label="Kontak Cepat">
+    <a href="tel:<?= $no_igd; ?>" class="float-pill float-igd" title="Darurat IGD" aria-label="Telepon IGD">
+      <div class="fp-icon"><i class="fas fa-ambulance"></i></div>
+      <span class="fp-text">IGD <?= $no_igd; ?></span>
     </a>
-    <a href="https://wa.me/<?php echo $no_rs_wa; ?>" target="_blank" rel="noopener"
-       class="float-btn float-wa" title="WhatsApp RS" aria-label="WhatsApp">
-      <i class="fab fa-whatsapp"></i>
+    <a href="https://wa.me/<?= $no_rs_wa; ?>" target="_blank" rel="noopener" class="float-pill float-wa" title="WhatsApp" aria-label="WhatsApp RS">
+      <div class="fp-icon"><i class="fab fa-whatsapp"></i></div>
+      <span class="fp-text">WhatsApp RS</span>
     </a>
   </div>
 
   <!-- ============================================================
        HERO / BANNER
   ============================================================ -->
-  <section class="hero-section p-0" id="home">
-    <div id="heroCarousel" class="carousel slide carousel-fade h-100"
-         data-bs-ride="carousel" data-bs-interval="5000">
+  <section class="hero-wrap p-0" id="home" aria-label="Banner Utama">
 
-      <div class="carousel-inner h-100">
+    <div id="heroCarousel" class="carousel slide carousel-fade h-100"
+         data-bs-ride="carousel" data-bs-interval="6000" aria-roledescription="carousel">
+      <div class="carousel-inner hero-carousel-inner">
         <?php if (!empty($banners_data)): ?>
           <?php foreach ($banners_data as $idx => $banner): ?>
-          <div class="carousel-item h-100 <?= $idx === 0 ? 'active' : ''; ?>">
-            <div class="bg-holder"
-                 style="background-image:url(public/<?= htmlspecialchars($banner['image_path']); ?>);"></div>
-            <div class="banner-overlay"></div>
+          <div class="carousel-item hero-item <?= $idx === 0 ? 'active' : ''; ?>"
+               aria-roledescription="slide"
+               aria-label="Slide <?= $idx + 1; ?> dari <?= count($banners_data); ?>">
+            <div class="hero-bg"
+                 style="background-image: url('public/<?= htmlspecialchars($banner['image_path']); ?>');"
+                 role="img"
+                 aria-label="<?= htmlspecialchars($banner['title']); ?>">
+            </div>
+            <div class="hero-overlay" aria-hidden="true"></div>
 
-            <div class="container hero-content d-flex align-items-center">
-              <div class="col-lg-8 text-center text-lg-start text-white pt-5">
-                <h1 class="mb-3"><?= htmlspecialchars($banner['title']); ?></h1>
-                <p class="lead mb-0"><?= htmlspecialchars($banner['description']); ?></p>
+            <div class="hero-body">
+              <div class="hero-text">
+                <div class="hero-badge" aria-hidden="true">
+                  <i class="fas fa-heart"></i>
+                  RS Jantung Heart Center
+                </div>
+                <h1 class="hero-title"><?= htmlspecialchars($banner['title']); ?></h1>
+                <p class="hero-desc"><?= htmlspecialchars($banner['description']); ?></p>
+                <div class="hero-actions">
+                  <a class="btn-primary-jhc" href="index.php#departments">
+                    <i class="fas fa-stethoscope"></i>
+                    Lihat Layanan
+                  </a>
+                  <a class="btn-ghost-jhc" href="https://wa.me/<?= $no_rs_wa; ?>" target="_blank" rel="noopener">
+                    <i class="fab fa-whatsapp"></i>
+                    Hubungi Kami
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -1062,152 +1874,122 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
         <?php endif; ?>
       </div>
 
-      <button class="carousel-control-prev" type="button"
-              data-bs-target="#heroCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-      </button>
-      <button class="carousel-control-next" type="button"
-              data-bs-target="#heroCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
-      </button>
-
-      <div class="carousel-indicators">
-        <?php foreach ($banners_data as $idx => $b): ?>
-          <button type="button" data-bs-target="#heroCarousel"
-                  data-bs-slide-to="<?= $idx; ?>"
-                  <?= $idx === 0 ? 'class="active" aria-current="true"' : ''; ?>
-                  aria-label="Slide <?= $idx+1; ?>"></button>
-        <?php endforeach; ?>
+      <!-- Custom controls -->
+      <div class="carousel-ctrl" aria-label="Navigasi carousel">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="Sebelumnya">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide="next" aria-label="Berikutnya">
+          <i class="fas fa-chevron-right"></i>
+        </button>
       </div>
 
+      <div class="carousel-dots">
+        <?php foreach ($banners_data as $idx => $b): ?>
+          <button type="button"
+                  data-bs-target="#heroCarousel"
+                  data-bs-slide-to="<?= $idx; ?>"
+                  class="<?= $idx === 0 ? 'active' : ''; ?>"
+                  aria-current="<?= $idx === 0 ? 'true' : 'false'; ?>"
+                  aria-label="Slide <?= $idx + 1; ?>">
+          </button>
+        <?php endforeach; ?>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       ABOUT US
+  ============================================================ -->
+  <section id="about_us" class="about-section">
+    <div class="container" style="max-width:1280px;">
+      <div class="row g-4 g-lg-5 align-items-center">
+
+        <!-- Image -->
+        <div class="col-lg-4 col-md-6">
+          <div class="about-img-frame">
+            <?php 
+              $first_key  = array_key_first($tabs_config);
+              $db_path    = $about_sections[$first_key]['image_path'] ?? '';
+              $display_img = !empty($db_path) ? 'public/' . $db_path : 'public/assets/img/default-about.jpg';
+            ?>
+            <img src="<?= $display_img; ?>" id="main-about-image" alt="Tentang RS JHC Tasikmalaya">
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="col-lg-8 col-md-6">
+          <div class="sec-eyebrow" aria-hidden="true">Mengenal Kami</div>
+          <h2 class="sec-title mb-4">RS Jantung <em>Heart Center</em><br>Tasikmalaya</h2>
+
+          <!-- Tabs -->
+          <div class="about-tabs" role="tablist" aria-label="Informasi tentang RS JHC">
+            <?php $no = 0; foreach ($tabs_config as $key => $info): ?>
+              <button class="about-tab-btn <?= $no === 0 ? 'active' : ''; ?>"
+                      role="tab"
+                      aria-selected="<?= $no === 0 ? 'true' : 'false'; ?>"
+                      aria-controls="atab-<?= $key; ?>"
+                      data-img="<?= $about_sections[$key]['image_path'] ?? ''; ?>"
+                      onclick="switchAboutTab(this, 'atab-<?= $key; ?>')">
+                <i class="fas <?= $info['icon']; ?>"></i>
+                <?= $info['label']; ?>
+              </button>
+            <?php $no++; endforeach; ?>
+          </div>
+
+          <!-- Content Box -->
+          <div class="about-content-box" id="aboutContentBox">
+            <?php $no = 0; foreach ($tabs_config as $key => $info): ?>
+              <div class="about-tab-pane <?= $no === 0 ? 'active' : ''; ?>"
+                   id="atab-<?= $key; ?>"
+                   role="tabpanel"
+                   aria-labelledby="btn-<?= $key; ?>">
+                <h3><?= htmlspecialchars($about_sections[$key]['title'] ?? $info['label']); ?></h3>
+                <p class="tab-text">
+                  <?= (isset($about_sections[$key]['content']) && $about_sections[$key]['content'] !== '')
+                    ? nl2br(htmlspecialchars((string)$about_sections[$key]['content']))
+                    : 'Konten belum tersedia.'; ?>
+                </p>
+              </div>
+            <?php $no++; endforeach; ?>
+          </div>
+
+        </div>
+      </div>
     </div>
   </section>
 
-    <!-- ============================================================
-        ABOUT US
-    ============================================================ -->
-    <section id="about_us" class="py-5 overflow-hidden">
-      <div class="container">
-        <div class="row g-5 align-items-center">
-          
-          <div class="col-lg-4">
-            <div class="about-image-wrapper">
-              <?php 
-                $first_key = array_key_first($tabs_config);
-                
-                // Ambil path yang tersimpan di database (contoh: assets/img/gallery/nama_file.jpg)
-                $db_path = $about_sections[$first_key]['image_path'] ?? '';
-                
-                // Gabungkan dengan prefix 'public/' agar mengarah ke folder yang benar
-                // Jika kolom image_path di DB sudah menyertakan 'assets/img/gallery/', tinggal tambah 'public/'
-                if (!empty($db_path)) {
-                    $display_img = 'public/' . $db_path;
-                } else {
-                    // Gambar default jika data di database kosong
-                    $display_img = 'public/assets/img/default-about.jpg'; 
-                }
-              ?>
-              <img src="<?= $display_img; ?>" 
-                  id="main-about-image" 
-                  alt="Tentang JHC" 
-                  style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-          </div>
-
-          <div class="col-lg-8">
-            <ul class="nav nav-tabs border-0 mb-4 flex-nowrap overflow-auto pb-2" id="aboutTab" role="tablist">
-              <?php $no = 0; foreach ($tabs_config as $key => $info): $active = ($no === 0) ? 'active' : ''; ?>
-                <li class="nav-item">
-                  <button class="nav-link <?= $active; ?> custom-tab-btn" 
-                          data-bs-toggle="tab" 
-                          data-bs-target="#content-<?= $key; ?>" 
-                          type="button" role="tab"
-                          /* Atribut data-img mengambil path murni dari kolom image_path di database */
-                          data-img="<?= $about_sections[$key]['image_path'] ?? ''; ?>">
-                    <i class="fas <?= $info['icon']; ?> me-2"></i><?= $info['label']; ?>
-                  </button>
-                </li>
-              <?php $no++; endforeach; ?>
-            </ul>
-
-            <div class="tab-content" id="aboutTabContent">
-              <?php $no = 0; foreach ($tabs_config as $key => $info): $show = ($no === 0) ? 'show active' : ''; ?>
-                <div class="tab-pane fade <?= $show; ?> slide-from-right tab-pane-scroll" id="content-<?= $key; ?>" role="tabpanel">
-                  
-                  <h3 class="text-danger fw-bold mb-3"><?= htmlspecialchars($about_sections[$key]['title'] ?? $info['label']); ?></h3>
-                  
-                  <div class="text-secondary lh-lg fs-5" style="text-align: justify;">
-                    <?= (isset($about_sections[$key]['content']) && $about_sections[$key]['content'] !== '') 
-                        ? nl2br(htmlspecialchars((string)$about_sections[$key]['content'])) 
-                        : 'Konten belum tersedia.'; ?>
-                  </div>
-                </div>
-              <?php $no++; endforeach; ?>
-            </div>
-            
-            <div class="tab-pane-scroll">
-              <h3 class="text-danger fw-bold">
-                  <?= htmlspecialchars($about_sections[$key]['title'] ?? $info['label']); ?>
-              </h3>
-              
-              <div class="text-description">
-                  <?= (isset($about_sections[$key]['content']) && $about_sections[$key]['content'] !== '') 
-                      ? nl2br(htmlspecialchars((string)$about_sections[$key]['content'])) 
-                      : 'Konten belum tersedia.'; ?>
-              </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
   <!-- ============================================================
        SERVICES / DEPARTMENTS
   ============================================================ -->
-  <section id="departments" class="bg-white">
-    <div class="container">
-      <div class="row justify-content-center mb-5">
-        <div class="col-lg-7 text-center">
-          <span class="section-label"><i class="fas fa-star me-2"></i>Layanan Terbaik</span>
-          <h2 class="section-title">Pelayanan Kami</h2>
-          <div class="section-divider mx-auto"></div>
-          <p class="text-muted mt-4">Layanan unggulan dan poliklinik spesialis untuk kesehatan Anda.</p>
-        </div>
+  <section id="departments" class="services-section">
+    <div class="container" style="max-width:1280px;">
+
+      <div class="sec-header-center mb-5">
+        <div class="sec-eyebrow" aria-hidden="true">Layanan Terbaik</div>
+        <h2 class="sec-title">Pelayanan <em>Kami</em></h2>
+        <p class="sec-subtitle">Layanan unggulan dan poliklinik spesialis untuk mendukung kesehatan Anda.</p>
       </div>
 
       <?php 
-      function render_dept_cards($data_list, $is_layanan = true) {
-        foreach($data_list as $item): ?>
+      /* ── Poliklinik: icon-card renderer ── */
+      function render_poliklinik_cards($data_list) {
+        foreach ($data_list as $item): ?>
           <div class="col-6 col-md-4 col-lg-3 mb-4">
-            <div class="card service-card hover-lift text-center p-3 p-md-4">
-              <div class="card-body p-1">
-                <div class="icon-wrap">
-                  <?php if(!empty($item['icon_path'])): ?>
-                    <img src="<?= htmlspecialchars($item['icon_path']); ?>" alt="ikon">
+            <div class="service-card">
+              <div class="svc-card-inner">
+                <div class="svc-icon-wrap">
+                  <?php if (!empty($item['icon_path'])): ?>
+                    <img src="<?= htmlspecialchars($item['icon_path']); ?>" alt="">
                   <?php else: ?>
-                    <i class="fas <?= $is_layanan ? 'fa-star text-warning' : 'fa-heartbeat text-primary'; ?> fa-2x"></i>
+                    <i class="fas fa-heartbeat text-primary"></i>
                   <?php endif; ?>
                 </div>
-                <h5 class="fw-bold text-dark mb-3" style="font-size:clamp(.875rem,2vw,1rem);line-height:1.3;">
-                  <?= htmlspecialchars($item['name']); ?>
-                </h5>
-                <?php if (!$is_layanan): ?>
-                  <a href="doctors_list.php?dept_id=<?= $item['id']; ?>"
-                     class="btn-jhc btn-jhc-sm">
-                    <i class="fas fa-user-md me-1"></i> Lihat Dokter
-                  </a>
-                <?php else: ?>
-                  <button class="btn-jhc btn-jhc-sm btn-open-layanan"
-                          data-name="<?= htmlspecialchars($item['name']); ?>"
-                          data-desc="<?= htmlspecialchars($item['description']); ?>"
-                          data-expertise="<?= htmlspecialchars($item['special_skills']); ?>"
-                          data-info="<?= htmlspecialchars($item['additional_info']); ?>"
-                          data-image="<?= htmlspecialchars($item['icon_path'] ?? ''); ?>"
-                          data-btn-text="<?= htmlspecialchars($item['btn_text'] ?? 'Hubungi Kami'); ?>"
-                          data-btn-link="<?= htmlspecialchars($item['btn_link'] ?? '#'); ?>"
-                          data-bs-toggle="modal" data-bs-target="#modalLayanan">
-                    <i class="fas fa-info-circle me-1"></i> Detail
-                  </button>
-                <?php endif; ?>
+                <h3 class="svc-name"><?= htmlspecialchars($item['name']); ?></h3>
+                <a href="doctors_list.php?dept_id=<?= $item['id']; ?>" class="btn-svc">
+                  <i class="fas fa-user-md"></i> Lihat Dokter
+                </a>
               </div>
             </div>
           </div>
@@ -1215,35 +1997,69 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
       }
       ?>
 
-      <!-- Layanan Unggulan -->
+      <!-- ── Layanan Unggulan: clean white icon-card ── -->
       <?php if (!empty($layanan_data)): ?>
-      <div class="mb-5">
-        <div class="text-center mb-4">
-          <h4 class="fw-bold text-jhc-navy text-uppercase" style="font-size:1rem;letter-spacing:1px;">
-            <i class="fas fa-award me-2 text-warning"></i>Layanan Unggulan
-          </h4>
-          <div style="width:60px;height:3px;background:var(--grad);margin:.75rem auto 0;border-radius:3px;"></div>
+        <!-- Section subheading -->
+        <div class="dept-divider mt-2">
+          <div class="dept-divider-line"></div>
+          <div class="dept-divider-label"><i class="fas fa-stethoscope"></i> Layanan Unggulan</div>
+          <div class="dept-divider-line"></div>
         </div>
-        <div class="row gx-3 gx-md-4">
-          <?php render_dept_cards($layanan_data, true); ?>
+
+        <div class="layanan-grid mb-5">
+          <?php foreach ($layanan_data as $item): ?>
+            <div class="lu-card btn-open-layanan"
+                 role="button"
+                 tabindex="0"
+                 data-name="<?= htmlspecialchars($item['name']); ?>"
+                 data-desc="<?= htmlspecialchars($item['description']); ?>"
+                 data-expertise="<?= htmlspecialchars($item['special_skills']); ?>"
+                 data-info="<?= htmlspecialchars($item['additional_info']); ?>"
+                 data-image="<?= htmlspecialchars($item['icon_path'] ?? ''); ?>"
+                 data-btn-text="<?= htmlspecialchars($item['btn_text'] ?? 'Hubungi Kami'); ?>"
+                 data-btn-link="<?= htmlspecialchars($item['btn_link'] ?? '#'); ?>"
+                 data-bs-toggle="modal" data-bs-target="#modalLayanan">
+
+              <!-- Icon -->
+              <div class="lu-icon">
+                <?php if (!empty($item['icon_path'])): ?>
+                  <img src="<?= htmlspecialchars($item['icon_path']); ?>"
+                       alt="<?= htmlspecialchars($item['name']); ?>"
+                       onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                  <span class="lu-fallback-icon" style="display:none;">
+                    <i class="fas fa-star"></i>
+                  </span>
+                <?php else: ?>
+                  <i class="fas fa-star lu-fallback-icon"></i>
+                <?php endif; ?>
+              </div>
+
+              <!-- Name -->
+              <h3 class="lu-name"><?= htmlspecialchars($item['name']); ?></h3>
+
+              <!-- Button -->
+              <button class="lu-btn"
+                      aria-label="Detail <?= htmlspecialchars($item['name']); ?>">
+                <i class="fas fa-info-circle"></i> Detail
+              </button>
+
+            </div>
+          <?php endforeach; ?>
         </div>
-      </div>
       <?php endif; ?>
 
-      <!-- Poliklinik Spesialis -->
+      <!-- ── Poliklinik Spesialis: icon-card grid ── -->
       <?php if (!empty($poliklinik_data)): ?>
-      <div class="mt-4 pt-3">
-        <div class="text-center mb-4">
-          <h4 class="fw-bold text-secondary text-uppercase" style="font-size:1rem;letter-spacing:1px;">
-            <i class="fas fa-stethoscope me-2"></i>Poliklinik Spesialis
-          </h4>
-          <div style="width:60px;height:3px;background:var(--grad);margin:.75rem auto 0;border-radius:3px;"></div>
+        <div class="dept-divider mt-2">
+          <div class="dept-divider-line"></div>
+          <div class="dept-divider-label"><i class="fas fa-stethoscope"></i> Poliklinik Spesialis</div>
+          <div class="dept-divider-line"></div>
         </div>
         <div class="row gx-3 gx-md-4">
-          <?php render_dept_cards($poliklinik_data, false); ?>
+          <?php render_poliklinik_cards($poliklinik_data); ?>
         </div>
-      </div>
       <?php endif; ?>
+
     </div>
   </section>
 
@@ -1251,48 +2067,51 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
   <div class="modal fade" id="modalLayanan" tabindex="-1" aria-labelledby="modalLayananLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="jhc-modal-header">
           <h5 class="modal-title" id="modalLayananLabel">
-            <i class="fas fa-info-circle me-2"></i>Detail Layanan
+            <i class="fas fa-info-circle"></i>Detail Layanan
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
         </div>
         <div class="modal-body p-4">
           <div class="text-center mb-4">
             <img id="m-image" src="" alt="Gambar Layanan"
                  class="img-fluid rounded-3 shadow-sm mb-3"
-                 style="max-height:220px;width:100%;object-fit:cover;display:none;">
-            <h3 id="m-name" class="fw-bold text-dark"></h3>
+                 style="max-height:200px;width:100%;object-fit:cover;display:none;">
+            <h3 id="m-name" class="fw-bold" style="color:var(--navy);font-size:1.4rem;"></h3>
           </div>
-          <div class="row g-4">
-            <div class="col-12">
-              <p class="text-muted fw-semibold small text-uppercase mb-1">
-                <i class="fas fa-align-left me-1 text-danger"></i>Tentang Layanan
-              </p>
-              <p id="m-desc" class="text-secondary mb-0"></p>
-            </div>
+          <div class="mb-4">
+            <p class="text-muted fw-semibold" style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">
+              <i class="fas fa-align-left me-1 text-danger"></i>Tentang Layanan
+            </p>
+            <p id="m-desc" class="text-secondary" style="font-size:0.9rem;line-height:1.75;"></p>
+          </div>
+          <div class="row g-3">
             <div class="col-md-6">
-              <div class="p-3 bg-light rounded-3 h-100 border-start border-4 border-warning">
-                <p class="fw-bold small text-uppercase mb-2">
-                  <i class="fas fa-star me-1 text-warning"></i>Keahlian Khusus
+              <div class="info-panel warning">
+                <p class="panel-label" style="color:var(--gold);">
+                  <i class="fas fa-star me-1"></i>Keahlian Khusus
                 </p>
-                <div id="m-expertise" class="text-muted small" style="white-space:pre-line;"></div>
+                <div id="m-expertise" class="text-muted" style="font-size:0.85rem;line-height:1.65;white-space:pre-line;"></div>
               </div>
             </div>
             <div class="col-md-6">
-              <div class="p-3 bg-light rounded-3 h-100 border-start border-4 border-primary">
-                <p class="fw-bold small text-uppercase mb-2 text-primary">
+              <div class="info-panel primary">
+                <p class="panel-label" style="color:var(--navy-mid);">
                   <i class="fas fa-clock me-1"></i>Informasi Layanan
                 </p>
-                <div id="m-info" class="text-muted small" style="white-space:pre-line;"></div>
+                <div id="m-info" class="text-muted" style="font-size:0.85rem;line-height:1.65;white-space:pre-line;"></div>
               </div>
             </div>
           </div>
         </div>
-        <div class="modal-footer border-0 pt-0">
-          <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
-          <a id="m-btn" href="#" class="btn-jhc">
+        <div class="modal-footer border-0 pt-0 pb-4 px-4">
+          <button type="button" class="btn-outline-jhc" data-bs-dismiss="modal">
+            <i class="fas fa-times"></i> Tutup
+          </button>
+          <a id="m-btn" href="#" class="btn-primary-jhc">
             <span id="m-btn-text">Hubungi Kami</span>
+            <i class="fas fa-arrow-right"></i>
           </a>
         </div>
       </div>
@@ -1303,40 +2122,55 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
        FACILITIES
   ============================================================ -->
   <?php if (!empty($facilities_data)): ?>
-  <section id="facilities" style="background:linear-gradient(135deg,#F0F9FF 0%,#E3F2FD 100%);">
-    <div class="container">
-      <div class="row justify-content-center mb-5">
-        <div class="col-lg-7 text-center">
-          <span class="section-label"><i class="fas fa-building me-2"></i>Fasilitas</span>
-          <h2 class="section-title">Fasilitas Unggulan</h2>
-          <div class="section-divider mx-auto"></div>
-          <p class="text-muted mt-4">Fasilitas modern dan lengkap untuk kenyamanan Anda.</p>
-        </div>
+  <section id="facilities" class="facilities-section">
+    <div class="container" style="max-width:1280px;">
+
+      <div class="sec-header-center mb-5">
+        <div class="sec-eyebrow" aria-hidden="true">Fasilitas</div>
+        <h2 class="sec-title">Fasilitas <em>Unggulan</em></h2>
+        <p class="sec-subtitle">Fasilitas modern dan lengkap untuk kenyamanan dan kesembuhan Anda.</p>
       </div>
 
-      <div class="row g-4">
-        <?php foreach($facilities_data as $fac): ?>
-        <div class="col-md-6 col-lg-4">
-          <div class="fac-card hover-lift bg-white h-100">
-            <div class="fac-img position-relative">
-              <img src="public/<?= htmlspecialchars($fac['image_path']); ?>"
-                   alt="<?= htmlspecialchars($fac['name']); ?>">
-              <div class="position-absolute bottom-0 start-0 w-100 p-3"
-                   style="background:linear-gradient(to top,rgba(0,0,0,.8),transparent);">
-                <h5 class="text-white mb-0 fw-bold" style="font-size:clamp(.9rem,2vw,1.05rem);">
-                  <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($fac['name']); ?>
-                </h5>
+      <div class="fac-grid">
+        <?php foreach ($facilities_data as $idx => $fac):
+          $bg_style = !empty($fac['image_path'])
+            ? "background-image: url('public/" . htmlspecialchars($fac['image_path']) . "');"
+            : "background: linear-gradient(135deg, #0f1f3d 0%, #1E3A5F 100%);";
+          $has_desc = !empty(trim($fac['description']));
+        ?>
+        <div class="fac-card" id="fac-<?= $idx; ?>">
+          <!-- Background image -->
+          <div class="fac-bg" style="<?= $bg_style ?>"></div>
+          <!-- Dark overlay -->
+          <div class="fac-overlay"></div>
+          <!-- Nomor dekoratif -->
+          <span class="fac-number" aria-hidden="true"><?= str_pad($idx + 1, 2, '0', STR_PAD_LEFT); ?></span>
+          <!-- Content -->
+          <div class="fac-body">
+            <div class="fac-badge">
+              <i class="fas fa-hospital"></i> Fasilitas
+            </div>
+            <h3 class="fac-title"><?= htmlspecialchars($fac['name']); ?></h3>
+
+            <?php if ($has_desc): ?>
+              <!-- Collapsible description -->
+              <div class="fac-desc-wrap" id="fac-desc-<?= $idx; ?>">
+                <p class="fac-desc"><?= nl2br(htmlspecialchars($fac['description'])); ?></p>
               </div>
-            </div>
-            <div class="card-body p-4">
-              <p class="text-muted mb-0" style="line-height:1.75;font-size:.9rem;">
-                <?= nl2br(htmlspecialchars($fac['description'])); ?>
-              </p>
-            </div>
+              <!-- Toggle button -->
+              <button class="fac-toggle"
+                      onclick="toggleFacDesc(<?= $idx; ?>)"
+                      aria-expanded="false"
+                      aria-controls="fac-desc-<?= $idx; ?>">
+                <span class="fac-toggle-text">Baca Selengkapnya</span>
+                <i class="fas fa-chevron-down"></i>
+              </button>
+            <?php endif; ?>
           </div>
         </div>
         <?php endforeach; ?>
       </div>
+
     </div>
   </section>
   <?php endif; ?>
@@ -1345,50 +2179,46 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
        MCU PACKAGES
   ============================================================ -->
   <?php if (!empty($mcu_packages_data)): ?>
-  <section id="mcu_packages_data" class="bg-light">
-    <div class="container">
-      <div class="row justify-content-center mb-5">
-        <div class="col-lg-7 text-center">
-          <span class="section-label"><i class="fas fa-file-medical me-2"></i>Layanan Check Up</span>
-          <h2 class="section-title">Pilih Paket Kesehatan Anda</h2>
-          <div class="section-divider mx-auto"></div>
-        </div>
+  <section id="mcu_packages_data" class="mcu-section">
+    <div class="container" style="max-width:1280px;">
+
+      <div class="sec-header-center mb-5">
+        <div class="sec-eyebrow" aria-hidden="true">Layanan Check Up</div>
+        <h2 class="sec-title">Pilih Paket <em>Kesehatan</em> Anda</h2>
+        <p class="sec-subtitle">Deteksi dini adalah investasi terbaik untuk kesehatan Anda dan keluarga.</p>
       </div>
 
       <div class="row g-4">
         <?php foreach ($mcu_packages_data as $idx => $pkg): ?>
           <?php
-            $wa_text = urlencode("Halo JHC, saya ingin reservasi: " . $pkg['title']);
+            $wa_text = urlencode("Halo JHC, saya ingin reservasi paket: " . $pkg['title']);
             $wa_link = "https://api.whatsapp.com/send?phone=6287760615300&text={$wa_text}";
           ?>
           <div class="col-md-6 col-lg-4">
-            <div class="card mcu-card border-0 shadow-sm h-100">
+            <div class="mcu-card">
               <div class="mcu-img-wrap">
-                <img src="public/<?= htmlspecialchars($pkg['image_path']); ?>" alt="MCU">
-                <div class="mcu-price-tag">
+                <img src="public/<?= htmlspecialchars($pkg['image_path']); ?>"
+                     alt="<?= htmlspecialchars($pkg['title']); ?>">
+                <div class="mcu-price-badge">
                   Rp <?= number_format($pkg['price'], 0, ',', '.'); ?>
                 </div>
               </div>
-              <div class="card-body p-4 d-flex flex-column">
-                <h5 class="fw-bold text-dark mb-2"><?= htmlspecialchars($pkg['title']); ?></h5>
-                <p class="text-muted small mb-4" style="line-height:1.65;-webkit-line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;">
-                  <?= htmlspecialchars(substr($pkg['description'], 0, 120)); ?>…
-                </p>
-                <div class="mt-auto row g-2">
-                  <div class="col-6">
-                    <button type="button"
-                            class="btn-jhc-outline w-100 justify-content-center"
-                            style="font-size:.8rem;padding:.45rem .5rem;"
-                            data-bs-toggle="modal" data-bs-target="#mcuModal<?= $idx; ?>">
-                      Lihat Detail
-                    </button>
-                  </div>
-                  <div class="col-6">
-                    <a href="<?= $wa_link; ?>" target="_blank" rel="noopener"
-                       class="btn-jhc btn-jhc-sm w-100 justify-content-center">
-                      Reservasi
-                    </a>
-                  </div>
+              <div class="mcu-body">
+                <h3 class="mcu-title"><?= htmlspecialchars($pkg['title']); ?></h3>
+                <p class="mcu-desc"><?= htmlspecialchars(substr($pkg['description'], 0, 130)); ?>…</p>
+                <div class="mcu-actions">
+                  <button type="button"
+                          class="btn-outline-jhc btn-sm-jhc"
+                          style="flex:1;justify-content:center;"
+                          data-bs-toggle="modal"
+                          data-bs-target="#mcuModal<?= $idx; ?>">
+                    <i class="fas fa-list"></i> Detail
+                  </button>
+                  <a href="<?= $wa_link; ?>" target="_blank" rel="noopener"
+                     class="btn-primary-jhc btn-sm-jhc"
+                     style="flex:1;justify-content:center;">
+                    <i class="fab fa-whatsapp"></i> Reservasi
+                  </a>
                 </div>
               </div>
             </div>
@@ -1397,31 +2227,32 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
           <!-- MCU Detail Modal -->
           <div class="modal fade" id="mcuModal<?= $idx; ?>" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
-              <div class="modal-content border-0 shadow-lg" style="border-radius:20px;">
-                <div class="modal-header">
-                  <h5 class="modal-title">Detail Paket MCU</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <div class="modal-content">
+                <div class="jhc-modal-header">
+                  <h5 class="modal-title">
+                    <i class="fas fa-file-medical"></i>Detail Paket MCU
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
                 <div class="modal-body p-4 p-lg-5">
                   <div class="row g-4">
                     <div class="col-md-5">
                       <img src="public/<?= htmlspecialchars($pkg['image_path']); ?>"
-                           class="img-fluid rounded-3 shadow-sm" alt="Detail MCU">
+                           class="img-fluid rounded-3 shadow-sm w-100" alt="<?= htmlspecialchars($pkg['title']); ?>">
                     </div>
                     <div class="col-md-7">
-                      <span class="badge bg-primary bg-opacity-10 text-primary mb-2 px-3 py-2 rounded-pill">
-                        <i class="fas fa-list-check me-1"></i>Rincian Paket
-                      </span>
-                      <h3 class="fw-bold text-dark mb-2"><?= htmlspecialchars($pkg['title']); ?></h3>
-                      <h4 class="text-primary fw-bold mb-4">
+                      <span class="sec-eyebrow" style="font-size:0.68rem;margin-bottom:0.5rem;">Rincian Paket</span>
+                      <h3 class="fw-bold mb-1" style="color:var(--navy);font-size:1.25rem;"><?= htmlspecialchars($pkg['title']); ?></h3>
+                      <p class="fw-bold mb-4" style="color:var(--crimson);font-size:1.4rem;">
                         Rp <?= number_format($pkg['price'], 0, ',', '.'); ?>
-                      </h4>
-                      <div class="text-muted mb-4" style="line-height:1.8;font-size:.9rem;">
+                      </p>
+                      <div class="text-muted mb-4" style="font-size:0.88rem;line-height:1.8;">
                         <?= nl2br(htmlspecialchars($pkg['description'])); ?>
                       </div>
                       <a href="<?= $wa_link; ?>" target="_blank" rel="noopener"
-                         class="btn btn-success w-100 py-3 rounded-3 fw-bold">
-                        <i class="fab fa-whatsapp me-2"></i>Hubungi Kami Sekarang
+                         class="btn-primary-jhc w-100 justify-content-center"
+                         style="padding:.9rem;">
+                        <i class="fab fa-whatsapp"></i> Hubungi Kami Sekarang
                       </a>
                     </div>
                   </div>
@@ -1432,6 +2263,7 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
 
         <?php endforeach; ?>
       </div>
+
     </div>
   </section>
   <?php endif; ?>
@@ -1440,58 +2272,61 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
        VIRTUAL ROOM
   ============================================================ -->
   <?php if ($vr_data): ?>
-  <section id="virtual_room" class="bg-white">
-    <div class="container">
+  <section id="virtual_room" class="vr-section">
+    <div class="container" style="max-width:1280px;">
       <div class="row align-items-center g-4 g-lg-5">
 
+        <!-- Video side -->
         <div class="col-lg-6 order-2 order-lg-1">
-          <div class="position-relative">
+          <div class="vr-video-wrap">
             <?php if (!empty($vr_data['video_url'])): 
               $embed_url = $vr_data['video_url'];
               $sep = strpos($embed_url,'?') !== false ? '&' : '?';
-              $auto_url = $embed_url.$sep.'autoplay=1&mute=1&loop=1&playlist='.basename(parse_url($embed_url,PHP_URL_PATH));
+              $auto_url = $embed_url . $sep . 'autoplay=1&mute=1&loop=1&playlist=' . basename(parse_url($embed_url, PHP_URL_PATH));
             ?>
-              <div class="ratio ratio-16x9 shadow-lg rounded-3 overflow-hidden">
+              <div class="ratio ratio-16x9">
                 <iframe src="<?= htmlspecialchars($auto_url); ?>"
-                        allow="autoplay;encrypted-media" allowfullscreen title="Virtual Room"></iframe>
+                        allow="autoplay;encrypted-media" allowfullscreen
+                        title="Virtual Room RS JHC"></iframe>
               </div>
             <?php elseif (!empty($vr_data['video_path'])): ?>
-              <div class="ratio ratio-16x9 shadow-lg rounded-3 overflow-hidden bg-black">
+              <div class="ratio ratio-16x9 bg-black">
                 <video class="w-100 h-100" autoplay muted loop controls style="object-fit:cover;">
                   <source src="<?= htmlspecialchars($vr_data['video_path']); ?>" type="video/mp4">
                 </video>
               </div>
             <?php else: ?>
               <img src="<?= htmlspecialchars($vr_data['image_path_360']); ?>"
-                   class="img-fluid rounded-3 shadow-lg w-100" alt="Virtual Room">
+                   class="w-100" alt="Virtual Room">
             <?php endif; ?>
           </div>
         </div>
 
+        <!-- Text side -->
         <div class="col-lg-6 order-1 order-lg-2">
-          <span class="section-label"><i class="fas fa-vr-cardboard me-2"></i>Virtual Room</span>
-          <h2 class="section-title mb-4"><?= htmlspecialchars($vr_data['title']); ?></h2>
-          <p class="text-secondary mb-4" style="line-height:1.85;text-align:justify;">
+          <div class="sec-eyebrow" aria-hidden="true">Virtual Room</div>
+          <h2 class="sec-title mb-4"><?= htmlspecialchars($vr_data['title']); ?></h2>
+          <p class="sec-subtitle mb-5" style="max-width:100%;">
             <?= nl2br(htmlspecialchars($vr_data['content'])); ?>
           </p>
 
           <div class="row g-3">
             <div class="col-sm-6">
-              <div class="d-flex align-items-center p-3 bg-light rounded-3 gap-3">
-                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
-                     style="width:44px;height:44px;flex-shrink:0;">
-                  <i class="fas fa-user-md"></i>
+              <div class="vr-feature-card">
+                <div class="vr-feature-icon blue-bg"><i class="fas fa-user-md"></i></div>
+                <div>
+                  <h6>Dokter Ahli</h6>
+                  <small>Berpengalaman & Berdedikasi</small>
                 </div>
-                <div><h6 class="fw-bold mb-0">Dokter Ahli</h6><small class="text-muted">Berpengalaman</small></div>
               </div>
             </div>
             <div class="col-sm-6">
-              <div class="d-flex align-items-center p-3 bg-light rounded-3 gap-3">
-                <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center"
-                     style="width:44px;height:44px;flex-shrink:0;">
-                  <i class="fas fa-clock"></i>
+              <div class="vr-feature-card">
+                <div class="vr-feature-icon red-bg"><i class="fas fa-clock"></i></div>
+                <div>
+                  <h6>Layanan 24 Jam</h6>
+                  <small>Siap melayani kapan saja</small>
                 </div>
-                <div><h6 class="fw-bold mb-0">Layanan 24 Jam</h6><small class="text-muted">Selalu Siap</small></div>
               </div>
             </div>
           </div>
@@ -1502,59 +2337,57 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
   </section>
   <?php endif; ?>
 
-
   <!-- ============================================================
        NEWS
   ============================================================ -->
-  <section id="news" class="bg-white">
-    <div class="container">
-      <div class="row justify-content-center mb-5">
-        <div class="col-lg-7 text-center">
-          <span class="section-label"><i class="fas fa-newspaper me-2"></i>Berita Terkini</span>
-          <h2 class="section-title">
-            <?= htmlspecialchars($settings['news_section_title'] ?? 'Berita & Artikel'); ?>
-          </h2>
-          <div class="section-divider mx-auto"></div>
-          <p class="text-muted mt-4">Informasi terbaru seputar kesehatan dan layanan kami.</p>
-        </div>
+  <section id="news" class="news-section">
+    <div class="container" style="max-width:1280px;">
+
+      <div class="sec-header-center mb-5">
+        <div class="sec-eyebrow" aria-hidden="true">Berita Terkini</div>
+        <h2 class="sec-title">
+          <?= htmlspecialchars($settings['news_section_title'] ?? 'Berita &'); ?>
+          <em><?= strpos(($settings['news_section_title'] ?? ''), ' ') !== false ? '' : 'Artikel'; ?></em>
+        </h2>
+        <p class="sec-subtitle">Informasi terbaru seputar kesehatan jantung dan layanan RS JHC.</p>
       </div>
 
       <div class="row g-4">
-        <?php foreach($news_data as $article): ?>
+        <?php foreach ($news_data as $article): ?>
         <div class="col-md-6 col-lg-4">
-          <div class="news-card hover-lift bg-white h-100">
-            <div class="news-img position-relative">
+          <article class="news-card">
+            <div class="news-img-wrap">
               <img src="public/<?= htmlspecialchars($article['image_path']); ?>"
                    alt="<?= htmlspecialchars($article['title']); ?>">
-              <span class="news-date-badge">
-                <i class="fas fa-calendar-alt me-1"></i><?= date('d M Y', strtotime($article['post_date'])); ?>
-              </span>
+              <div class="news-date-tag">
+                <i class="fas fa-calendar-alt"></i>
+                <?= date('d M Y', strtotime($article['post_date'])); ?>
+              </div>
             </div>
-            <div class="card-body p-4">
-              <span class="badge bg-light text-primary mb-3 px-3 py-2 rounded-pill" style="font-size:.75rem;">
-                <i class="fas fa-tag me-1"></i><?= htmlspecialchars($article['category']); ?>
-              </span>
-              <h5 class="fw-bold text-dark lh-base mb-3" style="font-size:clamp(.9rem,2vw,1rem);">
-                <?= htmlspecialchars($article['title']); ?>
-              </h5>
-              <p class="text-muted small mb-3" style="line-height:1.7;">
-                <?= substr(strip_tags($article['content']), 0, 100); ?>…
-              </p>
-              <a href="javascript:void(0)"
-                 class="news-read-more btn-read-more"
-                 data-bs-toggle="modal" data-bs-target="#modalArticle"
-                 data-title="<?= htmlspecialchars($article['title']); ?>"
-                 data-category="<?= htmlspecialchars($article['category']); ?>"
-                 data-date="<?= date('d M Y', strtotime($article['post_date'])); ?>"
-                 data-image="public/<?= htmlspecialchars($article['image_path']); ?>"
-                 data-content="<?= htmlspecialchars($article['content']); ?>">
+            <div class="news-body">
+              <div>
+                <span class="news-category">
+                  <i class="fas fa-tag"></i><?= htmlspecialchars($article['category']); ?>
+                </span>
+              </div>
+              <h3 class="news-title"><?= htmlspecialchars($article['title']); ?></h3>
+              <p class="news-excerpt"><?= substr(strip_tags($article['content']), 0, 110); ?>…</p>
+              <button class="news-read-link btn-read-more"
+                      style="background:none;border:none;padding:0;font-family:inherit;"
+                      data-bs-toggle="modal" data-bs-target="#modalArticle"
+                      data-title="<?= htmlspecialchars($article['title']); ?>"
+                      data-category="<?= htmlspecialchars($article['category']); ?>"
+                      data-date="<?= date('d M Y', strtotime($article['post_date'])); ?>"
+                      data-image="public/<?= htmlspecialchars($article['image_path']); ?>"
+                      data-content="<?= htmlspecialchars($article['content']); ?>">
                 Baca Selengkapnya <i class="fas fa-arrow-right"></i>
-              </a>
+              </button>
             </div>
-          </div>
+          </article>
         </div>
         <?php endforeach; ?>
       </div>
+
     </div>
   </section>
 
@@ -1562,29 +2395,32 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
   <div class="modal fade" id="modalArticle" tabindex="-1" aria-labelledby="modalArticleLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="jhc-modal-header">
           <h5 class="modal-title" id="modalArticleLabel">
-            <i class="fas fa-newspaper me-2"></i>Detail Artikel
+            <i class="fas fa-newspaper"></i>Artikel
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
         </div>
         <div class="modal-body p-0">
-          <img id="article-img" src="" class="w-100" style="max-height:300px;object-fit:cover;" alt="">
-          <div class="p-4">
+          <img id="article-img" src="" class="w-100"
+               style="max-height:280px;object-fit:cover;display:block;" alt="">
+          <div class="p-4 p-lg-5">
             <div class="d-flex gap-2 mb-3 flex-wrap">
-              <span class="badge bg-light text-primary px-3 py-2 rounded-pill">
-                <i class="fas fa-tag me-1"></i><span id="article-category"></span>
+              <span class="news-category">
+                <i class="fas fa-tag"></i><span id="article-category"></span>
               </span>
-              <span class="badge bg-light text-dark px-3 py-2 rounded-pill">
-                <i class="fas fa-calendar-alt me-1"></i><span id="article-date"></span>
+              <span class="news-category" style="background:rgba(30,58,95,0.07);color:var(--navy-mid);">
+                <i class="fas fa-calendar-alt"></i><span id="article-date"></span>
               </span>
             </div>
-            <h3 id="article-title" class="fw-bold text-dark mb-4"></h3>
-            <div id="article-content" class="text-secondary" style="line-height:1.85;text-align:justify;"></div>
+            <h3 id="article-title" class="fw-bold mb-4" style="color:var(--navy);font-size:1.3rem;"></h3>
+            <div id="article-content" class="text-secondary" style="font-size:0.9rem;line-height:1.9;text-align:justify;"></div>
           </div>
         </div>
-        <div class="modal-footer border-0">
-          <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+        <div class="modal-footer border-0 pb-4 px-4">
+          <button type="button" class="btn-outline-jhc" data-bs-dismiss="modal">
+            <i class="fas fa-times"></i> Tutup
+          </button>
         </div>
       </div>
     </div>
@@ -1593,7 +2429,7 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
   <!-- ============================================================
        PARTNERS
   ============================================================ -->
-  <section id="partners" style="background:linear-gradient(135deg,#f8f9fa 0%,#fff 100%);">
+ <section id="partners" style="background:linear-gradient(135deg,#f8f9fa 0%,#fff 100%);">
     <div class="container">
       <div class="row justify-content-center mb-5">
         <div class="col-lg-7 text-center">
@@ -1637,34 +2473,30 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
     $raw_path      = $p_data['popup_image_path'] ?? '';
     $final_img_url = 'public/' . $raw_path;
   ?>
-  <div class="modal fade" id="promoPopup" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="promoPopup" tabindex="-1" aria-hidden="true" aria-label="Promo">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow-lg" style="border-radius:22px;">
-        <button type="button" class="btn-close"
-                data-bs-dismiss="modal"
-                style="position:absolute;top:12px;right:12px;z-index:60;background:rgba(255,255,255,.9);border-radius:50%;padding:9px;box-shadow:0 4px 12px rgba(0,0,0,.15);">
-        </button>
-        <div class="modal-body p-0">
+      <div class="modal-content border-0">
+        <div class="modal-body p-0 position-relative">
+          <button type="button" class="popup-close" data-bs-dismiss="modal" aria-label="Tutup">
+            <i class="fas fa-times" style="font-size:0.8rem;color:var(--slate);"></i>
+          </button>
           <?php if (!empty($raw_path)): ?>
-          <div class="popup-img-wrap">
-            <img src="<?= $final_img_url; ?>" class="w-100"
-                 onerror="this.src='public/assets/img/gallery/JHC_Logo.png';this.style.padding='40px';"
-                 alt="Promo">
-          </div>
+            <img src="<?= $final_img_url; ?>" class="popup-img" alt="Promo RS JHC"
+                 onerror="this.src='public/assets/img/gallery/JHC_Logo.png';this.style.padding='40px';">
           <?php endif; ?>
-          <div class="p-4 text-center">
+          <div class="popup-body">
             <?php if (!empty($p_data['popup_title'])): ?>
-              <h4 class="fw-bold text-dark mb-2"><?= htmlspecialchars($p_data['popup_title']); ?></h4>
+              <p class="popup-title"><?= htmlspecialchars($p_data['popup_title']); ?></p>
             <?php endif; ?>
             <?php if (!empty($p_data['popup_content'])): ?>
-              <p class="text-muted small mb-0" style="line-height:1.65;">
-                <?= nl2br(htmlspecialchars($p_data['popup_content'])); ?>
-              </p>
+              <p class="popup-text"><?= nl2br(htmlspecialchars($p_data['popup_content'])); ?></p>
             <?php endif; ?>
           </div>
         </div>
-        <div class="modal-footer border-0 p-3 justify-content-center">
-          <button type="button" class="btn-jhc px-5" data-bs-dismiss="modal">Tutup</button>
+        <div class="modal-footer border-0 p-4 pt-0 justify-content-center">
+          <button type="button" class="btn-primary-jhc" data-bs-dismiss="modal">
+            <i class="fas fa-times"></i> Tutup
+          </button>
         </div>
       </div>
     </div>
@@ -1674,279 +2506,317 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
   <!-- ============================================================
        FOOTER
   ============================================================ -->
-  <footer class="py-0">
-    <div class="container">
-      <div class="row py-5 g-5">
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="container" style="max-width:1280px;">
+        <div class="footer-main">
+          <div class="row g-5">
 
-        <!-- Brand & Contact -->
-        <div class="col-12 col-md-6 col-lg-4">
-          <?php $footer_logo = !empty($settings['footer_logo_path']) ? $settings['footer_logo_path'] : 'assets/img/gallery/JHC_Logo.png'; ?>
-          <a href="index.php" class="d-inline-block mb-4">
-            <img src="public/<?= htmlspecialchars($footer_logo); ?>" height="60" alt="JHC Logo"
-                 style="filter:brightness(0) invert(1);">
-          </a>
-          <p class="text-white opacity-75 small mb-4" style="line-height:1.85;">
-            Memberikan pelayanan kesehatan jantung terpadu dengan standar kualitas tinggi dan tenaga medis profesional untuk masyarakat Tasikmalaya dan sekitarnya.
-          </p>
+            <!-- Brand & Contact -->
+            <div class="col-12 col-lg-4">
+              <?php $footer_logo = !empty($settings['footer_logo_path']) ? $settings['footer_logo_path'] : 'assets/img/gallery/JHC_Logo.png'; ?>
+              <a href="index.php" aria-label="Beranda">
+                <img src="public/<?= htmlspecialchars($footer_logo); ?>"
+                     class="footer-brand-logo" alt="RS JHC Tasikmalaya">
+              </a>
+              <p class="footer-tagline">
+                Memberikan pelayanan kesehatan jantung terpadu dengan standar kualitas tinggi dan tenaga medis profesional untuk masyarakat Tasikmalaya dan sekitarnya.
+              </p>
 
-          <div class="d-flex flex-column gap-3 mb-4">
-            <div class="d-flex align-items-center gap-3 text-white">
-              <div class="footer-icon-circle"><i class="fas fa-ambulance"></i></div>
-              <div>
-                <small class="d-block opacity-50">Gawat Darurat (IGD)</small>
-                <strong>(0265) 3172112</strong>
+              <div class="footer-contact-item">
+                <div class="fci-icon"><i class="fas fa-ambulance"></i></div>
+                <div>
+                  <p class="fci-label">Gawat Darurat (IGD)</p>
+                  <p class="fci-value">(0265) 3172112</p>
+                </div>
               </div>
-            </div>
-            <div class="d-flex align-items-center gap-3 text-white">
-              <div class="footer-icon-circle"><i class="fab fa-whatsapp"></i></div>
-              <div>
-                <small class="d-block opacity-50">WhatsApp RS</small>
-                <strong>+62 851-7500-0375</strong>
+              <div class="footer-contact-item">
+                <div class="fci-icon"><i class="fab fa-whatsapp"></i></div>
+                <div>
+                  <p class="fci-label">WhatsApp RS</p>
+                  <p class="fci-value">+62 851-7500-0375</p>
+                </div>
               </div>
-            </div>
-            <div class="d-flex align-items-center gap-3 text-white">
-              <div class="footer-icon-circle"><i class="fas fa-envelope"></i></div>
-              <div>
-                <small class="d-block opacity-50">Email Resmi</small>
-                <strong>jhc.tasik@gmail.com</strong>
+              <div class="footer-contact-item">
+                <div class="fci-icon"><i class="fas fa-envelope"></i></div>
+                <div>
+                  <p class="fci-label">Email Resmi</p>
+                  <p class="fci-value">jhc.tasik@gmail.com</p>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <div class="d-flex gap-2">
-            <a href="https://facebook.com/rsjantungjakarta" class="social-btn" target="_blank" rel="noopener" aria-label="Facebook">
-              <i class="fab fa-facebook-f"></i>
-            </a>
-            <a href="https://instagram.com/rsjantungtasikmalaya" class="social-btn" target="_blank" rel="noopener" aria-label="Instagram">
-              <i class="fab fa-instagram"></i>
-            </a>
-            <a href="https://youtube.com/@RSJantungJakartaJHC" class="social-btn" target="_blank" rel="noopener" aria-label="YouTube">
-              <i class="fab fa-youtube"></i>
-            </a>
-          </div>
-        </div>
-
-        <!-- Informasi -->
-        <div class="col-6 col-lg-2">
-          <h5 class="fw-bold text-white mb-4 border-start border-3 border-danger ps-3">Informasi</h5>
-          <ul class="list-unstyled d-flex flex-column gap-2">
-            <li><a href="index.php#about_us"   class="footer-link">Tentang Kami</a></li>
-            <li><a href="index.php#facilities" class="footer-link">Fasilitas</a></li>
-            <li><a href="index.php#doctors"    class="footer-link">Tim Dokter</a></li>
-            <li><a href="index.php#news"       class="footer-link">Berita & Artikel</a></li>
-            <li><a href="career.php"           class="footer-link">Karir / Lowongan</a></li>
-          </ul>
-        </div>
-
-        <!-- Layanan -->
-        <div class="col-6 col-lg-2">
-          <h5 class="fw-bold text-white mb-4 border-start border-3 border-danger ps-3">Layanan</h5>
-          <ul class="list-unstyled d-flex flex-column gap-2">
-            <?php foreach(array_slice($layanan_data, 0, 5) as $d): ?>
-              <li>
-                <a href="index.php#departments" class="footer-link">
-                  <?= htmlspecialchars($d['name']); ?>
+              <div class="social-cluster">
+                <a href="https://facebook.com/rsjantungjakarta" class="social-btn" target="_blank" rel="noopener" aria-label="Facebook">
+                  <i class="fab fa-facebook-f"></i>
                 </a>
-              </li>
-            <?php endforeach; ?>
-          </ul>
-        </div>
-
-        <!-- Map -->
-        <div class="col-12 col-lg-4">
-          <h5 class="fw-bold text-white mb-4 border-start border-3 border-danger ps-3">Lokasi Kami</h5>
-          <div class="rounded-3 overflow-hidden shadow-lg border border-white border-opacity-10">
-            <iframe
-              src="https://maps.google.com/maps?q=RS+Jantung+Tasikmalaya+JHC&t=&z=15&ie=UTF8&iwloc=&output=embed"
-              width="100%" height="195" style="border:0;" allowfullscreen="" loading="lazy"
-              title="Lokasi RS JHC Tasikmalaya"></iframe>
-            <div class="p-3 bg-white bg-opacity-10">
-              <small class="text-white">
-                <i class="fas fa-map-marker-alt me-2 text-danger"></i>
-                Jl. Raya Tasikmalaya, Jawa Barat, Indonesia
-              </small>
+                <a href="https://instagram.com/rsjantungtasikmalaya" class="social-btn" target="_blank" rel="noopener" aria-label="Instagram">
+                  <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://youtube.com/@RSJantungJakartaJHC" class="social-btn" target="_blank" rel="noopener" aria-label="YouTube">
+                  <i class="fab fa-youtube"></i>
+                </a>
+              </div>
             </div>
+
+            <!-- Informasi -->
+            <div class="col-6 col-lg-2">
+              <h5 class="footer-heading">Informasi</h5>
+              <ul class="footer-links">
+                <li><a href="index.php#about_us">Tentang Kami</a></li>
+                <li><a href="index.php#facilities">Fasilitas</a></li>
+                <li><a href="index.php#doctors">Tim Dokter</a></li>
+                <li><a href="index.php#news">Berita & Artikel</a></li>
+                <li><a href="career.php">Karir / Lowongan</a></li>
+              </ul>
+            </div>
+
+            <!-- Layanan -->
+            <div class="col-6 col-lg-2">
+              <h5 class="footer-heading">Layanan</h5>
+              <ul class="footer-links">
+                <?php foreach (array_slice($layanan_data, 0, 5) as $d): ?>
+                  <li>
+                    <a href="index.php#departments">
+                      <?= htmlspecialchars($d['name']); ?>
+                    </a>
+                  </li>
+                <?php endforeach; ?>
+              </ul>
+            </div>
+
+            <!-- Map -->
+            <div class="col-12 col-lg-4">
+              <h5 class="footer-heading">Lokasi Kami</h5>
+              <div class="footer-map-wrap">
+                <iframe
+                  src="https://maps.google.com/maps?q=RS+Jantung+Tasikmalaya+JHC&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                  width="100%" height="200" style="border:0;display:block;" allowfullscreen="" loading="lazy"
+                  title="Lokasi RS JHC Tasikmalaya"></iframe>
+                <div class="footer-map-label">
+                  <i class="fas fa-map-marker-alt"></i>
+                  Jl. Mohamad Hatta No.155, RT.01/RW.020, Sukamanah, Kec. Cipedes, Kab. Tasikmalaya, Jawa Barat 46131
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
-
       </div>
-    </div>
 
-    <div class="border-top border-white border-opacity-10">
-      <div class="container">
-        <div class="py-4 text-center">
-          <p class="mb-0 text-white opacity-50 small fw-semibold">
-            &copy; 2026 RS Jantung Heart Center Tasikmalaya. All Rights Reserved.
-          </p>
+      <div class="container" style="max-width:1280px;">
+        <div class="footer-bottom text-center">
+          <p>&copy; 2026 RS Jantung Heart Center Tasikmalaya. All Rights Reserved.</p>
         </div>
       </div>
     </div>
   </footer>
 
-</main><!-- /#top -->
+</main>
 
 <!-- ============================================================
      SCRIPTS
 ============================================================ -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+(function() {
+  'use strict';
 
-  /* ── 1. NAVBAR SCROLL EFFECT ── */
+  /* ── Navbar scroll ── */
   const navbar = document.getElementById('mainNavbar');
-  window.addEventListener('scroll', function () {
-    navbar.classList.toggle('scrolled', window.scrollY > 60);
-  }, { passive: true });
+  const onScroll = () => navbar.classList.toggle('scrolled', window.scrollY > 60);
+  window.addEventListener('scroll', onScroll, { passive: true });
 
-  /* ── 2. SMOOTH SCROLL ── */
-  document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
-    anchor.addEventListener('click', function (e) {
+  /* ── Hamburger menu ── */
+  const toggler = document.getElementById('navToggle');
+  const navMenu = document.getElementById('navMenu');
+  const navCta  = document.getElementById('navCta');
+
+  function closeMenu() {
+    navMenu.classList.remove('mobile-open');
+    navCta.classList.remove('mobile-open');
+    toggler.setAttribute('aria-expanded', 'false');
+    const spans = toggler.querySelectorAll('span');
+    spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    navCta.style.top = '';
+  }
+
+  toggler.addEventListener('click', function() {
+    const isOpen = navMenu.classList.toggle('mobile-open');
+    navCta.classList.toggle('mobile-open', isOpen);
+    this.setAttribute('aria-expanded', isOpen.toString());
+
+    const spans = this.querySelectorAll('span');
+    if (isOpen) {
+      spans[0].style.transform = 'translateY(7px) rotate(45deg)';
+      spans[1].style.opacity   = '0';
+      spans[2].style.transform = 'translateY(-7px) rotate(-45deg)';
+
+      /* Stack CTA below the links panel */
+      requestAnimationFrame(() => {
+        const menuH = navMenu.offsetHeight;
+        const navH  = navbar.offsetHeight;
+        navCta.style.top = (navH + 6 + menuH) + 'px';
+        navCta.style.borderTop = '1px solid rgba(0,0,0,0.07)';
+      });
+    } else {
+      closeMenu();
+    }
+  });
+
+  /* Close mobile menu on link click */
+  navMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', closeMenu);
+  });
+
+  /* Close on outside click */
+  document.addEventListener('click', function(e) {
+    if (!navbar.contains(e.target)) closeMenu();
+  });
+
+  /* ── Smooth Scroll ── */
+  document.querySelectorAll('a[href^="index.php#"], a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
       const href = this.getAttribute('href');
-      if (href === '#' || href === '#!') return;
-      const target = document.querySelector(href);
+      const hashIndex = href.indexOf('#');
+      if (hashIndex === -1) return;
+      const hash = href.slice(hashIndex);
+      if (hash === '#' || hash === '#!') return;
+      const target = document.querySelector(hash);
       if (!target) return;
       e.preventDefault();
-      const offset = navbar.offsetHeight + 20;
+      const offset = navbar.offsetHeight + 16;
       window.scrollTo({ top: target.offsetTop - offset, behavior: 'smooth' });
     });
   });
 
-  document.addEventListener('DOMContentLoaded', function() {
-    const tabButtons = document.querySelectorAll('.custom-tab-btn');
+  /* ── About Tab Switcher ── */
+  window.switchAboutTab = function(btn, targetId) {
+    /* Deactivate all */
+    document.querySelectorAll('.about-tab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.about-tab-pane').forEach(p => p.classList.remove('active'));
+
+    /* Activate chosen */
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    const pane = document.getElementById(targetId);
+    if (pane) pane.classList.add('active');
+
+    /* Swap image */
+    const imgPath = btn.getAttribute('data-img');
     const mainImg = document.getElementById('main-about-image');
+    if (imgPath && imgPath.trim()) {
+      mainImg.style.opacity = '0';
+      mainImg.style.transform = 'scale(1.03)';
+      setTimeout(() => {
+        mainImg.src = 'public/' + imgPath;
+        mainImg.onload = () => {
+          mainImg.style.opacity = '1';
+          mainImg.style.transform = 'scale(1)';
+        };
+        mainImg.onerror = () => {
+          mainImg.style.opacity = '1';
+          mainImg.style.transform = 'scale(1)';
+        };
+      }, 280);
+    }
+  };
 
-    tabButtons.forEach(button => {
-        button.addEventListener('shown.bs.tab', function (event) {
-            const newImgPath = event.target.getAttribute('data-img');
-            
-            // Debugging: Cek path yang terpanggil di F12 Console browser
-            console.log("Memuat path gambar: " + newImgPath);
+  /* ── Modal: Detail Layanan — event delegation covers lu-card clicks ── */
+  document.addEventListener('click', function(e) {
+    const trigger = e.target.closest('.btn-open-layanan');
+    if (!trigger) return;
 
-            if(newImgPath && newImgPath.trim() !== "") {
-                // Beri efek transisi memudar
-                mainImg.style.opacity = '0';
-                
-                setTimeout(() => {
-                    // Update SRC gambar
-                    mainImg.src = newImgPath;
-                    
-                    // Pastikan gambar muncul kembali setelah sumbernya berubah
-                    mainImg.onload = function() {
-                        mainImg.style.opacity = '1';
-                    };
-                }, 300);
-            }
-        });
-    });
+    document.getElementById('m-name').textContent      = trigger.dataset.name     || '';
+    document.getElementById('m-desc').textContent      = trigger.dataset.desc     || '-';
+    document.getElementById('m-expertise').textContent = trigger.dataset.expertise || '-';
+    document.getElementById('m-info').textContent      = trigger.dataset.info     || 'Informasi belum tersedia.';
+
+    const imgEl = document.getElementById('m-image');
+    const path  = trigger.dataset.image || '';
+    if (path && path !== 'public/' && path !== 'public') {
+      imgEl.src = path; imgEl.style.display = 'block';
+    } else {
+      imgEl.style.display = 'none';
+    }
+
+    const mBtn  = document.getElementById('m-btn');
+    const bText = document.getElementById('m-btn-text');
+    mBtn.href = trigger.dataset.btnLink || '#';
+    bText.textContent = trigger.dataset.btnText || 'Hubungi Kami';
+
+    const isExt = (trigger.dataset.btnLink || '').match(/^https?:\/\/|wa\.me/);
+    isExt ? mBtn.setAttribute('target','_blank') : mBtn.removeAttribute('target');
   });
 
-  /* ── 3. MODAL: DETAIL LAYANAN ── */
-  document.querySelectorAll('.btn-open-layanan').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const name      = this.dataset.name     || '';
-      const desc      = this.dataset.desc     || '-';
-      const expertise = this.dataset.expertise|| '-';
-      const info      = this.dataset.info     || 'Informasi belum tersedia.';
-      const imagePath = this.dataset.image    || '';
-      const bText     = this.dataset.btnText  || 'Hubungi Kami';
-      const bLink     = this.dataset.btnLink  || '#';
+  /* ── Fasilitas: expand / collapse description ── */
+  window.toggleFacDesc = function(idx) {
+    const card       = document.getElementById('fac-' + idx);
+    const toggleBtn  = card ? card.querySelector('.fac-toggle') : null;
+    const toggleText = card ? card.querySelector('.fac-toggle-text') : null;
 
-      document.getElementById('m-name').innerText      = name;
-      document.getElementById('m-desc').innerText      = desc;
-      document.getElementById('m-expertise').innerText = expertise;
-      document.getElementById('m-info').innerText      = info;
+    if (!card) return;
+    const isExpanded = card.classList.toggle('expanded');
 
-      /* Gambar layanan */
-      const imgEl = document.getElementById('m-image');
-      if (imagePath && imagePath !== '' && imagePath !== 'public/' && imagePath !== 'public') {
-        imgEl.src           = imagePath;
-        imgEl.style.display = 'block';
-      } else {
-        imgEl.style.display = 'none';
-      }
+    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', isExpanded.toString());
+    if (toggleText) toggleText.textContent = isExpanded ? 'Sembunyikan' : 'Baca Selengkapnya';
 
-      /* Tombol aksi */
-      const actionBtn  = document.getElementById('m-btn');
-      const actionText = document.getElementById('m-btn-text');
+    /* Prevent card from hovering after expansion */
+    if (isExpanded) {
+      card.style.transform = 'none';
+    }
+  };
 
-      actionBtn.href       = bLink;
-      actionText.innerText = bText;
-
-      const isExternal = bLink.includes('http') || bLink.includes('wa.me');
-      if (isExternal) {
-        actionBtn.setAttribute('target', '_blank');
-        actionBtn.setAttribute('rel', 'noopener noreferrer');
-      } else {
-        actionBtn.removeAttribute('target');
-        actionBtn.removeAttribute('rel');
-      }
-    });
+  /* Stop fac-toggle click from bubbling */
+  document.querySelectorAll('.fac-toggle').forEach(btn => {
+    btn.addEventListener('click', e => e.stopPropagation());
   });
 
-  /* ── 4. MODAL: DETAIL DOKTER ── */
-  document.querySelectorAll('.btn-open-dokter').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const name        = this.dataset.name     || '';
-      const specialty   = this.dataset.specialty|| '';
-      const desc        = this.dataset.desc     || 'Tidak ada deskripsi tersedia.';
-      const img         = this.dataset.img      || '';
-      const scheduleRaw = this.dataset.schedule || '';
-
-      document.getElementById('mdl-name').innerText      = name;
-      document.getElementById('mdl-specialty').innerText = specialty;
-      document.getElementById('mdl-desc').innerText      = desc;
-      document.getElementById('mdl-img').src             = img;
-
-      /* Jadwal */
-      const scheduleEl = document.getElementById('mdl-schedule');
-      scheduleEl.innerHTML = '';
-      if (scheduleRaw.trim() !== '') {
-        scheduleRaw.split(',').forEach(function (item) {
-          const span = document.createElement('span');
-          span.className = 'badge bg-white text-info border border-info-subtle rounded-pill px-3 py-2 small fw-bold';
-          span.innerHTML = '<i class="far fa-clock me-1"></i>' + item.trim();
-          scheduleEl.appendChild(span);
-        });
-      } else {
-        scheduleEl.innerHTML = '<small class="text-muted fst-italic">Jadwal belum tersedia</small>';
-      }
-
-      /* Link booking */
-      const bookBtn = document.getElementById('mdl-book-link');
-      if (bookBtn) {
-        bookBtn.href = 'booking.php?dokter=' + encodeURIComponent(name) +
-                       '&spesialis=' + encodeURIComponent(specialty);
-      }
-    });
-  });
-
-  /* ── 5. MODAL: ARTIKEL ── */
-  document.querySelectorAll('.btn-read-more').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      document.getElementById('article-title').innerText    = this.dataset.title    || '';
-      document.getElementById('article-category').innerText = this.dataset.category || '';
-      document.getElementById('article-date').innerText     = this.dataset.date     || '';
-      document.getElementById('article-img').src            = this.dataset.image    || '';
-      document.getElementById('article-content').innerHTML  =
+  /* ── Modal: Artikel ── */
+  document.querySelectorAll('.btn-read-more').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.getElementById('article-title').textContent    = this.dataset.title    || '';
+      document.getElementById('article-category').textContent = this.dataset.category || '';
+      document.getElementById('article-date').textContent     = this.dataset.date     || '';
+      document.getElementById('article-img').src              = this.dataset.image    || '';
+      document.getElementById('article-content').innerHTML    =
         (this.dataset.content || '').replace(/\n/g, '<br>');
     });
   });
 
-  /* ── 6. TOOLTIPS ── */
-  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
-    new bootstrap.Tooltip(el);
-  });
+  /* ── Tooltips ── */
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
-  /* ── 7. PROMO POPUP (1 detik setelah load) ── */
+  /* ── Promo Popup ── */
   <?php if ($show_popup): ?>
   const promoEl = document.getElementById('promoPopup');
   if (promoEl) {
     const promoModal = new bootstrap.Modal(promoEl);
-    setTimeout(function () { promoModal.show(); }, 1000);
+    setTimeout(() => promoModal.show(), 1200);
   }
   <?php endif; ?>
 
-});
+  /* ── Animate on scroll ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity   = '1';
+        entry.target.style.transform = 'translateY(0)';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.07, rootMargin: '0px 0px -32px 0px' });
+
+  document.querySelectorAll('.lu-card, .service-card, .fac-card, .mcu-card, .news-card').forEach(el => {
+    el.style.opacity    = '0';
+    el.style.transform  = 'translateY(22px)';
+    el.style.transition = 'opacity 0.52s cubic-bezier(0.16,1,0.3,1), transform 0.52s cubic-bezier(0.16,1,0.3,1)';
+    observer.observe(el);
+  });
+
+})();
 </script>
 </body>
 </html>
