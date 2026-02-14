@@ -1894,6 +1894,11 @@ $show_popup = (count($active_popups) > 0);
     @media (max-width: 768px) {
       .gap-container { padding: 0 1.25rem; }
     }
+
+    .footer-contact-item a:hover .fci-value {
+    color: #bd3030 !important; /* Warna merah saat diarahkan kursor */
+    transition: 0.3s;
+    }
   </style>
 </head>
 <body>
@@ -2696,21 +2701,44 @@ $show_popup = (count($active_popups) > 0);
                 <div class="fci-icon"><i class="fas fa-ambulance"></i></div>
                 <div>
                   <p class="fci-label">Gawat Darurat (IGD)</p>
-                  <p class="fci-value"><?= htmlspecialchars($settings['contact_igd'] ?? '(0265) 3172112'); ?></p>
+                  <?php 
+                    $igd_raw = $settings['contact_igd'] ?? '(0265) 3172112';
+                    // Membersihkan karakter non-angka agar bisa didial otomatis oleh HP
+                    $igd_dial = preg_replace('/[^0-9]/', '', $igd_raw);
+                  ?>
+                  <a href="tel:<?= $igd_dial; ?>" class="text-decoration-none">
+                    <p class="fci-value"><?= htmlspecialchars($igd_raw); ?></p>
+                  </a>
                 </div>
               </div>
+
               <div class="footer-contact-item">
                 <div class="fci-icon"><i class="fab fa-whatsapp"></i></div>
                 <div>
                   <p class="fci-label">WhatsApp RS</p>
-                  <p class="fci-value"><?= htmlspecialchars($settings['contact_whatsapp'] ?? '+62 851-7500-0375'); ?></p>
+                  <?php 
+                    $wa_raw = $settings['contact_whatsapp'] ?? '+62 851-7500-0375';
+                    // Format nomor WA: hilangkan karakter simbol & ubah 0 di depan jadi 62
+                    $wa_link = preg_replace('/[^0-9]/', '', $wa_raw);
+                    if (substr($wa_link, 0, 1) === '0') {
+                        $wa_link = '62' . substr($wa_link, 1);
+                    }
+                  ?>
+                  <a href="https://wa.me/<?= $wa_link; ?>" target="_blank" class="text-decoration-none">
+                    <p class="fci-value"><?= htmlspecialchars($wa_raw); ?></p>
+                  </a>
                 </div>
               </div>
               <div class="footer-contact-item">
                 <div class="fci-icon"><i class="fas fa-envelope"></i></div>
                 <div>
                   <p class="fci-label">Email Resmi</p>
-                  <p class="fci-value"><?= htmlspecialchars($settings['contact_email'] ?? 'jhc.tasik@gmail.com'); ?></p>
+                  <?php 
+                    $email_raw = $settings['contact_email'] ?? 'jhc.tasik@gmail.com'; 
+                  ?>
+                  <a href="mailto:<?= htmlspecialchars($email_raw); ?>" class="text-decoration-none">
+                    <p class="fci-value"><?= htmlspecialchars($email_raw); ?></p>
+                  </a>
                 </div>
               </div>
 
