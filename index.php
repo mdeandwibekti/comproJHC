@@ -122,14 +122,16 @@ $facilities_data = [];
 $fac_result = $mysqli->query("SELECT * FROM facilities ORDER BY display_order ASC");
 if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[] = $row; } }
 
-$popup_res = $mysqli->query("SELECT * FROM settings2 WHERE setting_key LIKE 'popup_%'");
-$p_data = [];
-if ($popup_res) {
-    while($row = $popup_res->fetch_assoc()) {
-        $p_data[$row['setting_key']] = $row['setting_value'];
+$popup_query = $mysqli->query("SELECT * FROM popups WHERE status = 'active' ORDER BY created_at DESC");
+
+$active_popups = [];
+if ($popup_query) {
+    while($row = $popup_query->fetch_assoc()) {
+        $active_popups[] = $row;
     }
 }
-$show_popup = (($p_data['popup_status'] ?? '') === 'active');
+
+$show_popup = (count($active_popups) > 0);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -1705,32 +1707,163 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
     /* ============================================================
        PROMO POPUP
     ============================================================ */
-    #promoPopup .modal-content { border-radius: var(--radius-xl) !important; overflow: hidden; }
-    #promoPopup .popup-close {
-      position: absolute;
-      top: 12px; right: 12px;
-      z-index: 60;
-      width: 36px; height: 36px;
-      background: rgba(255,255,255,0.92);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      border: none;
-      box-shadow: var(--shadow-md);
-      transition: all 0.25s var(--ease-out);
-      cursor: pointer;
+    /* --- Container Modal Utama --- */
+    #promoPopupCarousel .modal-content { 
+        border-radius: 24px !important; 
+        overflow: hidden; 
+        border: none;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
     }
-    #promoPopup .popup-close:hover { transform: rotate(90deg) scale(1.1); background: #fff; }
 
-    .popup-img { width: 100%; max-height: 400px; object-fit: cover; display: block; }
-    .popup-body { padding: 1.5rem 1.75rem; text-align: center; }
-    .popup-title { font-size: 1.15rem; font-weight: 800; color: var(--navy); margin-bottom: 0.5rem; }
-    .popup-text { font-size: 0.875rem; color: var(--slate); line-height: 1.7; }
+    /* --- Tombol Close (X) Melayang --- */
+    .btn-close-custom {
+        position: absolute;
+        right: 16px;
+        top: 16px;
+        z-index: 1100;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px); /* Efek blur premium */
+        border: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        color: #8a3033;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        cursor: pointer;
+    }
 
+    .btn-close-custom:hover { 
+        transform: rotate(90deg) scale(1.1); 
+        background: #8a3033; 
+        color: #fff; 
+    }
+
+    /* --- Kontainer Gambar --- */
+    .popup-img-container {
+        background: #f8f9fa; /* Background netral */
+        height: 400px; /* Tinggi proporsional */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .popup-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Gambar memenuhi area agar rapi */
+        transition: transform 0.5s ease;
+    }
+
+    /* --- Area Konten Teks --- */
+    .content-area {
+        padding: 2.5rem 2rem;
+        background: #fff;
+        text-align: center;
+    }
+
+    .popup-title { 
+        font-size: 1.35rem; 
+        font-weight: 800; 
+        color: #1a1a1a; 
+        margin-bottom: 0.75rem;
+        letter-spacing: -0.5px;
+    }
+
+    .popup-text { 
+        font-size: 0.95rem; 
+        color: #64748b; 
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    /* --- Navigasi Panah (Custom Nav) --- */
+    .custom-nav {
+        width: 42px;
+        height: 42px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #8a3033;
+        border-radius: 50%;
+        top: 40%; /* Posisi di area gambar */
+        opacity: 0; /* Tersembunyi, muncul saat hover */
+        margin: 0 15px;
+        font-size: 1rem;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+    }
+
+    /* Panah muncul saat modal di-hover */
+    .modal-content:hover .custom-nav {
+        opacity: 1;
+    }
+
+    .custom-nav:hover {
+        background: #8a3033;
+        color: #fff;
+        transform: scale(1.1);
+    }
+
+    /* --- Indikator Titik (Pill Style) --- */
+    .custom-indicators {
+        bottom: 0 !important;
+        transform: translateY(-175px); /* Letakkan pas di perbatasan gambar & teks */
+        margin-bottom: 0;
+    }
+
+    .custom-indicators button {
+        width: 8px !important;
+        height: 8px !important;
+        border-radius: 50% !important;
+        background-color: #becad9 !important; /* Warna pasif */
+        border: none !important;
+        margin: 0 4px !important;
+        transition: all 0.3s ease;
+    }
+
+    .custom-indicators button.active {
+        background-color: #8a3033 !important; /* Warna aktif */
+        width: 24px !important; /* Memanjang menjadi pill */
+        border-radius: 10px !important;
+    }
+
+    /* --- Tombol Action Utama --- */
+    .btn-danger.rounded-pill {
+        padding: 12px 45px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        background: linear-gradient(135deg, #8a3033 0%, #bd3030 100%);
+        border: none;
+        box-shadow: 0 8px 20px -5px rgba(138, 48, 51, 0.4);
+        transition: 0.3s;
+    }
+
+    .btn-danger.rounded-pill:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px -5px rgba(138, 48, 51, 0.5);
+        opacity: 0.95;
+    }
+
+    /* --- Animasi Muncul (Pop-in) --- */
     .modal.fade .modal-dialog {
-      transform: scale(0.92) translateY(20px);
-      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transform: scale(0.8) translateY(40px);
+        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .modal.show .modal-dialog { transform: scale(1) translateY(0); }
+
+    .modal.show .modal-dialog {
+        transform: scale(1) translateY(0);
+    }
 
     /* ============================================================
        SPINNER
@@ -2127,7 +2260,7 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
 
       <div class="sec-header-center mb-5">
         <div class="sec-eyebrow" aria-hidden="true">Fasilitas</div>
-        <h2 class="sec-title">Fasilitas <em>Unggulan</em></h2>
+        <h2 class="sec-title">Fasilitas 
         <p class="sec-subtitle">Fasilitas modern dan lengkap untuk kenyamanan dan kesembuhan Anda.</p>
       </div>
 
@@ -2469,39 +2602,74 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
   <!-- ============================================================
        PROMO POPUP
   ============================================================ -->
-  <?php if ($show_popup): 
-    $raw_path      = $p_data['popup_image_path'] ?? '';
-    $final_img_url = 'public/' . $raw_path;
-  ?>
-  <div class="modal fade" id="promoPopup" tabindex="-1" aria-hidden="true" aria-label="Promo">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0">
-        <div class="modal-body p-0 position-relative">
-          <button type="button" class="popup-close" data-bs-dismiss="modal" aria-label="Tutup">
-            <i class="fas fa-times" style="font-size:0.8rem;color:var(--slate);"></i>
-          </button>
-          <?php if (!empty($raw_path)): ?>
-            <img src="<?= $final_img_url; ?>" class="popup-img" alt="Promo RS JHC"
-                 onerror="this.src='public/assets/img/gallery/JHC_Logo.png';this.style.padding='40px';">
-          <?php endif; ?>
-          <div class="popup-body">
-            <?php if (!empty($p_data['popup_title'])): ?>
-              <p class="popup-title"><?= htmlspecialchars($p_data['popup_title']); ?></p>
-            <?php endif; ?>
-            <?php if (!empty($p_data['popup_content'])): ?>
-              <p class="popup-text"><?= nl2br(htmlspecialchars($p_data['popup_content'])); ?></p>
-            <?php endif; ?>
-          </div>
+  <?php if ($show_popup): ?>
+    <div class="modal fade popup-modern" id="promoPopupCarousel" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+
+                <div class="modal-body p-0">
+                    <div id="carouselPromo" class="carousel slide" data-bs-ride="carousel">
+                        
+                        <?php if (count($active_popups) > 1): ?>
+                        <div class="carousel-indicators" style="bottom: 20px;">
+                            <?php foreach ($active_popups as $index => $popup): ?>
+                            <button type="button" data-bs-target="#carouselPromo" data-bs-slide-to="<?= $index; ?>" class="<?= $index === 0 ? 'active' : ''; ?>" aria-current="<?= $index === 0 ? 'true' : 'false'; ?>"></button>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php endif; ?>
+
+                        <div class="carousel-inner">
+                            <?php foreach ($active_popups as $index => $popup): 
+                                $img_url = 'public/' . htmlspecialchars($popup['image_path']);
+                            ?>
+                            <div class="carousel-item <?= $index === 0 ? 'active' : ''; ?>">
+                                <?php if (!empty($popup['image_path'])): ?>
+                                    <div class="popup-img-container">
+                                        <img src="<?= $img_url; ?>" class="d-block w-100" alt="<?= htmlspecialchars($popup['title']); ?>"
+                                            onerror="this.src='public/assets/img/gallery/logo.png'; this.style.padding='50px';">
+                                    </div>
+                                <?php endif; ?>
+
+                                <div class="p-4 p-lg-5 text-center bg-white">
+                                    <?php if (!empty($popup['title'])): ?>
+                                        <h4 class="fw-bold text-dark mb-3"><?= htmlspecialchars($popup['title']); ?></h4>
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($popup['content'])): ?>
+                                        <div class="text-muted mb-4" style="line-height: 1.6; font-size: 0.9rem;">
+                                            <?= nl2br(htmlspecialchars($popup['content'])); ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <button type="button" class="btn btn-danger rounded-pill px-5 fw-bold shadow-sm" 
+                                            data-bs-dismiss="modal" style="background: linear-gradient(90deg, #8a3033 0%, #bd3030 100%); border: none;">
+                                        Tutup
+                                    </button>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <?php if (count($active_popups) > 1): ?>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselPromo" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselPromo" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="modal-footer border-0 p-4 pt-0 justify-content-center">
-          <button type="button" class="btn-primary-jhc" data-bs-dismiss="modal">
-            <i class="fas fa-times"></i> Tutup
-          </button>
-        </div>
-      </div>
     </div>
-  </div>
-  <?php endif; ?>
+    <?php endif; ?>
 
   <!-- ============================================================
        FOOTER
@@ -2790,13 +2958,16 @@ $show_popup = (($p_data['popup_status'] ?? '') === 'active');
   document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
   /* ── Promo Popup ── */
-  <?php if ($show_popup): ?>
-  const promoEl = document.getElementById('promoPopup');
-  if (promoEl) {
-    const promoModal = new bootstrap.Modal(promoEl);
-    setTimeout(() => promoModal.show(), 1200);
-  }
-  <?php endif; ?>
+  /* ── Promo Popup Carousel ── */
+  document.addEventListener("DOMContentLoaded", function() {
+    var promoElement = document.getElementById('promoPopupCarousel');
+    if (promoElement) {
+        var myModal = new bootstrap.Modal(promoElement);
+        setTimeout(function() {
+            myModal.show();
+        }, 1000); // Muncul setelah 1 detik
+    }
+  });
 
   /* ── Animate on scroll ── */
   const observer = new IntersectionObserver((entries) => {
