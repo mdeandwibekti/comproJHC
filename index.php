@@ -55,11 +55,11 @@ if ($res) {
 }
 
 $settings = [];
-$set_result = $mysqli->query("SELECT * FROM settings2");
-if ($set_result) { 
-    while($row = $set_result->fetch_assoc()) { 
-        $settings[$row['setting_key']] = $row['setting_value']; 
-    } 
+$res_settings = $mysqli->query("SELECT * FROM settings2 WHERE setting_key LIKE 'contact_%' OR setting_key LIKE 'social_%'");
+if ($res_settings) {
+    while($row = $res_settings->fetch_assoc()){
+        $settings[$row['setting_key']] = $row['setting_value'];
+    }
 }
 
 $banners_data = [];
@@ -2680,53 +2680,59 @@ $show_popup = (count($active_popups) > 0);
         <div class="footer-main">
           <div class="row g-5">
 
-            <!-- Brand & Contact -->
             <div class="col-12 col-lg-4">
-              <?php $footer_logo = !empty($settings['footer_logo_path']) ? $settings['footer_logo_path'] : 'assets/img/gallery/JHC_Logo.png'; ?>
+              <?php 
+                $footer_logo = !empty($settings['footer_logo_path']) ? $settings['footer_logo_path'] : 'assets/img/gallery/JHC_Logo.png'; 
+              ?>
               <a href="index.php" aria-label="Beranda">
                 <img src="public/<?= htmlspecialchars($footer_logo); ?>"
                      class="footer-brand-logo" alt="RS JHC Tasikmalaya">
               </a>
               <p class="footer-tagline">
-                Memberikan pelayanan kesehatan jantung terpadu dengan standar kualitas tinggi dan tenaga medis profesional untuk masyarakat Tasikmalaya dan sekitarnya.
+                <?= htmlspecialchars($settings['contact_tagline'] ?? 'Memberikan pelayanan kesehatan jantung terpadu dengan standar kualitas tinggi.'); ?>
               </p>
 
               <div class="footer-contact-item">
                 <div class="fci-icon"><i class="fas fa-ambulance"></i></div>
                 <div>
                   <p class="fci-label">Gawat Darurat (IGD)</p>
-                  <p class="fci-value">(0265) 3172112</p>
+                  <p class="fci-value"><?= htmlspecialchars($settings['contact_igd'] ?? '(0265) 3172112'); ?></p>
                 </div>
               </div>
               <div class="footer-contact-item">
                 <div class="fci-icon"><i class="fab fa-whatsapp"></i></div>
                 <div>
                   <p class="fci-label">WhatsApp RS</p>
-                  <p class="fci-value">+62 851-7500-0375</p>
+                  <p class="fci-value"><?= htmlspecialchars($settings['contact_whatsapp'] ?? '+62 851-7500-0375'); ?></p>
                 </div>
               </div>
               <div class="footer-contact-item">
                 <div class="fci-icon"><i class="fas fa-envelope"></i></div>
                 <div>
                   <p class="fci-label">Email Resmi</p>
-                  <p class="fci-value">jhc.tasik@gmail.com</p>
+                  <p class="fci-value"><?= htmlspecialchars($settings['contact_email'] ?? 'jhc.tasik@gmail.com'); ?></p>
                 </div>
               </div>
 
               <div class="social-cluster">
-                <a href="https://facebook.com/rsjantungjakarta" class="social-btn" target="_blank" rel="noopener" aria-label="Facebook">
-                  <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="https://instagram.com/rsjantungtasikmalaya" class="social-btn" target="_blank" rel="noopener" aria-label="Instagram">
-                  <i class="fab fa-instagram"></i>
-                </a>
-                <a href="https://youtube.com/@RSJantungJakartaJHC" class="social-btn" target="_blank" rel="noopener" aria-label="YouTube">
-                  <i class="fab fa-youtube"></i>
-                </a>
+                <?php if(!empty($settings['social_facebook'])): ?>
+                  <a href="<?= htmlspecialchars($settings['social_facebook']); ?>" class="social-btn" target="_blank" rel="noopener">
+                    <i class="fab fa-facebook-f"></i>
+                  </a>
+                <?php endif; ?>
+                <?php if(!empty($settings['social_instagram'])): ?>
+                  <a href="<?= htmlspecialchars($settings['social_instagram']); ?>" class="social-btn" target="_blank" rel="noopener">
+                    <i class="fab fa-instagram"></i>
+                  </a>
+                <?php endif; ?>
+                <?php if(!empty($settings['social_youtube'])): ?>
+                  <a href="<?= htmlspecialchars($settings['social_youtube']); ?>" class="social-btn" target="_blank" rel="noopener">
+                    <i class="fab fa-youtube"></i>
+                  </a>
+                <?php endif; ?>
               </div>
             </div>
 
-            <!-- Informasi -->
             <div class="col-6 col-lg-2">
               <h5 class="footer-heading">Informasi</h5>
               <ul class="footer-links">
@@ -2738,7 +2744,6 @@ $show_popup = (count($active_popups) > 0);
               </ul>
             </div>
 
-            <!-- Layanan -->
             <div class="col-6 col-lg-2">
               <h5 class="footer-heading">Layanan</h5>
               <ul class="footer-links">
@@ -2752,17 +2757,16 @@ $show_popup = (count($active_popups) > 0);
               </ul>
             </div>
 
-            <!-- Map -->
             <div class="col-12 col-lg-4">
               <h5 class="footer-heading">Lokasi Kami</h5>
               <div class="footer-map-wrap">
                 <iframe
-                  src="https://maps.google.com/maps?q=RS+Jantung+Tasikmalaya+JHC&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                  src="<?= $settings['contact_map_url'] ?? ''; ?>"
                   width="100%" height="200" style="border:0;display:block;" allowfullscreen="" loading="lazy"
                   title="Lokasi RS JHC Tasikmalaya"></iframe>
                 <div class="footer-map-label">
                   <i class="fas fa-map-marker-alt"></i>
-                  Jl. Mohamad Hatta No.155, RT.01/RW.020, Sukamanah, Kec. Cipedes, Kab. Tasikmalaya, Jawa Barat 46131
+                  <?= htmlspecialchars($settings['contact_address'] ?? 'Alamat belum diatur.'); ?>
                 </div>
               </div>
             </div>
@@ -2773,7 +2777,7 @@ $show_popup = (count($active_popups) > 0);
 
       <div class="container" style="max-width:1280px;">
         <div class="footer-bottom text-center">
-          <p>&copy; 2026 RS Jantung Heart Center Tasikmalaya. All Rights Reserved.</p>
+          <p>© <?= date('Y'); ?> RS Jantung Heart Center Tasikmalaya. All Rights Reserved.</p>
         </div>
       </div>
     </div>
