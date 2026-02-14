@@ -2233,14 +2233,6 @@ $show_popup = (count($active_popups) > 0);
                 <div id="m-expertise" class="text-muted" style="font-size:0.85rem;line-height:1.65;white-space:pre-line;"></div>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="info-panel primary">
-                <p class="panel-label" style="color:var(--navy-mid);">
-                  <i class="fas fa-clock me-1"></i>Informasi Layanan
-                </p>
-                <div id="m-info" class="text-muted" style="font-size:0.85rem;line-height:1.65;white-space:pre-line;"></div>
-              </div>
-            </div>
           </div>
         </div>
         <div class="modal-footer border-0 pt-0 pb-4 px-4">
