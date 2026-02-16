@@ -2140,7 +2140,7 @@ $show_popup = (count($active_popups) > 0);
         <!-- Section subheading -->
         <div class="dept-divider mt-2">
           <div class="dept-divider-line"></div>
-          <div class="dept-divider-label"><i class="fas fa-stethoscope"></i> Layanan Unggulan</div>
+          <div class="dept-divider-label"><i class="fas fa-stethoscope"></i> Layanan</div>
           <div class="dept-divider-line"></div>
         </div>
 
@@ -2560,7 +2560,7 @@ $show_popup = (count($active_popups) > 0);
        PARTNERS
   ============================================================ -->
  <section id="partners" style="background:linear-gradient(135deg,#f8f9fa 0%,#fff 100%);">
-    <div class="container">
+    <div class="container">baik
       <div class="row justify-content-center mb-5">
         <div class="col-lg-7 text-center">
           <span class="section-label"><i class="fas fa-handshake me-2"></i>Mitra Kami</span>
