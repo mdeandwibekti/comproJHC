@@ -2921,26 +2921,48 @@ $show_popup = (count($active_popups) > 0);
     const trigger = e.target.closest('.btn-open-layanan');
     if (!trigger) return;
 
-    document.getElementById('m-name').textContent      = trigger.dataset.name     || '';
-    document.getElementById('m-desc').textContent      = trigger.dataset.desc     || '-';
+    // 1. Update Konten Teks
+    document.getElementById('m-name').textContent      = trigger.dataset.name      || '';
+    document.getElementById('m-desc').textContent      = trigger.dataset.desc      || '-';
     document.getElementById('m-expertise').textContent = trigger.dataset.expertise || '-';
-    document.getElementById('m-info').textContent      = trigger.dataset.info     || 'Informasi belum tersedia.';
+    
+    // Pastikan elemen m-info ada di HTML Anda, jika tidak ada baris ini bisa dihapus
+    const infoEl = document.getElementById('m-info');
+    if (infoEl) infoEl.textContent = trigger.dataset.info || 'Informasi belum tersedia.';
 
+    // 2. Logika Gambar (m-image)
     const imgEl = document.getElementById('m-image');
     const path  = trigger.dataset.image || '';
-    if (path && path !== 'public/' && path !== 'public') {
-      imgEl.src = path; imgEl.style.display = 'block';
+    // Validasi path gambar agar tidak menampilkan broken image jika path tidak valid
+    if (path && path !== 'public/' && path !== 'public' && path !== '') {
+      imgEl.src = path; 
+      imgEl.style.display = 'block';
     } else {
       imgEl.style.display = 'none';
     }
 
+    // 3. LOGIKA TOMBOL WHATSAPP (m-btn)
     const mBtn  = document.getElementById('m-btn');
     const bText = document.getElementById('m-btn-text');
-    mBtn.href = trigger.dataset.btnLink || '#';
-    bText.textContent = trigger.dataset.btnText || 'Hubungi Kami';
+    
+    // Ambil link dan teks dari atribut data- di PHP
+    const btnLink = trigger.dataset.btnLink || '#';
+    const btnText = trigger.dataset.btnText || 'Hubungi Kami';
 
-    const isExt = (trigger.dataset.btnLink || '').match(/^https?:\/\/|wa\.me/);
-    isExt ? mBtn.setAttribute('target','_blank') : mBtn.removeAttribute('target');
+    // Set Link dan Teks
+    mBtn.href = btnLink;
+    if (bText) bText.textContent = btnText;
+
+    // 4. Deteksi Link Eksternal (WhatsApp/URL)
+    // Jika link mengandung http atau wa.me, maka buka di tab baru
+    const isExternal = btnLink.match(/^https?:\/\/|wa\.me/);
+    if (isExternal) {
+      mBtn.setAttribute('target', '_blank');
+      mBtn.setAttribute('rel', 'noopener noreferrer'); // Keamanan tambahan
+    } else {
+      mBtn.removeAttribute('target');
+      mBtn.removeAttribute('rel');
+    }
   });
 
   /* ── Fasilitas: expand / collapse description ── */
