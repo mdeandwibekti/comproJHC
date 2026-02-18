@@ -2205,44 +2205,42 @@ $show_popup = (count($active_popups) > 0);
   <!-- Modal: Detail Layanan -->
   <div class="modal fade" id="modalLayanan" tabindex="-1" aria-labelledby="modalLayananLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="jhc-modal-header">
-          <h5 class="modal-title" id="modalLayananLabel">
-            <i class="fas fa-info-circle"></i>Detail Layanan
+      <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden;">
+        <div class="jhc-modal-header" style="background: linear-gradient(135deg, #8a3033 0%, #bd3030 100%); padding: 1.2rem; color: white;">
+          <h5 class="modal-title fw-bold" id="modalLayananLabel">
+            <i class="fas fa-stethoscope me-2"></i>Detail Unit Layanan
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
         </div>
+        
         <div class="modal-body p-4">
-          <div class="text-center mb-4">
-            <img id="m-image" src="" alt="Gambar Layanan"
-                 class="img-fluid rounded-3 shadow-sm mb-3"
-                 style="max-height:200px;width:100%;object-fit:cover;display:none;">
-            <h3 id="m-name" class="fw-bold" style="color:var(--navy);font-size:1.4rem;"></h3>
-          </div>
-          <div class="mb-4">
-            <p class="text-muted fw-semibold" style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">
-              <i class="fas fa-align-left me-1 text-danger"></i>Tentang Layanan
-            </p>
-            <p id="m-desc" class="text-secondary" style="font-size:0.9rem;line-height:1.75;"></p>
-          </div>
-          <div class="row g-3">
-            <div class="col-md-6">
-              <div class="info-panel warning">
-                <p class="panel-label" style="color:var(--gold);">
-                  <i class="fas fa-star me-1"></i>Keahlian Khusus
-                </p>
-                <div id="m-expertise" class="text-muted" style="font-size:0.85rem;line-height:1.65;white-space:pre-line;"></div>
-              </div>
+          <div class="row g-4 align-items-center mb-4">
+            <div class="col-md-4 text-center">
+                <div class="p-3 bg-light rounded-circle d-inline-block shadow-sm" style="width: 120px; height: 120px;">
+                    <img id="m-image" src="" alt="Icon" class="img-fluid" style="height: 100%; object-fit: contain;">
+                </div>
+            </div>
+            <div class="col-md-8">
+                <h3 id="m-name" class="fw-bold mb-1" style="color:#8a3033;"></h3>
+                <p class="text-muted small uppercase mb-0"><i class="fas fa-hospital me-1"></i> RS Jantung Jakarta</p>
             </div>
           </div>
+
+          <div class="mb-4">
+            <p class="text-muted fw-bold mb-2" style="font-size:0.75rem; text-transform:uppercase; color:#8a3033 !important;">
+              <i class="fas fa-align-left me-1"></i>Informasi Layanan
+            </p>
+            <div id="m-desc" class="text-secondary" style="font-size:0.95rem; line-height:1.8;"></div>
+          </div>
         </div>
-        <div class="modal-footer border-0 pt-0 pb-4 px-4">
-          <button type="button" class="btn-outline-jhc" data-bs-dismiss="modal">
-            <i class="fas fa-times"></i> Tutup
+
+        <div class="modal-footer border-0 p-4 pt-0 d-flex justify-content-between">
+          <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i> Tutup
           </button>
-          <a id="m-btn" href="#" class="btn-primary-jhc">
-            <span id="m-btn-text">Hubungi Kami</span>
-            <i class="fas fa-arrow-right"></i>
+          
+          <a id="m-link-dokter" href="#" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm" style="background: #8a3033; border:none;">
+            <i class="fas fa-user-md me-2"></i> Lihat Jadwal Dokter
           </a>
         </div>
       </div>
@@ -2913,54 +2911,38 @@ $show_popup = (count($active_popups) > 0);
   };
 
   /* ── Modal: Detail Layanan — event delegation covers lu-card clicks ── */
-  document.addEventListener('click', function(e) {
-    const trigger = e.target.closest('.btn-open-layanan');
-    if (!trigger) return;
-
-    // 1. Update Konten Teks
-    document.getElementById('m-name').textContent      = trigger.dataset.name      || '';
-    document.getElementById('m-desc').textContent      = trigger.dataset.desc      || '-';
-    document.getElementById('m-expertise').textContent = trigger.dataset.expertise || '-';
+  document.addEventListener('DOMContentLoaded', function() {
+    const modalLayanan = document.getElementById('modalLayanan');
     
-    // Pastikan elemen m-info ada di HTML Anda, jika tidak ada baris ini bisa dihapus
-    const infoEl = document.getElementById('m-info');
-    if (infoEl) infoEl.textContent = trigger.dataset.info || 'Informasi belum tersedia.';
+    modalLayanan.addEventListener('show.bs.modal', function (event) {
+        // Elemen (kartu/tombol) yang memicu modal
+        const button = event.relatedTarget;
+        
+        // Ekstrak informasi dari atribut data-*
+        const id = button.getAttribute('data-id'); // Ambil ID Departemen
+        const name = button.getAttribute('data-name');
+        const desc = button.getAttribute('data-desc');
+        const img = button.getAttribute('data-image');
 
-    // 2. Logika Gambar (m-image)
-    const imgEl = document.getElementById('m-image');
-    const path  = trigger.dataset.image || '';
-    // Validasi path gambar agar tidak menampilkan broken image jika path tidak valid
-    if (path && path !== 'public/' && path !== 'public' && path !== '') {
-      imgEl.src = path; 
-      imgEl.style.display = 'block';
-    } else {
-      imgEl.style.display = 'none';
-    }
+        // Update elemen di dalam modal
+        document.getElementById('m-name').textContent = name;
+        document.getElementById('m-desc').innerHTML = desc;
+        
+        // Update Link Dokter berdasarkan ID Departemen
+        const linkDokter = document.getElementById('m-link-dokter');
+        linkDokter.href = 'doctors_list.php?dept_id=' + id;
 
-    // 3. LOGIKA TOMBOL WHATSAPP (m-btn)
-    const mBtn  = document.getElementById('m-btn');
-    const bText = document.getElementById('m-btn-text');
-    
-    // Ambil link dan teks dari atribut data- di PHP
-    const btnLink = trigger.dataset.btnLink || '#';
-    const btnText = trigger.dataset.btnText || 'Hubungi Kami';
-
-    // Set Link dan Teks
-    mBtn.href = btnLink;
-    if (bText) bText.textContent = btnText;
-
-    // 4. Deteksi Link Eksternal (WhatsApp/URL)
-    // Jika link mengandung http atau wa.me, maka buka di tab baru
-    const isExternal = btnLink.match(/^https?:\/\/|wa\.me/);
-    if (isExternal) {
-      mBtn.setAttribute('target', '_blank');
-      mBtn.setAttribute('rel', 'noopener noreferrer'); // Keamanan tambahan
-    } else {
-      mBtn.removeAttribute('target');
-      mBtn.removeAttribute('rel');
-    }
+        // Update Gambar Ikon
+        const modalImg = document.getElementById('m-image');
+        if(img) {
+            modalImg.src = img;
+            modalImg.style.display = 'block';
+        } else {
+            modalImg.src = 'assets/img/default-icon.png'; // Fallback icon
+        }
+    });
   });
-
+  
   /* ── Fasilitas: expand / collapse description ── */
   window.toggleFacDesc = function(idx) {
     const card       = document.getElementById('fac-' + idx);
