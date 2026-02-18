@@ -2106,7 +2106,7 @@ $show_popup = (count($active_popups) > 0);
     <div class="container" style="max-width:1280px;">
 
       <div class="sec-header-center mb-5">
-        <div class="sec-eyebrow" aria-hidden="true">Layanan Terbaik</div>
+        <div class="sec-eyebrow" aria-hidden="true">Layanan Unggulan</div>
         <h2 class="sec-title">Pelayanan <em>Kami</em></h2>
         <p class="sec-subtitle">Layanan unggulan dan poliklinik spesialis untuk mendukung kesehatan Anda.</p>
       </div>
