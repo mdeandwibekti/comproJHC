@@ -2055,7 +2055,7 @@ $show_popup = (count($active_popups) > 0);
         <!-- Content -->
         <div class="col-lg-8 col-md-6">
           <div class="sec-eyebrow" aria-hidden="true">Mengenal Kami</div>
-          <h2 class="sec-title mb-4">RS Jantung <em>Tasikmalaya</em></h2>
+          <h2 class="sec-title mb-4">RS Jantung <em>Heart Center</em></h2>
 
           <!-- Tabs -->
           <div class="about-tabs" role="tablist" aria-label="Informasi tentang RS JHC">
@@ -2248,57 +2248,48 @@ $show_popup = (count($active_popups) > 0);
        FACILITIES
   ============================================================ -->
   <?php if (!empty($facilities_data)): ?>
-  <section id="facilities" class="facilities-section">
-    <div class="container" style="max-width:1280px;">
+    <section id="facilities" class="facilities-section">
+      <div class="container" style="max-width:1280px;">
 
-      <div class="sec-header-center mb-5">
-        <div class="sec-eyebrow" aria-hidden="true">Fasilitas</div>
-        <h2 class="sec-title">Fasilitas 
-        <p class="sec-subtitle">Fasilitas modern dan lengkap untuk kenyamanan dan kesembuhan Anda.</p>
-      </div>
-
-      <div class="fac-grid">
-        <?php foreach ($facilities_data as $idx => $fac):
-          $bg_style = !empty($fac['image_path'])
-            ? "background-image: url('public/" . htmlspecialchars($fac['image_path']) . "');"
-            : "background: linear-gradient(135deg, #0f1f3d 0%, #1E3A5F 100%);";
-          $has_desc = !empty(trim($fac['description']));
-        ?>
-        <div class="fac-card" id="fac-<?= $idx; ?>">
-          <!-- Background image -->
-          <div class="fac-bg" style="<?= $bg_style ?>"></div>
-          <!-- Dark overlay -->
-          <div class="fac-overlay"></div>
-          <!-- Nomor dekoratif -->
-          <span class="fac-number" aria-hidden="true"><?= str_pad($idx + 1, 2, '0', STR_PAD_LEFT); ?></span>
-          <!-- Content -->
-          <div class="fac-body">
-            <div class="fac-badge">
-              <i class="fas fa-hospital"></i> Fasilitas
-            </div>
-            <h3 class="fac-title"><?= htmlspecialchars($fac['name']); ?></h3>
-
-            <?php if ($has_desc): ?>
-              <!-- Collapsible description -->
-              <div class="fac-desc-wrap" id="fac-desc-<?= $idx; ?>">
-                <p class="fac-desc"><?= nl2br(htmlspecialchars($fac['description'])); ?></p>
-              </div>
-              <!-- Toggle button -->
-              <button class="fac-toggle"
-                      onclick="toggleFacDesc(<?= $idx; ?>)"
-                      aria-expanded="false"
-                      aria-controls="fac-desc-<?= $idx; ?>">
-                <span class="fac-toggle-text">Baca Selengkapnya</span>
-                <i class="fas fa-chevron-down"></i>
-              </button>
-            <?php endif; ?>
-          </div>
+        <div class="sec-header-center mb-5">
+          <div class="sec-eyebrow" aria-hidden="true">Fasilitas</div>
+          <h2 class="sec-title">Fasilitas JHC</h2>
+          <p class="sec-subtitle">Fasilitas modern dan lengkap untuk kenyamanan dan kesembuhan Anda.</p>
         </div>
-        <?php endforeach; ?>
-      </div>
 
-    </div>
-  </section>
+        <div class="fac-grid">
+          <?php foreach ($facilities_data as $idx => $fac):
+              $bg_style = !empty($fac['image_path'])
+                  ? "background-image: url('public/" . htmlspecialchars($fac['image_path']) . "');"
+                  : "background: linear-gradient(135deg, #0f1f3d 0%, #1E3A5F 100%);";
+              
+              // Encode kategori untuk parameter URL agar spasi tertangani dengan benar
+              $cat_param = urlencode($fac['category'] ?? 'Umum');
+              $target_link = "facilities_list.php?category=" . $cat_param;
+          ?>
+          
+          <a href="<?= $target_link; ?>" class="fac-card text-decoration-none" id="fac-<?= $idx; ?>">
+              <div class="fac-bg" style="<?= $bg_style ?>"></div>
+              <div class="fac-overlay"></div>
+              <span class="fac-number" aria-hidden="true"><?= str_pad($idx + 1, 2, '0', STR_PAD_LEFT); ?></span>
+              
+              <div class="fac-body">
+                  <div class="fac-badge">
+                      <i class="fas fa-tag"></i> <?= htmlspecialchars($fac['category'] ?? 'Fasilitas'); ?>
+                  </div>
+                  <h3 class="fac-title text-white"><?= htmlspecialchars($fac['name']); ?></h3>
+
+                  <div class="fac-toggle mt-2 text-white">
+                      <span class="fac-toggle-text">Lihat Detail <?= htmlspecialchars($fac['category']); ?></span>
+                      <i class="fas fa-arrow-right ms-2"></i>
+                  </div>
+              </div>
+          </a>
+          <?php endforeach; ?>
+        </div>
+
+      </div>
+    </section>
   <?php endif; ?>
 
   <!-- ============================================================
