@@ -2000,10 +2000,6 @@ $show_popup = (count($active_popups) > 0);
                     <i class="fas fa-stethoscope"></i>
                     Lihat Layanan
                   </a>
-                  <a class="btn-ghost-jhc" href="https://wa.me/<?= $no_rs_wa; ?>" target="_blank" rel="noopener">
-                    <i class="fab fa-whatsapp"></i>
-                    Hubungi Kami
-                  </a>
                 </div>
               </div>
             </div>
@@ -2059,7 +2055,7 @@ $show_popup = (count($active_popups) > 0);
         <!-- Content -->
         <div class="col-lg-8 col-md-6">
           <div class="sec-eyebrow" aria-hidden="true">Mengenal Kami</div>
-          <h2 class="sec-title mb-4">RS Jantung <em>Heart Center</em><br>Tasikmalaya</h2>
+          <h2 class="sec-title mb-4">RS Jantung <em>Tasikmalaya</em></h2>
 
           <!-- Tabs -->
           <div class="about-tabs" role="tablist" aria-label="Informasi tentang RS JHC">
