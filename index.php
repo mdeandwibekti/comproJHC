@@ -119,8 +119,14 @@ if ($partner_result) {
 }
 
 $facilities_data = [];
-$fac_result = $mysqli->query("SELECT * FROM facilities ORDER BY display_order ASC");
-if ($fac_result) { while($row = $fac_result->fetch_assoc()) { $facilities_data[] = $row; } }
+$fac_query = "SELECT * FROM facilities WHERE category IS NULL OR category = '' ORDER BY display_order ASC";
+
+$fac_result = $mysqli->query($fac_query);
+if ($fac_result) { 
+    while($row = $fac_result->fetch_assoc()) { 
+        $facilities_data[] = $row; 
+    } 
+}
 
 $popup_query = $mysqli->query("SELECT * FROM popups WHERE status = 'active' ORDER BY created_at DESC");
 
