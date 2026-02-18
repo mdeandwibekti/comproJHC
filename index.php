@@ -2134,11 +2134,56 @@ $show_popup = (count($active_popups) > 0);
           </div>
         <?php endforeach;
       }
+
+      function render_layanan_dokter_cards($data_list) {
+        foreach ($data_list as $item): ?>
+          <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <div class="lu-card shadow-sm border-0 h-100" style="border-radius: 20px; overflow: hidden; background: #fff;">
+              
+              <div class="p-4 text-center" style="background: #f8f9fa;">
+                <div class="svc-icon-wrap mb-3" style="width: 70px; height: 70px; margin: 0 auto; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                  <?php if (!empty($item['icon_path'])): ?>
+                    <img src="<?= htmlspecialchars($item['icon_path']); ?>" alt="<?= htmlspecialchars($item['name']); ?>" style="width: 40px;">
+                  <?php else: ?>
+                    <i class="fas fa-stethoscope text-danger fa-2x"></i>
+                  <?php endif; ?>
+                </div>
+                <h3 class="svc-name fw-bold mb-0" style="font-size: 1.1rem; color: #8a3033;">
+                  <?= htmlspecialchars($item['name']); ?>
+                </h3>
+              </div>
+
+              <div class="card-body p-4 text-center">
+                <p class="text-muted small mb-4" style="line-height: 1.6; min-height: 40px;">
+                  <?= !empty($item['description']) ? substr(strip_tags($item['description']), 0, 80) . '...' : 'Layanan kesehatan unggulan dengan tenaga medis profesional.'; ?>
+                </p>
+                
+                <div class="d-grid gap-2">
+                  <a href="doctors_list.php?dept_id=<?= $item['id']; ?>" class="btn btn-danger py-2 fw-bold" style="border-radius: 12px; background: linear-gradient(135deg, #8a3033 0%, #bd3030 100%); border: none;">
+                    <i class="fas fa-user-md me-2"></i> Lihat Jadwal Dokter
+                  </a>
+                  
+                  <button class="btn btn-outline-secondary py-2 small fw-bold" 
+                          style="border-radius: 12px; font-size: 0.8rem;"
+                          data-bs-toggle="modal" 
+                          data-bs-target="#modalLayanan"
+                          data-id="<?= $item['id']; ?>"
+                          data-name="<?= htmlspecialchars($item['name']); ?>"
+                          data-desc="<?= htmlspecialchars($item['description'] ?? ''); ?>"
+                          data-image="<?= htmlspecialchars($item['icon_path'] ?? ''); ?>">
+                    <i class="fas fa-info-circle me-1"></i> Informasi Unit
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        <?php endforeach;
+      } 
       ?>
 
       <!-- ── Layanan Unggulan: clean white icon-card ── -->
       <?php if (!empty($layanan_data)): ?>
-        <!-- Section subheading -->
         <div class="dept-divider mt-2">
           <div class="dept-divider-line"></div>
           <div class="dept-divider-label"><i class="fas fa-stethoscope"></i> Layanan</div>
@@ -2148,23 +2193,23 @@ $show_popup = (count($active_popups) > 0);
         <div class="layanan-grid mb-5">
           <?php foreach ($layanan_data as $item): ?>
             <div class="lu-card btn-open-layanan"
-                 role="button"
-                 tabindex="0"
-                 data-name="<?= htmlspecialchars($item['name']); ?>"
-                 data-desc="<?= htmlspecialchars($item['description']); ?>"
-                 data-expertise="<?= htmlspecialchars($item['special_skills']); ?>"
-                 data-info="<?= htmlspecialchars($item['additional_info']); ?>"
-                 data-image="<?= htmlspecialchars($item['icon_path'] ?? ''); ?>"
-                 data-btn-text="<?= htmlspecialchars($item['btn_text'] ?? 'Hubungi Kami'); ?>"
-                 data-btn-link="<?= htmlspecialchars($item['btn_link'] ?? '#'); ?>"
-                 data-bs-toggle="modal" data-bs-target="#modalLayanan">
+                role="button"
+                tabindex="0"
+                data-id="<?= $item['id']; ?>" 
+                data-name="<?= htmlspecialchars($item['name']); ?>"
+                data-desc="<?= htmlspecialchars($item['description']); ?>"
+                data-expertise="<?= htmlspecialchars($item['special_skills']); ?>"
+                data-info="<?= htmlspecialchars($item['additional_info']); ?>"
+                data-image="<?= htmlspecialchars($item['icon_path'] ?? ''); ?>"
+                data-btn-text="<?= htmlspecialchars($item['btn_text'] ?? 'Hubungi Kami'); ?>"
+                data-btn-link="<?= htmlspecialchars($item['btn_link'] ?? '#'); ?>"
+                data-bs-toggle="modal" data-bs-target="#modalLayanan">
 
-              <!-- Icon -->
               <div class="lu-icon">
                 <?php if (!empty($item['icon_path'])): ?>
                   <img src="<?= htmlspecialchars($item['icon_path']); ?>"
-                       alt="<?= htmlspecialchars($item['name']); ?>"
-                       onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                      alt="<?= htmlspecialchars($item['name']); ?>"
+                      onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                   <span class="lu-fallback-icon" style="display:none;">
                     <i class="fas fa-star"></i>
                   </span>
@@ -2173,14 +2218,20 @@ $show_popup = (count($active_popups) > 0);
                 <?php endif; ?>
               </div>
 
-              <!-- Name -->
               <h3 class="lu-name"><?= htmlspecialchars($item['name']); ?></h3>
 
-              <!-- Button -->
-              <button class="lu-btn"
-                      aria-label="Detail <?= htmlspecialchars($item['name']); ?>">
-                <i class="fas fa-info-circle"></i> Detail
-              </button>
+              <div class="d-flex flex-column gap-2 mt-auto w-100">
+                <button class="lu-btn w-100" aria-label="Detail <?= htmlspecialchars($item['name']); ?>">
+                  <i class="fas fa-info-circle"></i> Detail
+                </button>
+                
+                <a href="doctors_list.php?dept_id=<?= $item['id']; ?>" 
+                  class="btn btn-sm btn-outline-danger rounded-pill fw-bold py-2" 
+                  onclick="event.stopPropagation();" 
+                  style="font-size: 0.75rem;">
+                  <i class="fas fa-user-md me-1"></i> Lihat Dokter
+                </a>
+              </div>
 
             </div>
           <?php endforeach; ?>
@@ -2215,33 +2266,24 @@ $show_popup = (count($active_popups) > 0);
         
         <div class="modal-body p-4">
           <div class="row g-4 align-items-center mb-4">
-            <div class="col-md-4 text-center">
-                <div class="p-3 bg-light rounded-circle d-inline-block shadow-sm" style="width: 120px; height: 120px;">
+            <div class="col-md-3 text-center">
+                <div class="p-3 bg-light rounded-circle d-inline-block shadow-sm" style="width: 100px; height: 100px;">
                     <img id="m-image" src="" alt="Icon" class="img-fluid" style="height: 100%; object-fit: contain;">
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <h3 id="m-name" class="fw-bold mb-1" style="color:#8a3033;"></h3>
-                <p class="text-muted small uppercase mb-0"><i class="fas fa-hospital me-1"></i> RS Jantung Jakarta</p>
+                <div id="m-desc" class="text-secondary small" style="line-height: 1.6;"></div>
             </div>
           </div>
 
-          <div class="mb-4">
-            <p class="text-muted fw-bold mb-2" style="font-size:0.75rem; text-transform:uppercase; color:#8a3033 !important;">
-              <i class="fas fa-align-left me-1"></i>Informasi Layanan
-            </p>
-            <div id="m-desc" class="text-secondary" style="font-size:0.95rem; line-height:1.8;"></div>
-          </div>
+          <hr class="opacity-5">
         </div>
 
-        <div class="modal-footer border-0 p-4 pt-0 d-flex justify-content-between">
-          <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">
-            <i class="fas fa-times me-1"></i> Tutup
+        <div class="modal-footer border-0 p-4 pt-0">
+          <button type="button" class="btn btn-light rounded-pill px-4 fw-bold w-100" data-bs-dismiss="modal">
+            Tutup Informasi
           </button>
-          
-          <a id="m-link-dokter" href="#" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm" style="background: #8a3033; border:none;">
-            <i class="fas fa-user-md me-2"></i> Lihat Jadwal Dokter
-          </a>
         </div>
       </div>
     </div>
@@ -2554,7 +2596,7 @@ $show_popup = (count($active_popups) > 0);
        PARTNERS
   ============================================================ -->
  <section id="partners" style="background:linear-gradient(135deg,#f8f9fa 0%,#fff 100%);">
-    <div class="container">baik
+    <div class="container">
       <div class="row justify-content-center mb-5">
         <div class="col-lg-7 text-center">
           <span class="section-label"><i class="fas fa-handshake me-2"></i>Mitra Kami</span>
@@ -2915,31 +2957,46 @@ $show_popup = (count($active_popups) > 0);
     const modalLayanan = document.getElementById('modalLayanan');
     
     modalLayanan.addEventListener('show.bs.modal', function (event) {
-        // Elemen (kartu/tombol) yang memicu modal
         const button = event.relatedTarget;
+        const deptId = button.getAttribute('data-id'); // Ambil ID Departemen
         
-        // Ekstrak informasi dari atribut data-*
-        const id = button.getAttribute('data-id'); // Ambil ID Departemen
-        const name = button.getAttribute('data-name');
-        const desc = button.getAttribute('data-desc');
-        const img = button.getAttribute('data-image');
+        // Update info dasar modal
+        document.getElementById('m-name').textContent = button.getAttribute('data-name');
+        document.getElementById('m-desc').innerHTML = button.getAttribute('data-desc');
+        document.getElementById('m-image').src = button.getAttribute('data-image');
 
-        // Update elemen di dalam modal
-        document.getElementById('m-name').textContent = name;
-        document.getElementById('m-desc').innerHTML = desc;
-        
-        // Update Link Dokter berdasarkan ID Departemen
-        const linkDokter = document.getElementById('m-link-dokter');
-        linkDokter.href = 'doctors_list.php?dept_id=' + id;
+        // Reset & Load Daftar Dokter via AJAX
+        const doctorContainer = document.getElementById('m-doctor-list');
+        doctorContainer.innerHTML = '<div class="col-12 text-center py-3"><div class="spinner-border spinner-border-sm text-danger" role="status"></div><span class="ms-2">Mencari dokter...</span></div>';
 
-        // Update Gambar Ikon
-        const modalImg = document.getElementById('m-image');
-        if(img) {
-            modalImg.src = img;
-            modalImg.style.display = 'block';
-        } else {
-            modalImg.src = 'assets/img/default-icon.png'; // Fallback icon
-        }
+        fetch('get_doctors_api.php?dept_id=' + deptId)
+            .then(response => response.json())
+            .then(data => {
+                doctorContainer.innerHTML = ''; // Bersihkan loading
+                
+                if (data.length > 0) {
+                    data.forEach(doc => {
+                        doctorContainer.innerHTML += `
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center p-2 border rounded-3 shadow-sm bg-white">
+                                    <img src="public/${doc.photo_path || 'assets/img/default-doctor.png'}" 
+                                         class="rounded-circle me-3" 
+                                         style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div>
+                                        <div class="fw-bold small text-dark">${doc.name}</div>
+                                        <div class="text-danger" style="font-size: 0.65rem; font-weight: 700;">${doc.specialty}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    doctorContainer.innerHTML = '<div class="col-12 text-center py-3 text-muted small">Jadwal dokter belum tersedia untuk unit ini.</div>';
+                }
+            })
+            .catch(error => {
+                doctorContainer.innerHTML = '<div class="col-12 text-center py-3 text-danger small">Gagal memuat data dokter.</div>';
+            });
     });
   });
   

@@ -268,8 +268,8 @@ if ($dept_id > 0) {
                         <button type="button" class="btn btn-outline-secondary w-100 rounded-pill py-2 fw-bold" data-bs-dismiss="modal">Tutup</button>
                     </div>
                     <div class="col-8">
-                        <a href="" id="mdl-booking-link" class="btn btn-booking w-100">
-                            <i class="fas fa-calendar-check me-2"></i> Buat Janji
+                        <a href="" id="mdl-booking-link" target="_blank" class="btn btn-booking w-100">
+                            <i class="fab fa-whatsapp me-2"></i> Buat Janji via WA
                         </a>
                     </div>
                 </div>
@@ -280,30 +280,45 @@ if ($dept_id > 0) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const modalDetail = document.getElementById('modalDetail');
+   const modalDetail = document.getElementById('modalDetail');
     modalDetail.addEventListener('show.bs.modal', function (event) {
-        // Tombol yang memicu modal
         const button = event.relatedTarget;
         
-        // Ambil data dari atribut data-*
-        const id = button.getAttribute('data-id');
+        // 1. Ambil data dari atribut kartu
         const name = button.getAttribute('data-name');
         const img = button.getAttribute('data-img');
         const desc = button.getAttribute('data-desc');
-        const schedule = button.getAttribute('data-schedule');
+        const schedule = button.getAttribute('data-schedule'); // Ini berisi Jam/Hari Praktik
         
-        // Isi data ke dalam modal
+        // 2. Ambil Nama Poli dari Judul Halaman
+        const poliName = document.querySelector('.hero-header h2').innerText;
+        
+        // 3. Isi data ke dalam modal (Tampilan Visual)
         document.getElementById('mdl-name').innerText = name;
         document.getElementById('mdl-desc').innerText = desc || 'Informasi profil belum tersedia.';
         document.getElementById('mdl-schedule').innerText = schedule || 'Hubungi RS untuk jadwal.';
         
-        // Handle gambar error
         const imgEl = document.getElementById('mdl-img');
         imgEl.src = img;
         imgEl.onerror = function() { this.src = 'assets/img/default-doctor.png'; };
         
-        // Set link booking
-        document.getElementById('mdl-booking-link').href = 'booking.php?doctor_id=' + id;
+        // --- 4. LOGIKA WHATSAPP DENGAN JAM PRAKTIK ---
+        const phoneNumber = "6285175000375";
+        
+        // Menyusun pesan dengan tambahan Jam/Jadwal
+        const message = `Halo RS JHC, saya ingin membuat janji temu.%0A%0A` +
+                        `*Data Pendaftaran:*%0A` +
+                        `- Nama Pasien: %0A` +
+                        `- No. Telepon: %0A` +
+                        `- Layanan/Poli: ${poliName}%0A` +
+                        `- Dokter: ${name}%0A` +
+                        `- Jadwal/Jam: ${schedule}%0A%0A` +
+                        `Mohon konfirmasi pendaftaran saya. Terima kasih.`;
+        
+        const waLink = `https://api.whatsapp.com/send/?phone=${phoneNumber}&text=${message}&type=phone_number&app_absent=0`;
+        
+        // Set link ke tombol booking
+        document.getElementById('mdl-booking-link').href = waLink;
     });
 </script>
 
