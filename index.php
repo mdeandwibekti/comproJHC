@@ -2251,7 +2251,7 @@ $show_popup = (count($active_popups) > 0);
       <div class="container" style="max-width:1280px;">
 
         <div class="sec-header-center mb-5">
-          <div class="sec-eyebrow" aria-hidden="true">Fasilitas fasilitas jhc</div>
+          <div class="sec-eyebrow" aria-hidden="true">Layanan & Fasilitas</div>
           <h2 class="sec-title">Fasilitas JHC</h2>
           <p class="sec-subtitle">Fasilitas modern dan lengkap untuk kenyamanan dan kesembuhan Anda.</p>
         </div>
@@ -2262,8 +2262,12 @@ $show_popup = (count($active_popups) > 0);
                   ? "background-image: url('public/" . htmlspecialchars($fac['image_path']) . "');"
                   : "background: linear-gradient(135deg, #0f1f3d 0%, #1E3A5F 100%);";
               
-              // Encode kategori untuk parameter URL agar spasi tertangani dengan benar
-              $cat_param = urlencode($fac['category'] ?? 'Umum');
+              /* MODIFIKASI PENTING: 
+                 Karena Fasilitas Utama tidak memiliki kategori (null), 
+                 maka kita gunakan 'name' sebagai parameter untuk memfilter 
+                 item-item di halaman facilities_list.php
+              */
+              $cat_param = urlencode($fac['name']); 
               $target_link = "facilities_list.php?category=" . $cat_param;
           ?>
           
@@ -2274,12 +2278,12 @@ $show_popup = (count($active_popups) > 0);
               
               <div class="fac-body">
                   <div class="fac-badge">
-                      <i class="fas fa-tag"></i> <?= htmlspecialchars($fac['category'] ?? 'Fasilitas'); ?>
+                      <i class="fas fa-hospital"></i> Unit Layanan
                   </div>
                   <h3 class="fac-title text-white"><?= htmlspecialchars($fac['name']); ?></h3>
 
                   <div class="fac-toggle mt-2 text-white">
-                      <span class="fac-toggle-text">Lihat Detail <?= htmlspecialchars($fac['category']); ?></span>
+                      <span class="fac-toggle-text">Lihat Detail Fasilitas</span>
                       <i class="fas fa-arrow-right ms-2"></i>
                   </div>
               </div>
