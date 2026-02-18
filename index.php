@@ -2596,7 +2596,7 @@ $show_popup = (count($active_popups) > 0);
        PARTNERS
   ============================================================ -->
  <section id="partners" style="background:linear-gradient(135deg,#f8f9fa 0%,#fff 100%);">
-    <div class="container">baik
+    <div class="container">
       <div class="row justify-content-center mb-5">
         <div class="col-lg-7 text-center">
           <span class="section-label"><i class="fas fa-handshake me-2"></i>Mitra Kami</span>
