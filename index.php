@@ -1934,7 +1934,6 @@ $show_popup = (count($active_popups) > 0);
         <li><a href="index.php#facilities">Fasilitas</a></li>
         <li><a href="index.php#mcu_packages_data">Paket MCU</a></li>
         <li><a href="index.php#virtual_room">Virtual Room</a></li>
-        <li><a href="index.php#doctors">Dokter Kami</a></li>
         <li><a href="index.php#news">Berita</a></li>
       </ul>
 
