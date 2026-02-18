@@ -78,34 +78,180 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 require_once 'layout/header.php';
+$page_title_text = empty($id) ? "Input Isi Fasilitas" : "Edit Isi Fasilitas";
 ?>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-    :root { --jhc-red: #8a3033; --jhc-gradient: linear-gradient(135deg, #8a3033 0%, #bd3030 100%); }
-    .main-wrapper { background: #fff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 40px; border: 1px solid #eee; }
-    .form-label { font-weight: 700; color: #444; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 7px; display: block;}
-    .category-note { font-size: 0.75rem; color: #888; font-style: italic; margin-top: 5px; display: block;}
-    .btn-save { background: var(--jhc-gradient); color: white; border: none; padding: 12px 35px; border-radius: 12px; font-weight: 700; transition: 0.3s; }
-    .btn-save:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(138, 48, 51, 0.3); }
-    .img-preview { max-height: 250px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    :root { 
+        --jhc-red-dark: #8a3033; 
+        --jhc-gradient: linear-gradient(135deg, #8a3033 0%, #bd3030 100%); 
+        --admin-bg: #f8fafb;
+    }
+
+    body {
+        background-color: var(--admin-bg) !important;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .main-wrapper { 
+        background: #ffffff; 
+        border-radius: 24px; 
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03); 
+        padding: 45px; 
+        margin-top: 20px; 
+        border: 1px solid #f1f5f9; 
+    }
+
+    .page-header-jhc { 
+        border-left: 6px solid var(--jhc-red-dark); 
+        padding-left: 24px; 
+        margin-bottom: 40px; 
+    }
+
+    /* Form Styling */
+    .form-label { 
+        font-weight: 700; 
+        color: #475569; 
+        margin-bottom: 0.8rem; 
+        font-size: 0.75rem; 
+        text-transform: uppercase; 
+        letter-spacing: 1px;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #f1f5f9;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background-color: #fcfdfe;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--jhc-red-dark);
+        box-shadow: 0 0 0 4px rgba(138, 48, 51, 0.1);
+        background-color: #fff;
+    }
+
+    /* Button Styling */
+    .btn-save { 
+        background: var(--jhc-gradient); 
+        color: white !important; 
+        border-radius: 14px; 
+        padding: 14px 35px; 
+        font-weight: 800; 
+        border: none; 
+        transition: 0.3s; 
+        box-shadow: 0 8px 20px rgba(138, 48, 51, 0.25); 
+    }
+
+    .btn-save:hover { 
+        transform: translateY(-3px); 
+        box-shadow: 0 12px 25px rgba(138, 48, 51, 0.35); 
+    }
+
+    .btn-back {
+        background: #ffffff;
+        color: #64748b;
+        border: 2px solid #e2e8f0;
+        border-radius: 14px;
+        font-weight: 700;
+        padding: 10px 24px;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-back:hover {
+        background: #f8fafb;
+        border-color: #cbd5e1;
+        color: #1e293b;
+    }
+
+    /* Image Preview Styling */
+    .img-preview-box { 
+        background: #fcfdfe; 
+        border: 2px dashed #e2e8f0; 
+        border-radius: 20px; 
+        padding: 30px; 
+        text-align: center; 
+        transition: 0.3s;
+    }
+
+    .img-preview-box img { 
+        max-height: 250px; 
+        border-radius: 15px; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+        border: 3px solid #fff;
+    }
+
+    .category-note {
+        background: #fff9f0;
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 0.8rem;
+        color: #92400e;
+        border-left: 4px solid #f59e0b;
+        margin-top: 10px;
+    }
+
+    .breadcrumb-jhc {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+    .breadcrumb-jhc a {
+        text-decoration: none;
+        color: #6c757d; /* Warna abu-abu Dashboard */
+        transition: 0.3s;
+    }
+    .breadcrumb-jhc a:hover {
+        color: var(--jhc-red-dark);
+    }
+    .breadcrumb-jhc .separator {
+        color: #dee2e6;
+    }
+    .breadcrumb-jhc .current {
+        color: var(--jhc-red-dark); /* Warna merah JHC */
+        font-weight: 700;
+    }
 </style>
 
-<div class="container py-4">
+<div class="container-fluid py-4">
     <div class="main-wrapper">
-        <div class="mb-4 border-start border-4 border-danger ps-3">
-            <h3 class="fw-bold mb-0"><?= empty($id) ? 'Input Isi Fasilitas' : 'Edit Isi Fasilitas'; ?></h3>
-            <p class="text-muted small">Hubungkan item fasilitas spesifik ke Kategori Utama.</p>
+        <div class="breadcrumb-jhc">
+            <a href="dashboard.php">Dashboard</a> 
+            <span class="separator">/</span> 
+            <a href="facilities.php">Manajemen Fasilitas</a>
+            <span class="separator">/</span> 
+            <span class="current"><?php echo empty($id) ? 'Tambah Sub-Item' : 'Edit Sub-Item'; ?></span>
+        </div>
+        <div class="page-header-jhc d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+            <div>
+                <h2 class="fw-extrabold mb-1 text-dark" style="font-weight: 800; letter-spacing: -1px;"><?php echo $page_title_text; ?></h2>
+                <p class="text-muted small mb-0">Hubungkan item fasilitas spesifik ke dalam <b>Kategori Utama</b>.</p>
+            </div>
+            <div class="mt-3 mt-md-0">
+                <a href="facilities.php" class="btn-back">
+                    <i class="fas fa-arrow-left me-2"></i> Kembali ke Daftar
+                </a>
+            </div>
         </div>
 
         <form action="" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?= $id; ?>">
             <input type="hidden" name="current_image" value="<?= $image_path; ?>">
 
-            <div class="row g-4">
-                <div class="col-md-7">
+            <div class="row g-5">
+                <div class="col-lg-7">
                     <div class="mb-4">
-                        <label class="form-label">Hubungkan ke Kategori Utama</label>
-                        <select name="category" class="form-select form-control-lg" required>
+                        <label class="form-label">Hubungkan ke Kategori Utama <span class="text-danger">*</span></label>
+                        <select name="category" class="form-select" required>
                             <option value="" disabled <?= empty($category) ? 'selected' : ''; ?>>-- Pilih Kategori Utama --</option>
                             <?php if (!empty($existing_categories)): ?>
                                 <?php foreach ($existing_categories as $cat_name): ?>
@@ -113,45 +259,61 @@ require_once 'layout/header.php';
                                         <?= htmlspecialchars($cat_name); ?>
                                     </option>
                                 <?php endforeach; ?>
-                            <?php else: ?>
-                                <option value="" disabled>Belum ada Kategori Utama. Buat dulu di menu utama.</option>
                             <?php endif; ?>
                         </select>
-                        <span class="category-note">*Daftar ini berisi nama fasilitas utama (Parent) yang Anda input di halaman Manajemen Fasilitas.</span>
+                        <div class="category-note">
+                            <i class="fas fa-info-circle me-1"></i> <b>Penting:</b> Item ini akan dikelompokkan di bawah nama fasilitas utama yang Anda pilih.
+                        </div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label">Nama Item (Misal: Kamar VIP, R. Lab, Ambulans)</label>
-                        <input type="text" name="name" class="form-control" placeholder="Contoh: Kamar VVIP" value="<?= htmlspecialchars($name); ?>" required>
+                        <label class="form-label">Nama Item Spesifik <span class="text-danger">*</span></label>
+                        <input type="text" name="name" class="form-control" placeholder="E.g. Kamar VVIP Suite" value="<?= htmlspecialchars($name); ?>" required>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label">Deskripsi Fasilitas</label>
-                        <textarea name="description" class="form-control" rows="5" placeholder="Jelaskan detail fasilitas ini..."><?= htmlspecialchars($description); ?></textarea>
+                        <textarea name="description" class="form-control" rows="6" placeholder="Jelaskan detail, keunggulan, atau kelengkapan fasilitas ini..."><?= htmlspecialchars($description); ?></textarea>
                     </div>
 
-                    <div class="col-md-4 mb-4">
-                        <label class="form-label">Urutan Tampil</label>
-                        <input type="number" name="display_order" class="form-control" value="<?= $display_order; ?>">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <label class="form-label">Urutan Tampil</label>
+                            <input type="number" name="display_order" class="form-control" value="<?= $display_order; ?>">
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-md-5">
+                <div class="col-lg-5">
                     <label class="form-label">Foto Item Fasilitas</label>
-                    <div class="border rounded-4 p-3 text-center bg-light mb-3">
+                    <div class="img-preview-box mb-3">
                         <?php if($image_path): ?>
-                            <img src="../<?= $image_path; ?>" class="img-fluid img-preview">
+                            <img src="../<?= $image_path; ?>" class="img-fluid">
                         <?php else: ?>
-                            <div class="py-5 text-muted"><i class="fas fa-image fa-4x opacity-25"></i><br>Belum ada foto</div>
+                            <div class="py-5">
+                                <i class="fas fa-image fa-4x text-muted opacity-25"></i>
+                                <p class="small text-muted mt-3 mb-0 fw-bold">Pratinjau Foto Item</p>
+                                <p class="x-small text-muted opacity-75">Belum ada foto yang diunggah.</p>
+                            </div>
                         <?php endif; ?>
                     </div>
-                    <input type="file" name="image" class="form-control">
+                    
+                    <div class="p-2">
+                        <input type="file" name="image" class="form-control">
+                        <div class="mt-3 p-3 rounded-3 bg-light border">
+                            <div class="d-flex align-items-center text-muted" style="font-size: 0.75rem;">
+                                <i class="fas fa-compress-arrows-alt me-2"></i>
+                                <span>Rekomendasi: Format JPG/PNG (Max 5MB).</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="text-end border-top pt-4 mt-4">
-                <a href="facilities.php" class="btn btn-light rounded-pill px-4 me-2">Kembali</a>
-                <button type="submit" class="btn btn-save">Simpan Perubahan</button>
+            <div class="mt-5 border-top pt-4 text-center text-lg-end">
+                <button type="submit" class="btn btn-save">
+                    <i class="fas fa-check-circle me-2"></i> Simpan Perubahan Item
+                </button>
             </div>
         </form>
     </div>

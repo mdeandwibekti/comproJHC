@@ -182,10 +182,38 @@ require_once 'layout/header.php';
         font-weight: 800; border: 1px solid rgba(138, 48, 51, 0.1);
         text-transform: uppercase; display: inline-block; margin-top: 5px;
     }
+
+    .breadcrumb-jhc {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+    .breadcrumb-jhc a {
+        text-decoration: none;
+        color: #6c757d; /* Warna abu-abu Dashboard */
+        transition: 0.3s;
+    }
+    .breadcrumb-jhc a:hover {
+        color: var(--jhc-red-dark);
+    }
+    .breadcrumb-jhc .separator {
+        color: #dee2e6;
+    }
+    .breadcrumb-jhc .current {
+        color: var(--jhc-red-dark); /* Warna merah JHC */
+        font-weight: 700;
+    }
 </style>
 
 <div class="container-fluid py-4">
     <div class="main-wrapper">
+        <div class="breadcrumb-jhc">
+            <a href="dashboard.php">Dashboard</a> 
+            <span class="separator">/</span> 
+            <span class="current">Manajemen Fasilitas</span>
+        </div>
         <div class="page-header-jhc d-flex flex-column flex-md-row justify-content-between align-items-md-center">
             <div>
                 <h2 class="fw-extrabold mb-1 text-dark" style="letter-spacing: -1px; font-weight: 800;">
