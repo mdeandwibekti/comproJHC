@@ -2251,7 +2251,7 @@ $show_popup = (count($active_popups) > 0);
       <div class="container" style="max-width:1280px;">
 
         <div class="sec-header-center mb-5">
-          <div class="sec-eyebrow" aria-hidden="true">Fasilitas</div>
+          <div class="sec-eyebrow" aria-hidden="true">Fasilitas fasilitas jhc</div>
           <h2 class="sec-title">Fasilitas JHC</h2>
           <p class="sec-subtitle">Fasilitas modern dan lengkap untuk kenyamanan dan kesembuhan Anda.</p>
         </div>
