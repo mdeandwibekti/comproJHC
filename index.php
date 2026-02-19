@@ -127,17 +127,14 @@ if ($fac_result) {
     } 
 }
 
-$popup_query = $mysqli->query("SELECT * FROM popups WHERE status = 'active' ORDER BY created_at DESC");
 
+// Ambil data popup aktif
 $active_popups = [];
-if ($popup_query) {
-    while($row = $popup_query->fetch_assoc()) {
-        $active_popups[] = $row;
-    }
-}
-
-$show_popup = (count($active_popups) > 0);
+$popup_res = $mysqli->query("SELECT * FROM popups WHERE status = 'active' ORDER BY created_at DESC");
+while($row = $popup_res->fetch_assoc()){ $active_popups[] = $row; }
+$show_popup = !empty($active_popups);
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1729,12 +1726,19 @@ $show_popup = (count($active_popups) > 0);
 
     /* --- GAMBAR KONTEN --- */
     .popup-img-container {
-      background: #f8f9fa;
-      height: 400px;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden; position: relative;
+        width: 100%;
+        height: 350px; /* Tinggi tetap agar konsisten */
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
     }
-    .popup-img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .popup-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Gambar akan memenuhi kontainer tanpa distorsi */
+    }
 
     /* --- AREA TEKS --- */
     .content-area {
@@ -1745,25 +1749,21 @@ $show_popup = (count($active_popups) > 0);
     .popup-title { font-size: 1.35rem; font-weight: 800; color: #1a1a1a; margin-bottom: 0.75rem; letter-spacing: -0.5px; }
     .popup-text { font-size: 0.95rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem; }
 
-    /* --- NAVIGASI PANAH (LEBIH KONTRAS & BERWARNA) --- */
-    .custom-nav {
-      width: 48px; height: 48px;
-      background: #8a3033 !important; /* Warna Merah JHC Solid */
-      color: #ffffff !important;
-      border-radius: 50%;
-      top: 45%;
-      opacity: 0.85; /* Dibuat lebih pekat agar terlihat jelas */
-      margin: 0 12px;
-      font-size: 1.1rem;
-      border: 2px solid #ffffff !important; /* Border putih agar "keluar" dari gambar */
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-      display: flex; align-items: center; justify-content: center;
-      z-index: 1050;
-    }
-    /* Munculkan penuh saat modal disentuh */
-    .modal-content:hover .custom-nav { opacity: 1; }
-    .custom-nav:hover { transform: scale(1.1); background: #bd3030 !important; box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+   /* Navigasi Carousel Panah agar Terlihat Jelas */
+.custom-nav {
+    width: 40px;
+    height: 40px;
+    background-color: var(--crimson) !important;
+    border-radius: 50%;
+    top: 40%;
+    opacity: 0.8;
+    border: 2px solid #fff !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.custom-nav:hover { opacity: 1; transform: scale(1.1); }
+.custom-nav i { color: #fff; font-size: 1rem; }
 
     /* --- INDIKATOR TITIK (DI ATAS GAMBAR) --- */
     .custom-indicators { 
@@ -2516,74 +2516,69 @@ $show_popup = (count($active_popups) > 0);
   <!-- ============================================================
        PROMO POPUP
   ============================================================ -->
-  <?php if ($show_popup): ?>
-    <div class="modal fade popup-modern" id="promoPopupCarousel" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
-                
-                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
-                    <i class="fas fa-times"></i>
-                </button>
+<?php if ($show_popup): ?>
+<div class="modal fade popup-modern" id="promoPopupCarousel" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
+            
+            <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
 
-                <div class="modal-body p-0">
-                    <div id="carouselPromo" class="carousel slide" data-bs-ride="carousel">
-                        
-                        <?php if (count($active_popups) > 1): ?>
-                        <div class="carousel-indicators" style="bottom: 20px;">
-                            <?php foreach ($active_popups as $index => $popup): ?>
-                            <button type="button" data-bs-target="#carouselPromo" data-bs-slide-to="<?= $index; ?>" class="<?= $index === 0 ? 'active' : ''; ?>" aria-current="<?= $index === 0 ? 'true' : 'false'; ?>"></button>
-                            <?php endforeach; ?>
-                        </div>
-                        <?php endif; ?>
-
-                        <div class="carousel-inner">
-                            <?php foreach ($active_popups as $index => $popup): 
-                                $img_url = 'public/' . htmlspecialchars($popup['image_path']);
-                            ?>
-                            <div class="carousel-item <?= $index === 0 ? 'active' : ''; ?>">
-                                <?php if (!empty($popup['image_path'])): ?>
-                                    <div class="popup-img-container">
-                                        <img src="<?= $img_url; ?>" class="d-block w-100" alt="<?= htmlspecialchars($popup['title']); ?>"
-                                            onerror="this.src='public/assets/img/gallery/logo.png'; this.style.padding='50px';">
-                                    </div>
-                                <?php endif; ?>
-
-                                <div class="p-4 p-lg-5 text-center bg-white">
-                                    <?php if (!empty($popup['title'])): ?>
-                                        <h4 class="fw-bold text-dark mb-3"><?= htmlspecialchars($popup['title']); ?></h4>
-                                    <?php endif; ?>
-
-                                    <?php if (!empty($popup['content'])): ?>
-                                        <div class="text-muted mb-4" style="line-height: 1.6; font-size: 0.9rem;">
-                                            <?= nl2br(htmlspecialchars($popup['content'])); ?>
-                                        </div>
-                                    <?php endif; ?>
-
-                                    <button type="button" class="btn btn-danger rounded-pill px-5 fw-bold shadow-sm" 
-                                            data-bs-dismiss="modal" style="background: linear-gradient(90deg, #8a3033 0%, #bd3030 100%); border: none;">
-                                        Tutup
-                                    </button>
-                                </div>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-
-                        <?php if (count($active_popups) > 1): ?>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselPromo" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselPromo" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
-                        <?php endif; ?>
-                    </div>
+            <div id="carouselPromo" class="carousel slide" data-bs-ride="carousel">
+                <?php if (count($active_popups) > 1): ?>
+                <div class="carousel-indicators custom-indicators">
+                    <?php foreach ($active_popups as $index => $popup): ?>
+                        <button type="button" data-bs-target="#carouselPromo" data-bs-slide-to="<?= $index; ?>" class="<?= $index === 0 ? 'active' : ''; ?>"></button>
+                    <?php endforeach; ?>
                 </div>
+                <?php endif; ?>
+
+                <div class="carousel-inner">
+                    <?php foreach ($active_popups as $index => $popup): 
+                        // SINKRONISASI PATH: Tambahkan public/ agar gambar muncul
+                        $img_url = 'public/' . htmlspecialchars($popup['image_path']);
+                    ?>
+                    <div class="carousel-item <?= $index === 0 ? 'active' : ''; ?>">
+                        <div class="popup-img-container" style="background: #f8f9fa; height: 350px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            <img src="<?= $img_url; ?>?v=<?= time(); ?>" 
+                                 class="d-block w-100 h-100" 
+                                 style="object-fit: cover;"
+                                 alt="<?= htmlspecialchars($popup['title']); ?>"
+                                 onerror="this.src='public/assets/img/gallery/logo.png'; this.style.objectFit='contain'; this.style.padding='40px';">
+                        </div>
+
+                        <div class="p-4 p-lg-5 text-center bg-white">
+                            <h4 class="fw-bold text-dark mb-2"><?= htmlspecialchars($popup['title']); ?></h4>
+                            <p class="text-muted small mb-4"><?= nl2br(htmlspecialchars($popup['content'])); ?></p>
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-center">
+                                <?php if(!empty($popup['wa_link'])): ?>
+                                    <a href="<?= htmlspecialchars($popup['wa_link']); ?>" target="_blank" class="btn btn-success rounded-pill px-5 fw-bold shadow-sm">
+                                        <i class="fab fa-whatsapp me-2"></i>Ambil Promo
+                                    </a>
+                                <?php endif; ?>
+                                <button class="btn btn-outline-secondary rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                
+                <?php if (count($active_popups) > 1): ?>
+                    <button class="carousel-control-prev custom-nav" type="button" data-bs-target="#carouselPromo" data-bs-slide="prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-control-next custom-nav" type="button" data-bs-target="#carouselPromo" data-bs-slide="next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
     </div>
-  <?php endif; ?>
+</div>
+<?php endif; ?>
+
 
   <!-- ============================================================
        FOOTER
@@ -2912,16 +2907,33 @@ $show_popup = (count($active_popups) > 0);
   /* ── Tooltips ── */
   document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
-  /* ── Promo Popup ── */
-  document.addEventListener("DOMContentLoaded", function() {
-    var promoElement = document.getElementById('promoPopupCarousel');
+/* Promo Popup */
+document.addEventListener("DOMContentLoaded", function() {
+    const promoElement = document.getElementById('promoPopupCarousel');
+    
     if (promoElement) {
-        var myModal = new bootstrap.Modal(promoElement);
-        setTimeout(function() {
+        // Inisialisasi Modal
+        const myModal = new bootstrap.Modal(promoElement, {
+            keyboard: true,
+            backdrop: 'static'
+        });
+
+        // Inisialisasi Carousel agar bisa digeser
+        const carouselElement = document.getElementById('carouselPromo');
+        if (carouselElement) {
+            new bootstrap.Carousel(carouselElement, {
+                interval: 4000, // Geser otomatis tiap 4 detik
+                ride: 'carousel',
+                pause: 'hover'
+            });
+        }
+
+        // Munculkan modal setelah jeda 1 detik
+        setTimeout(() => {
             myModal.show();
         }, 1000);
     }
-  });
+});
 
   /* ── Animate on scroll ── */
   const observer = new IntersectionObserver((entries) => {
