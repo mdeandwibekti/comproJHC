@@ -2032,8 +2032,7 @@ $show_popup = (count($active_popups) > 0);
     <div class="container" style="max-width:1280px;">
 
       <div class="sec-header-center mb-5">
-        <div class="sec-eyebrow" aria-hidden="true">Layanan Unggulan</div>
-        <h2 class="sec-title">Pelayanan <em>Kami</em></h2>
+        <h2 class="sec-title">Layanan <em>Unggulan</em></h2>
         <p class="sec-subtitle">Layanan unggulan dan poliklinik spesialis untuk mendukung kesehatan Anda.</p>
       </div>
 
@@ -2222,8 +2221,7 @@ $show_popup = (count($active_popups) > 0);
     <div class="container" style="max-width:1280px;">
 
       <div class="sec-header-center mb-5">
-        <div class="sec-eyebrow" aria-hidden="true">Layanan Check Up</div>
-        <h2 class="sec-title">Pilih Paket <em>Kesehatan</em> Anda</h2>
+        <h2 class="sec-title">Promo Paket <em>Kesehatan</em></h2>
         <p class="sec-subtitle">Deteksi dini adalah investasi terbaik untuk kesehatan Anda dan keluarga.</p>
       </div>
 
@@ -2325,7 +2323,7 @@ $show_popup = (count($active_popups) > 0);
               <div class="ratio ratio-16x9">
                 <iframe src="<?= htmlspecialchars($auto_url); ?>"
                         allow="autoplay;encrypted-media" allowfullscreen
-                        title="Virtual Room RS Jantung Tasikmalaya"></iframe>
+                        title="Hospital Room RS Jantung Tasikmalaya"></iframe>
               </div>
             <?php elseif (!empty($vr_data['video_path'])): ?>
               <div class="ratio ratio-16x9 bg-black">
@@ -2341,7 +2339,7 @@ $show_popup = (count($active_popups) > 0);
         </div>
 
         <div class="col-lg-6 order-1 order-lg-2">
-          <div class="sec-eyebrow" aria-hidden="true">Virtual Room</div>
+          <div class="sec-eyebrow" aria-hidden="true">Hospital Room</div>
           <h2 class="sec-title mb-4"><?= htmlspecialchars($vr_data['title']); ?></h2>
           <p class="sec-subtitle mb-5" style="max-width:100%;">
             <?= nl2br(htmlspecialchars($vr_data['content'])); ?>
