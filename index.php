@@ -1017,20 +1017,21 @@ $show_popup = (count($active_popups) > 0);
       gap: 1rem;
       margin-bottom: 2.5rem;
     }
-    .dept-divider-line { flex: 1; height: 1px; background: #E2E8F0; }
+    .dept-divider-line { flex: 1; height: 1px; background: #8a3033; }
     .dept-divider-label {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
       padding: 0.5rem 1.25rem;
-      background: linear-gradient(135deg, #f7f8fc, #fff);
+      background: linear-gradient(135deg, #8a3033, 50%, #c8102e);
       border: 1.5px solid #E2E8F0;
       border-radius: 50px;
       font-size: 0.75rem;
       font-weight: 800;
+      color: var(--navy);
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--slate);
+      color: var(--shadow-red);
     }
 
     /* Layanan grid */
