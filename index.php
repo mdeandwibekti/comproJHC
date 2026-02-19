@@ -1952,7 +1952,7 @@ $show_popup = (count($active_popups) > 0);
   </section>
 
   <!-- ============================================================
-       ABOUT US — Layout Baru: Tabs [1][2][3] di atas, Gambar kiri | Konten kanan
+       ABOUT US 
   ============================================================ -->
   <section id="about_us" class="about-section">
     <div class="container" style="max-width:1280px;">
@@ -1960,11 +1960,11 @@ $show_popup = (count($active_popups) > 0);
       <!-- Header Section -->
       <div class="sec-header-center mb-4">
         <div class="sec-eyebrow" aria-hidden="true">Mengenal Kami</div>
-        <h2 class="sec-title">RS Jantung <em>Tasikmalaya</em></h2>
+        <h2 class="sec-title"> <em>RS Jantung</em> Tasikmalaya</h2>
       </div>
 
       <!-- Tab Buttons [1][2][3] — centered, di atas dua kolom -->
-      <div class="about-tabs-row" role="tablist" aria-label="Informasi RS JHC Tasikmalaya">
+      <div class="about-tabs-row" role="tablist" aria-label="Informasi RS Jantung Tasikmalaya">
         <?php $no = 0; foreach ($tabs_config as $key => $info): ?>
           <button class="about-tab-btn <?= $no === 0 ? 'active' : ''; ?>"
                   role="tab"
@@ -1991,10 +1991,10 @@ $show_popup = (count($active_popups) > 0);
           ?>
           <img src="<?= $display_img; ?>"
                id="main-about-image"
-               alt="Tentang RS JHC Tasikmalaya">
+               alt="Tentang RS Jantung Tasikmalaya">
           <div class="about-img-badge">
             <i class="fas fa-hospital-alt"></i>
-            RS JHC Tasikmalaya
+            RS Jantung Tasikmalaya
           </div>
         </div>
 
@@ -2176,7 +2176,7 @@ $show_popup = (count($active_popups) > 0);
 
         <div class="sec-header-center mb-5">
           <div class="sec-eyebrow" aria-hidden="true">Layanan & Fasilitas</div>
-          <h2 class="sec-title">Fasilitas JHC</h2>
+          <h2 class="sec-title">Fasilitas <em>RS Jantung</em> Tasikmalaya</h2>
           <p class="sec-subtitle">Fasilitas modern dan lengkap untuk kenyamanan dan kesembuhan Anda.</p>
         </div>
 
@@ -2325,7 +2325,7 @@ $show_popup = (count($active_popups) > 0);
               <div class="ratio ratio-16x9">
                 <iframe src="<?= htmlspecialchars($auto_url); ?>"
                         allow="autoplay;encrypted-media" allowfullscreen
-                        title="Virtual Room RS JHC"></iframe>
+                        title="Virtual Room RS Jantung Tasikmalaya"></iframe>
               </div>
             <?php elseif (!empty($vr_data['video_path'])): ?>
               <div class="ratio ratio-16x9 bg-black">
@@ -2386,7 +2386,7 @@ $show_popup = (count($active_popups) > 0);
           <?= htmlspecialchars($settings['news_section_title'] ?? 'Berita &'); ?>
           <em><?= strpos(($settings['news_section_title'] ?? ''), ' ') !== false ? '' : 'Artikel'; ?></em>
         </h2>
-        <p class="sec-subtitle">Informasi terbaru seputar kesehatan jantung dan layanan RS JHC.</p>
+        <p class="sec-subtitle">Informasi terbaru seputar kesehatan jantung dan layanan RS Jantung Tasikmalaya.</p>
       </div>
 
       <div class="row g-4">
@@ -2687,7 +2687,7 @@ $show_popup = (count($active_popups) > 0);
                 <iframe
                   src="<?= $settings['contact_map_url'] ?? ''; ?>"
                   width="100%" height="220" style="border:0;display:block;" allowfullscreen="" loading="lazy"
-                  title="Lokasi RS JHC Tasikmalaya"></iframe>
+                  title="Lokasi RS Jantung Tasikmalaya"></iframe>
                 <div class="footer-map-label">
                   <i class="fas fa-map-marker-alt"></i>
                   <?= htmlspecialchars($settings['contact_address'] ?? 'Alamat belum diatur.'); ?>
