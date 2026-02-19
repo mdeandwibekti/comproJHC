@@ -9,12 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $title = trim($_POST["title"] ?? '');
     $content = trim($_POST["content"] ?? '');
     $video_url = trim($_POST["video_url"] ?? ''); 
-<<<<<<< HEAD
     $bpjs_link = trim($_POST["bpjs_link"] ?? 'alur-bpjs.php'); // Tangkap input baru
-=======
-    $bpjs_link = trim($_POST["bpjs_link"] ?? 'alur-bpjs.php');
-    $bpjs_content = $_POST["bpjs_content"] ?? '';
->>>>>>> e9fae2c774ed34d1c017adf0a546cb21621f2b74
     $current_img = $_POST["current_image_360"] ?? '';
     $current_video = $_POST["current_video_path"] ?? '';
 
@@ -50,17 +45,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($error_msg)) {
-<<<<<<< HEAD
         // UPDATE SQL TERBARU (Menambahkan bpjs_link)
         $sql = "UPDATE page_virtual_room SET title=?, content=?, video_url=?, image_path_360=?, video_path=?, bpjs_link=? WHERE id=1";
         if ($stmt = $mysqli->prepare($sql)) {
             $stmt->bind_param("ssssss", $title, $content, $video_url, $current_img, $current_video, $bpjs_link);
-=======
-        // UPDATE SQL: Menyimpan semua data termasuk konten BPJS
-        $sql = "UPDATE page_virtual_room SET title=?, content=?, video_url=?, image_path_360=?, video_path=?, bpjs_link=?, bpjs_content=? WHERE id=1";
-        if ($stmt = $mysqli->prepare($sql)) {
-            $stmt->bind_param("sssssss", $title, $content, $video_url, $current_img, $current_video, $bpjs_link, $bpjs_content);
->>>>>>> e9fae2c774ed34d1c017adf0a546cb21621f2b74
             if ($stmt->execute()) {
                 header("location: virtual_room.php?status=updated");
                 exit();
@@ -71,13 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $query = $mysqli->query("SELECT * FROM page_virtual_room WHERE id=1");
-<<<<<<< HEAD
 $data = $query->fetch_assoc() ?: ['title'=>'','content'=>'','video_url'=>'','image_path_360'=>'','video_path'=>'','bpjs_link'=>'alur-bpjs.php'];
-=======
-$data = $query->fetch_assoc() ?: [
-    'title'=>'','content'=>'','video_url'=>'','image_path_360'=>'','video_path'=>'','bpjs_link'=>'alur-bpjs.php','bpjs_content'=>''
-];
->>>>>>> e9fae2c774ed34d1c017adf0a546cb21621f2b74
 
 require_once 'layout/header.php';
 ?>
@@ -93,7 +75,6 @@ require_once 'layout/header.php';
     body { background-color: var(--admin-bg) !important; font-family: 'Inter', sans-serif; }
     .admin-wrapper { background: #ffffff; border-radius: 24px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03); padding: 45px; border: 1px solid #f1f5f9; }
     .manage-header { border-left: 6px solid var(--jhc-red-dark); padding-left: 24px; margin-bottom: 35px; }
-<<<<<<< HEAD
     .card-settings { background: #fcfdfe; border: 1px solid #edf2f7; border-radius: 18px; transition: 0.3s; padding: 25px; margin-bottom: 25px; }
     .card-settings:hover { border-color: #cbd5e1; background: #fff; }
     .form-label { font-weight: 700; color: #475569; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; display: block; }
@@ -101,14 +82,6 @@ require_once 'layout/header.php';
     .btn-jhc-save { background: var(--jhc-gradient) !important; color: white !important; border-radius: 14px; padding: 14px 40px; font-weight: 800; border: none !important; box-shadow: 0 8px 20px rgba(138, 48, 51, 0.2); transition: 0.3s; }
     .status-pill { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
     .pill-bpjs { background: #eff6ff; color: #2563eb; }
-=======
-    .card-settings { background: #fcfdfe; border: 1px solid #edf2f7; border-radius: 18px; padding: 25px; margin-bottom: 25px; transition: 0.3s; }
-    .card-settings:hover { border-color: #cbd5e1; background: #fff; }
-    .form-label { font-weight: 700; color: #475569; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; display: block; }
-    .form-control { border: 2px solid #f1f5f9; border-radius: 12px; padding: 12px 16px; background-color: #fcfdfe; }
-    .btn-jhc-save { background: var(--jhc-gradient) !important; color: white !important; border-radius: 14px; padding: 14px 40px; font-weight: 800; border: none !important; box-shadow: 0 8px 20px rgba(138, 48, 51, 0.2); }
-    .status-pill { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
->>>>>>> e9fae2c774ed34d1c017adf0a546cb21621f2b74
 </style>
 
 <div class="container-fluid py-4">
@@ -119,13 +92,8 @@ require_once 'layout/header.php';
 
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center manage-header">
                 <div>
-<<<<<<< HEAD
                     <h2 style="font-weight: 800; letter-spacing: -1px;">Pengaturan Tur Virtual</h2>
                     <p class="text-muted small mb-0">Kelola konten visual imersif dan navigasi alur BPJS.</p>
-=======
-                    <h2 style="font-weight: 800; letter-spacing: -1px;">Pengaturan Tur Virtual & BPJS</h2>
-                    <p class="text-muted small mb-0">Kelola konten imersif serta panduan pendaftaran pasien.</p>
->>>>>>> e9fae2c774ed34d1c017adf0a546cb21621f2b74
                 </div>
                 <div class="mt-3 mt-md-0">
                     <button type="submit" class="btn btn-jhc-save" id="btnSubmit">
@@ -134,15 +102,6 @@ require_once 'layout/header.php';
                 </div>
             </div>
 
-<<<<<<< HEAD
-=======
-            <?php if(isset($_GET['status']) && $_GET['status'] == 'updated'): ?>
-                <div id="successAlert" class="alert alert-success border-0 shadow-sm border-start border-success border-5 mb-4 p-3">
-                    <div class="d-flex align-items-center"><i class="fas fa-check-circle fa-lg me-3"></i> <strong>Berhasil!</strong> Data telah diperbarui.</div>
-                </div>
-            <?php endif; ?>
-
->>>>>>> e9fae2c774ed34d1c017adf0a546cb21621f2b74
             <div class="row g-5">
                 <div class="col-lg-7">
                     <div class="mb-4">
@@ -151,7 +110,6 @@ require_once 'layout/header.php';
                     </div>
 
                     <div class="card card-settings border-primary border-start border-4">
-<<<<<<< HEAD
                         <div class="status-pill pill-bpjs"><i class="fas fa-route me-1"></i> Navigasi Pasien</div>
                         <label class="form-label text-primary">Link Tujuan Alur BPJS</label>
                         <div class="input-group">
@@ -165,37 +123,16 @@ require_once 'layout/header.php';
                         <div class="status-pill" style="background:#fff1f2; color:#e11d48;"><i class="fab fa-youtube me-1"></i> Video Embed</div>
                         <label class="form-label">YouTube Link</label>
                         <input type="text" name="video_url" class="form-control" value="<?= htmlspecialchars($data['video_url']); ?>" placeholder="https://www.youtube.com/embed/XXXXX">
-=======
-                        <div class="status-pill" style="background: #eff6ff; color: #2563eb;"><i class="fas fa-route me-1"></i> Alur BPJS</div>
-                        <div class="mb-3">
-                            <label class="form-label text-primary">Link Navigasi</label>
-                            <input type="text" name="bpjs_link" class="form-control" value="<?= htmlspecialchars($data['bpjs_link']); ?>">
-                        </div>
-                        <div class="mb-0">
-                            <label class="form-label text-primary">Isi Panduan Alur (Teks)</label>
-                            <textarea name="bpjs_content" class="form-control" rows="8"><?= htmlspecialchars($data['bpjs_content']); ?></textarea>
-                        </div>
-                    </div>
-
-                    <div class="card card-settings">
-                        <div class="status-pill" style="background:#fff1f2; color:#e11d48;"><i class="fab fa-youtube me-1"></i> Video YouTube</div>
-                        <input type="text" name="video_url" class="form-control" value="<?= htmlspecialchars($data['video_url']); ?>" placeholder="https://www.youtube.com/embed/...">
->>>>>>> e9fae2c774ed34d1c017adf0a546cb21621f2b74
                     </div>
 
                     <div class="mb-0">
                         <label class="form-label">Narasi Deskripsi Fasilitas</label>
-<<<<<<< HEAD
                         <textarea name="content" class="form-control" rows="6"><?= htmlspecialchars($data['content']); ?></textarea>
-=======
-                        <textarea name="content" class="form-control" rows="5"><?= htmlspecialchars($data['content']); ?></textarea>
->>>>>>> e9fae2c774ed34d1c017adf0a546cb21621f2b74
                     </div>
                 </div>
 
                 <div class="col-lg-5">
                     <div class="card card-settings">
-<<<<<<< HEAD
                         <label class="form-label">Ganti Video Lokal (.mp4)</label>
                         <input type="file" name="video_file" class="form-control mb-3" accept="video/mp4">
                         
@@ -204,16 +141,6 @@ require_once 'layout/header.php';
                     </div>
 
                     <label class="form-label">Preview Aktif</label>
-=======
-                        <label class="form-label">Update Media Lokal</label>
-                        <small class="d-block mb-2 text-muted">Video (.mp4):</small>
-                        <input type="file" name="video_file" class="form-control mb-3" accept="video/mp4">
-                        <small class="d-block mb-2 text-muted">Gambar 360°:</small>
-                        <input type="file" name="image_360" class="form-control" accept="image/*">
-                    </div>
-
-                    <label class="form-label">Preview Media</label>
->>>>>>> e9fae2c774ed34d1c017adf0a546cb21621f2b74
                     <div class="preview-box">
                         <?php if(!empty($data['video_url'])): ?>
                             <div class="ratio ratio-16x9"><iframe src="<?= $data['video_url']; ?>" allowfullscreen></iframe></div>
@@ -227,16 +154,4 @@ require_once 'layout/header.php';
     </div>
 </div>
 
-<<<<<<< HEAD
-=======
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        if ($("#successAlert").length) {
-            setTimeout(function() { $("#successAlert").fadeOut("slow"); }, 3000);
-        }
-    });
-</script>
-
->>>>>>> e9fae2c774ed34d1c017adf0a546cb21621f2b74
 <?php require_once 'layout/footer.php'; ?>
