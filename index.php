@@ -1030,7 +1030,7 @@ $show_popup = (count($active_popups) > 0);
       color: var(--navy);
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--shadow-red);
+      color: var(--white);
     }
 
     /* Layanan grid */
@@ -2355,13 +2355,17 @@ $show_popup = (count($active_popups) > 0);
 
           <div class="row g-3">
             <div class="col-sm-6">
-              <div class="vr-feature-card">
-                <div class="vr-feature-icon blue-bg"><i class="fas fa-user-md"></i></div>
-                <div>
-                  <h6>Dokter Ahli</h6>
-                  <small>Berpengalaman & Berdedikasi</small>
+              <a href="<?= !empty($vr_data['bpjs_link']) ? htmlspecialchars($vr_data['bpjs_link']) : '#'; ?>" 
+                class="text-decoration-none">
+                <div class="vr-feature-card" style="transition: 0.3s; cursor: pointer;">
+                  <div class="vr-feature-icon blue-bg">
+                    <i class="fas fa-file-medical"></i> </div>
+                  <div>
+                    <h6 class="text-dark">Alur BPJS</h6>
+                    <small class="text-muted">Klik untuk panduan pendaftaran</small>
+                  </div>
                 </div>
-              </div>
+              </a>
             </div>
             <div class="col-sm-6">
               <div class="vr-feature-card">
