@@ -1701,6 +1701,7 @@ $show_popup = (count($active_popups) > 0);
     /* ============================================================
        PROMO POPUP
     ============================================================ */
+    /* --- MODAL CONTAINER --- */
     #promoPopupCarousel .modal-content { 
       border-radius: 24px !important; 
       overflow: hidden; 
@@ -1708,11 +1709,12 @@ $show_popup = (count($active_popups) > 0);
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
     }
 
+    /* --- TOMBOL TUTUP (CLOSE) --- */
     .btn-close-custom {
       position: absolute;
       right: 16px; top: 16px;
       z-index: 1100;
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(8px);
       border: none;
       width: 34px; height: 34px;
@@ -1725,6 +1727,7 @@ $show_popup = (count($active_popups) > 0);
     }
     .btn-close-custom:hover { transform: rotate(90deg) scale(1.1); background: #8a3033; color: #fff; }
 
+    /* --- GAMBAR KONTEN --- */
     .popup-img-container {
       background: #f8f9fa;
       height: 400px;
@@ -1733,48 +1736,57 @@ $show_popup = (count($active_popups) > 0);
     }
     .popup-img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
 
+    /* --- AREA TEKS --- */
     .content-area {
       padding: 2.5rem 2rem;
       background: #fff;
       text-align: center;
     }
-
     .popup-title { font-size: 1.35rem; font-weight: 800; color: #1a1a1a; margin-bottom: 0.75rem; letter-spacing: -0.5px; }
     .popup-text { font-size: 0.95rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem; }
 
+    /* --- NAVIGASI PANAH (LEBIH KONTRAS & BERWARNA) --- */
     .custom-nav {
-      width: 42px; height: 42px;
-      background: rgba(255, 255, 255, 0.9);
-      color: #8a3033;
+      width: 48px; height: 48px;
+      background: #8a3033 !important; /* Warna Merah JHC Solid */
+      color: #ffffff !important;
       border-radius: 50%;
-      top: 40%;
-      opacity: 0;
-      margin: 0 15px;
-      font-size: 1rem;
-      border: none;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      transition: all 0.4s ease;
+      top: 45%;
+      opacity: 0.85; /* Dibuat lebih pekat agar terlihat jelas */
+      margin: 0 12px;
+      font-size: 1.1rem;
+      border: 2px solid #ffffff !important; /* Border putih agar "keluar" dari gambar */
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
       display: flex; align-items: center; justify-content: center;
-      z-index: 100;
+      z-index: 1050;
     }
+    /* Munculkan penuh saat modal disentuh */
     .modal-content:hover .custom-nav { opacity: 1; }
-    .custom-nav:hover { background: #8a3033; color: #fff; transform: scale(1.1); }
+    .custom-nav:hover { transform: scale(1.1); background: #bd3030 !important; box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
 
-    .custom-indicators { bottom: 0 !important; transform: translateY(-175px); margin-bottom: 0; }
+    /* --- INDIKATOR TITIK (DI ATAS GAMBAR) --- */
+    .custom-indicators { 
+      bottom: 20px !important; 
+      transform: none; 
+      margin-bottom: 0; 
+      z-index: 1060;
+    }
     .custom-indicators button {
-      width: 8px !important; height: 8px !important;
+      width: 10px !important; height: 10px !important;
       border-radius: 50% !important;
-      background-color: #becad9 !important;
-      border: none !important;
-      margin: 0 4px !important;
+      background-color: rgba(255,255,255,0.7) !important;
+      border: 1px solid rgba(0,0,0,0.2) !important;
+      margin: 0 5px !important;
       transition: all 0.3s ease;
     }
     .custom-indicators button.active {
       background-color: #8a3033 !important;
-      width: 24px !important;
+      width: 28px !important; /* Efek memanjang untuk posisi aktif */
       border-radius: 10px !important;
     }
 
+    /* --- TOMBOL AKSI UTAMA --- */
     .btn-danger.rounded-pill {
       padding: 12px 45px;
       font-weight: 700;
@@ -1786,17 +1798,13 @@ $show_popup = (count($active_popups) > 0);
       box-shadow: 0 8px 20px -5px rgba(138, 48, 51, 0.4);
       transition: 0.3s;
     }
-    .btn-danger.rounded-pill:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px -5px rgba(138, 48, 51, 0.5);
-      opacity: 0.95;
-    }
 
+    /* --- ANIMASI MODAL ZOOM --- */
     .modal.fade .modal-dialog {
-      transform: scale(0.8) translateY(40px);
-      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform: scale(0.8);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .modal.show .modal-dialog { transform: scale(1) translateY(0); }
+    .modal.show .modal-dialog { transform: scale(1); }
 
     /* ============================================================
        SPINNER
