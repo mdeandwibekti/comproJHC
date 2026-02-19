@@ -2466,15 +2466,15 @@ $show_popup = (count($active_popups) > 0);
   <!-- ============================================================
        PARTNERS
   ============================================================ -->
-  <section id="partners" style="background:linear-gradient(135deg,#f8f9fa 0%,#fff 100%); padding: 5rem 0;">
-    <div class="container" style="max-width:1280px;">
-      <div class="sec-header-center mb-5">
-        <div class="sec-eyebrow" aria-hidden="true">
-          <i class="fas fa-handshake"></i>
-          Mitra Kami
+  <section id="partners" style="background:linear-gradient(135deg,#f8f9fa 0%,#fff 100%);">
+    <div class="container">
+      <div class="row justify-content-center mb-5">
+        <div class="col-lg-7 text-center">
+          <span class="section-label"><i class="fas fa-handshake me-2"></i>Mitra Kami</span>
+          <h2 class="section-title">Mitra Asuransi & Perusahaan</h2>
+          <div class="section-divider mx-auto"></div>
+          <p class="text-muted mt-4">Bekerja sama dengan berbagai mitra terpercaya untuk pelayanan terbaik.</p>
         </div>
-        <h2 class="sec-title">Mitra Asuransi & <em>Perusahaan</em></h2>
-        <p class="sec-subtitle">Bekerja sama dengan berbagai mitra terpercaya untuk pelayanan terbaik.</p>
       </div>
 
       <div class="row justify-content-center align-items-center g-4">
@@ -2484,10 +2484,10 @@ $show_popup = (count($active_popups) > 0);
             <a href="<?= htmlspecialchars(!empty($partner['url']) ? $partner['url'] : '#'); ?>"
                target="<?= !empty($partner['url']) ? '_blank' : '_self'; ?>"
                rel="noopener noreferrer"
-               class="partner-item d-block"
+               class="d-block p-3"
                data-bs-toggle="tooltip" title="<?= htmlspecialchars($partner['name']); ?>">
               <img src="public/<?= htmlspecialchars($partner['logo_path']); ?>"
-                   class="partner-logo"
+                   class="img-fluid partner-logo"
                    alt="<?= htmlspecialchars($partner['name']); ?>"
                    onerror="this.src='public/assets/img/gallery/default-partner.png';">
             </a>
@@ -2495,7 +2495,7 @@ $show_popup = (count($active_popups) > 0);
           <?php endforeach; ?>
         <?php else: ?>
           <div class="col-12 text-center text-muted py-5">
-            <i class="fas fa-info-circle fa-3x mb-3 d-block opacity-25"></i>
+            <i class="fas fa-info-circle fa-3x mb-3"></i>
             <p>Belum ada mitra yang ditampilkan.</p>
           </div>
         <?php endif; ?>
