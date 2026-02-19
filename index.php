@@ -223,7 +223,7 @@ $show_popup = (count($active_popups) > 0);
     ::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 10px; }
 
     /* ============================================================
-       NAVBAR  —  Logo kiri · Menu tengah (center) · CTA kanan
+       NAVBAR
     ============================================================ */
     .site-nav {
       position: fixed;
@@ -244,7 +244,6 @@ $show_popup = (count($active_popups) > 0);
       box-shadow: 0 2px 16px rgba(10,22,40,0.08);
     }
 
-    /* Three-column grid: brand | links (center) | cta */
     .nav-inner {
       max-width: 1340px;
       width: 100%;
@@ -263,7 +262,6 @@ $show_popup = (count($active_popups) > 0);
     .nav-cta-wrap { grid-area: cta; }
     .nav-hamburger { display: none; grid-area: cta; }
 
-    /* ── Brand ── */
     .nav-brand {
       display: flex;
       align-items: center;
@@ -276,7 +274,6 @@ $show_popup = (count($active_popups) > 0);
     }
     .site-nav.scrolled .nav-brand img { height: 46px; }
 
-    /* ── Center links ── */
     .nav-links {
       display: flex;
       align-items: center;
@@ -288,7 +285,7 @@ $show_popup = (count($active_popups) > 0);
     .nav-links a {
       display: block;
       padding: 0.52rem 0.9rem;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       font-weight: 700;
       color: #1a1a2e;
       border-radius: var(--radius-sm);
@@ -311,7 +308,6 @@ $show_popup = (count($active_popups) > 0);
     .nav-links a:hover { color: var(--crimson); }
     .nav-links a:hover::after { width: 65%; }
 
-    /* ── CTA Button — matches reference exactly ── */
     .nav-cta-wrap {
       display: flex;
       align-items: center;
@@ -344,7 +340,6 @@ $show_popup = (count($active_popups) > 0);
       color: #fff !important;
     }
 
-    /* ── Hamburger ── */
     .nav-hamburger {
       display: none;
       flex-direction: column;
@@ -363,28 +358,20 @@ $show_popup = (count($active_popups) > 0);
       transition: all 0.3s var(--ease-out);
     }
 
-    /* ── Mobile Nav ── */
     @media (max-width: 1080px) {
-      /* 2-col: brand | hamburger */
       .nav-inner {
         grid-template-columns: auto 1fr;
         grid-template-areas: "brand ham";
         padding: 0 1.25rem;
         gap: 0;
       }
-
-      /* Desktop-only items hidden */
       .nav-links    { display: none !important; grid-area: unset; }
       .nav-cta-wrap { display: none !important; grid-area: unset; }
-
-      /* Hamburger takes the right cell */
       .nav-hamburger {
         display: flex;
         grid-area: ham;
         justify-self: end;
       }
-
-      /* Mobile dropdown panel — nav-links */
       .nav-links.mobile-open {
         display: flex !important;
         position: absolute;
@@ -400,8 +387,6 @@ $show_popup = (count($active_popups) > 0);
         justify-content: flex-start;
         z-index: 200;
       }
-
-      /* Mobile CTA panel */
       .nav-cta-wrap.mobile-open {
         display: flex !important;
         position: absolute;
@@ -414,7 +399,6 @@ $show_popup = (count($active_popups) > 0);
         justify-content: stretch;
         box-shadow: 0 20px 40px rgba(10,22,40,.15);
       }
-
       .nav-links.mobile-open a {
         padding: 0.78rem 1rem;
         border-radius: var(--radius-sm);
@@ -424,7 +408,6 @@ $show_popup = (count($active_popups) > 0);
       }
       .nav-links.mobile-open a:hover { background: var(--crimson-soft); color: var(--crimson); }
       .nav-links.mobile-open a::after { display: none !important; }
-
       .nav-cta-wrap.mobile-open .nav-cta { width: 100%; justify-content: center; }
     }
 
@@ -481,16 +464,9 @@ $show_popup = (count($active_popups) > 0);
     }
     .float-pill:hover .fp-text { opacity: 1; }
 
-    .float-igd {
-      background: var(--grad-primary);
-      color: #fff;
-    }
+    .float-igd { background: var(--grad-primary); color: #fff; }
     .float-igd .fp-icon { background: rgba(255,255,255,0.2); }
-
-    .float-wa {
-      background: #25D366;
-      color: #fff;
-    }
+    .float-wa { background: #25D366; color: #fff; }
     .float-wa .fp-icon { background: rgba(255,255,255,0.2); }
 
     @keyframes float-pulse {
@@ -550,16 +526,6 @@ $show_popup = (count($active_popups) > 0);
         transparent 100%
       );
       z-index: 1;
-    }
-
-    /* Noise grain overlay */
-    .hero-overlay::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none;
-      mix-blend-mode: overlay;
     }
 
     .hero-body {
@@ -626,7 +592,6 @@ $show_popup = (count($active_popups) > 0);
       align-items: center;
     }
 
-    /* Carousel controls */
     .carousel-ctrl {
       position: absolute;
       bottom: 2.5rem;
@@ -825,127 +790,224 @@ $show_popup = (count($active_popups) > 0);
     }
 
     /* ============================================================
-       ABOUT SECTION
+       ABOUT SECTION — IMPROVED LAYOUT
+       Sesuai sketsa: [1][2][3] tabs di atas
+       Kolom kiri: Gambar | Kolom kanan: Kata-kata
     ============================================================ */
-    .about-section { background: var(--mist); }
+    .about-section { 
+      background: var(--mist);
+      padding: 5rem 0;
+    }
 
-    .about-img-frame {
+    /* Tab buttons row — di atas, centered */
+    .about-tabs-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .about-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.52rem 1.2rem;
+      border-radius: 50px;
+      border: 2px solid #E2E8F0;
+      background: var(--white);
+      color: var(--slate);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      transition: all 0.25s var(--ease-out);
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: var(--shadow-xs);
+    }
+    .about-tab-btn i { font-size: 0.72rem; }
+    .about-tab-btn .tab-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px; height: 20px;
+      background: rgba(10,22,40,0.08);
+      border-radius: 50%;
+      font-size: 0.65rem;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .about-tab-btn:hover {
+      border-color: var(--crimson);
+      color: var(--crimson);
+      background: var(--crimson-soft);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+    .about-tab-btn.active {
+      background: var(--grad-primary);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 6px 18px rgba(200,16,46,.30);
+    }
+    .about-tab-btn.active .tab-num {
+      background: rgba(255,255,255,0.25);
+    }
+
+    /* Two-column body grid */
+    .about-body-grid {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 1.75rem;
+      align-items: stretch;
+    }
+
+    @media (max-width: 1199px) {
+      .about-body-grid {
+        grid-template-columns: 260px 1fr;
+        gap: 1.5rem;
+      }
+    }
+    @media (max-width: 991px) {
+      .about-body-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+      }
+    }
+
+    /* Image column */
+    .about-img-col {
       position: relative;
       border-radius: var(--radius-xl);
       overflow: hidden;
-      height: 480px;
+      height: 400px;
       box-shadow: var(--shadow-xl);
+      flex-shrink: 0;
+    }
+    @media (max-width: 991px) {
+      .about-img-col {
+        height: 280px;
+      }
+    }
+    @media (max-width: 575px) {
+      .about-img-col {
+        height: 220px;
+      }
     }
 
-    .about-img-frame img {
-      width: 100%; height: 100%;
+    .about-img-col img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      transition: transform 0.5s var(--ease-out), opacity 0.35s ease;
+      transition: opacity 0.32s ease, transform 0.45s var(--ease-out);
     }
 
-    /* Decorative corner accent */
-    .about-img-frame::before {
+    /* Decorative accents on image */
+    .about-img-col::before {
       content: '';
       position: absolute;
-      bottom: -2px; right: -2px;
-      width: 80px; height: 80px;
+      bottom: 0; right: 0;
+      width: 60px; height: 60px;
       background: var(--crimson);
       clip-path: polygon(100% 0, 100% 100%, 0 100%);
       z-index: 5;
-      opacity: 0.85;
+      opacity: 0.88;
     }
-    .about-img-frame::after {
+    .about-img-col::after {
       content: '';
       position: absolute;
       top: 0; left: 0;
       width: 4px; height: 60%;
       background: var(--grad-primary);
       border-radius: 0 4px 4px 0;
+      z-index: 5;
     }
 
-    .about-tabs {
+    /* Image badge overlay */
+    .about-img-badge {
+      position: absolute;
+      bottom: 1rem; left: 1rem;
+      background: rgba(10,22,40,0.75);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.4rem 0.85rem;
+      border-radius: 50px;
       display: flex;
-      gap: 0.35rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
-    }
-
-    .about-tab-btn {
-      display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      padding: 0.5rem 1.1rem;
-      border-radius: 50px;
-      border: 2px solid #E2E8F0;
-      background: var(--white);
-      color: var(--slate);
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      transition: all 0.25s var(--ease-out);
-      cursor: pointer;
+      z-index: 6;
+      border: 1px solid rgba(255,255,255,0.15);
     }
-    .about-tab-btn i { font-size: 0.7rem; }
-    .about-tab-btn:hover { border-color: var(--crimson); color: var(--crimson); background: var(--crimson-soft); }
-    .about-tab-btn.active {
-      background: var(--grad-primary);
-      color: #fff;
-      border-color: transparent;
-      box-shadow: var(--shadow-red);
-    }
+    .about-img-badge i { color: #FF8A9B; font-size: 0.65rem; }
 
-    .about-content-box {
+    /* Content panel (right column) */
+    .about-content-panel {
       background: var(--white);
-      border-radius: var(--radius-lg);
-      border-left: 4px solid var(--crimson);
+      border-radius: var(--radius-xl);
+      border-left: 5px solid var(--crimson);
       box-shadow: var(--shadow-md);
-      height: 320px;
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
+      min-height: 340px;
+    }
+    @media (max-width: 991px) {
+      .about-content-panel {
+        min-height: 280px;
+        border-left: none;
+        border-top: 5px solid var(--crimson);
+      }
     }
 
-    .about-tab-pane {
-      height: 100%;
-      padding: 1.75rem 2rem;
+    .about-pane-wrap {
+      flex: 1;
       overflow-y: auto;
-      display: none;
+      padding: 2rem 2.25rem;
     }
-    .about-tab-pane.active { display: block; animation: fadeSlide 0.35s var(--ease-out); }
+    @media (max-width: 575px) {
+      .about-pane-wrap { padding: 1.5rem 1.25rem; }
+    }
+
+    .about-pane-wrap::-webkit-scrollbar { width: 3px; }
+    .about-pane-wrap::-webkit-scrollbar-track { background: #f1f3f8; }
+    .about-pane-wrap::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 10px; }
+
+    .about-tab-pane { display: none; animation: fadeSlide 0.32s var(--ease-out); }
+    .about-tab-pane.active { display: block; }
+
     @keyframes fadeSlide {
-      from { opacity: 0; transform: translateX(12px); }
+      from { opacity: 0; transform: translateX(14px); }
       to   { opacity: 1; transform: translateX(0); }
     }
 
-    .about-tab-pane::-webkit-scrollbar { width: 3px; }
-    .about-tab-pane::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 10px; }
-
     .about-tab-pane h3 {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 800;
       color: var(--crimson-deep);
-      margin-bottom: 0.85rem;
-      padding-bottom: 0.65rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.7rem;
       border-bottom: 1.5px solid var(--crimson-soft);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .about-tab-pane h3 i {
+      color: var(--crimson);
+      font-size: 0.9rem;
     }
 
     .about-tab-pane .tab-text {
-      font-size: 0.87rem;
-      line-height: 1.75;
+      font-size: 0.88rem;
+      line-height: 1.9;
       color: var(--slate);
       text-align: justify;
     }
 
-    @media (max-width: 991px) {
-      .about-img-frame { height: 320px; }
-      .about-content-box { height: auto; min-height: 280px; }
-      .about-tab-pane { height: auto; }
-    }
-    @media (max-width: 575px) {
-      .about-tabs { gap: 0.25rem; }
-      .about-tab-btn { font-size: 0.7rem; padding: 0.4rem 0.75rem; }
-    }
-
     /* ============================================================
-       SERVICE CARDS  —  Image-background style (reference design)
+       SERVICE CARDS
     ============================================================ */
     .services-section { background: var(--white); }
 
@@ -961,7 +1023,7 @@ $show_popup = (count($active_popups) > 0);
       align-items: center;
       gap: 0.5rem;
       padding: 0.5rem 1.25rem;
-      background: var(--mist);
+      background: linear-gradient(135deg, #f7f8fc, #fff);
       border: 1.5px solid #E2E8F0;
       border-radius: 50px;
       font-size: 0.75rem;
@@ -971,41 +1033,7 @@ $show_popup = (count($active_popups) > 0);
       color: var(--slate);
     }
 
-    /* ============================================================
-       LAYANAN UNGGULAN  —  Clean white icon-card (sesuai referensi)
-    ============================================================ */
-
-    /* Section heading override for Layanan Unggulan */
-    .layanan-section-head {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-    .layanan-section-head .lu-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.82rem;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.5rem;
-    }
-    .layanan-section-head .lu-eyebrow i { font-size: 0.78rem; }
-    .layanan-section-head .lu-title {
-      font-size: clamp(1.25rem, 3vw, 1.6rem);
-      font-weight: 900;
-      color: var(--navy);
-      letter-spacing: -0.01em;
-    }
-    .layanan-section-head .lu-divider {
-      width: 48px; height: 3px;
-      background: var(--crimson-deep);
-      border-radius: 3px;
-      margin: 0.65rem auto 0;
-    }
-
-    /* Grid: 4 cols desktop → 3 tablet → 2 small → 1 mobile */
+    /* Layanan grid */
     .layanan-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -1015,7 +1043,6 @@ $show_popup = (count($active_popups) > 0);
     @media (max-width: 767px)  { .layanan-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
     @media (max-width: 420px)  { .layanan-grid { grid-template-columns: 1fr; } }
 
-    /* Card base */
     .lu-card {
       background: var(--white);
       border: 1.5px solid #E8ECF4;
@@ -1027,6 +1054,7 @@ $show_popup = (count($active_popups) > 0);
       align-items: center;
       gap: 0;
       cursor: pointer;
+      height: 100%;
       transition: transform 0.32s var(--ease-out),
                   box-shadow 0.32s var(--ease-out),
                   border-color 0.32s var(--ease-out);
@@ -1038,7 +1066,6 @@ $show_popup = (count($active_popups) > 0);
       border-color: rgba(200,16,46,.18);
     }
 
-    /* Icon circle */
     .lu-icon {
       width: 80px; height: 80px;
       border-radius: 50%;
@@ -1048,21 +1075,10 @@ $show_popup = (count($active_popups) > 0);
       transition: background 0.3s, transform 0.3s;
       flex-shrink: 0;
     }
-    .lu-card:hover .lu-icon {
-      background: var(--crimson-soft);
-      transform: scale(1.07);
-    }
-    .lu-icon img {
-      width: 44px; height: 44px;
-      object-fit: contain;
-      display: block;
-    }
-    .lu-icon .lu-fallback-icon {
-      font-size: 1.6rem;
-      color: var(--gold);
-    }
+    .lu-card:hover .lu-icon { background: var(--crimson-soft); transform: scale(1.07); }
+    .lu-icon img { width: 44px; height: 44px; object-fit: contain; display: block; }
+    .lu-icon .lu-fallback-icon { font-size: 1.6rem; color: var(--gold); }
 
-    /* Name */
     .lu-name {
       font-size: 0.9rem;
       font-weight: 700;
@@ -1072,7 +1088,6 @@ $show_popup = (count($active_popups) > 0);
       flex: 1;
     }
 
-    /* Detail button — merah solid seperti referensi */
     .lu-btn {
       display: inline-flex;
       align-items: center;
@@ -1098,7 +1113,6 @@ $show_popup = (count($active_popups) > 0);
       color: #fff;
     }
 
-    /* ── Poliklinik: same clean white card ── */
     .service-card {
       background: var(--white);
       border: 1.5px solid #E8ECF4;
@@ -1170,7 +1184,7 @@ $show_popup = (count($active_popups) > 0);
     }
 
     /* ============================================================
-       FACILITIES  —  Full image-background card + expand/collapse
+       FACILITIES
     ============================================================ */
     .facilities-section { background: linear-gradient(160deg, var(--mist) 0%, #EEF5FB 100%); }
 
@@ -1182,22 +1196,16 @@ $show_popup = (count($active_popups) > 0);
     @media (max-width: 991px) { .fac-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 575px) { .fac-grid { grid-template-columns: 1fr; gap: 1rem; } }
 
-    /* Card expands height when description is shown */
     .fac-card {
       position: relative;
       border-radius: 20px;
       overflow: hidden;
       height: 340px;
-      cursor: default;
-      transition: transform 0.38s var(--ease-out),
-                  box-shadow 0.38s var(--ease-out),
-                  height 0.45s var(--ease-out);
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.38s var(--ease-out), box-shadow 0.38s var(--ease-out), height 0.45s var(--ease-out);
     }
-    .fac-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 24px 56px rgba(10,22,40,.18);
-    }
-    /* Expanded card grows taller */
+    .fac-card:hover { transform: translateY(-6px); box-shadow: 0 24px 56px rgba(10,22,40,.18); }
     .fac-card.expanded { height: auto; min-height: 340px; }
 
     .fac-bg {
@@ -1210,24 +1218,15 @@ $show_popup = (count($active_popups) > 0);
       transition: transform 0.55s var(--ease-out);
     }
     .fac-card:hover .fac-bg { transform: scale(1.04); }
-    /* Don't zoom when expanded */
     .fac-card.expanded .fac-bg { transform: scale(1); }
 
     .fac-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        180deg,
-        rgba(5,10,22,0.10) 0%,
-        rgba(5,10,22,0.45) 40%,
-        rgba(5,10,22,0.90) 100%
-      );
+      background: linear-gradient(180deg, rgba(5,10,22,0.10) 0%, rgba(5,10,22,0.45) 40%, rgba(5,10,22,0.90) 100%);
       transition: background 0.4s;
     }
-    /* Darker overlay when expanded for readability */
-    .fac-card.expanded .fac-overlay {
-      background: rgba(5,10,22,0.82);
-    }
+    .fac-card.expanded .fac-overlay { background: rgba(5,10,22,0.82); }
 
     .fac-body {
       position: absolute;
@@ -1265,15 +1264,12 @@ $show_popup = (count($active_popups) > 0);
       text-shadow: 0 1px 8px rgba(0,0,0,.4);
     }
 
-    /* Description — collapsed: 3 lines, expanded: full */
     .fac-desc-wrap {
       overflow: hidden;
       transition: max-height 0.45s var(--ease-out);
       max-height: 0;
     }
-    .fac-card.expanded .fac-desc-wrap {
-      max-height: 400px;
-    }
+    .fac-card.expanded .fac-desc-wrap { max-height: 400px; }
 
     .fac-desc {
       font-size: 0.83rem;
@@ -1283,7 +1279,6 @@ $show_popup = (count($active_popups) > 0);
       padding-bottom: 0.75rem;
     }
 
-    /* Read more / collapse button */
     .fac-toggle {
       display: inline-flex;
       align-items: center;
@@ -1310,7 +1305,6 @@ $show_popup = (count($active_popups) > 0);
       font-weight: 900;
       color: rgba(255,255,255,0.06);
       line-height: 1;
-      font-family: var(--font-display);
       pointer-events: none;
       z-index: 2;
       user-select: none;
@@ -1333,7 +1327,7 @@ $show_popup = (count($active_popups) > 0);
 
     .mcu-img-wrap {
       position: relative;
-      height: 200px;
+      height: 220px;
       overflow: hidden;
     }
     .mcu-img-wrap img {
@@ -1419,7 +1413,7 @@ $show_popup = (count($active_popups) > 0);
     .news-card:hover { transform: translateY(-7px); box-shadow: var(--shadow-xl); border-color: rgba(200,16,46,0.1); }
 
     .news-img-wrap {
-      height: 230px;
+      height: 220px;
       overflow: hidden;
       position: relative;
     }
@@ -1509,14 +1503,17 @@ $show_popup = (count($active_popups) > 0);
       border-color: rgba(200,16,46,0.15);
       transform: translateY(-3px);
     }
-    .partner-item img {
+    .partner-logo {
       max-height: 52px;
       width: auto;
       object-fit: contain;
-      filter: grayscale(30%);
-      transition: filter 0.3s;
+      filter: grayscale(20%) opacity(0.85);
+      transition: all 0.3s var(--ease-out);
     }
-    .partner-item:hover img { filter: grayscale(0%); }
+    .partner-item:hover .partner-logo {
+      filter: grayscale(0%) opacity(1);
+      transform: scale(1.05);
+    }
 
     /* ============================================================
        MODALS
@@ -1546,21 +1543,6 @@ $show_popup = (count($active_popups) > 0);
     .jhc-modal-header .modal-title i { color: #FF8A9B; }
     .jhc-modal-header .btn-close { filter: brightness(0) invert(1); opacity: 0.8; }
     .jhc-modal-header .btn-close:hover { opacity: 1; }
-
-    .info-panel {
-      padding: 1rem 1.25rem;
-      border-radius: var(--radius-md);
-      border-left: 3px solid;
-    }
-    .info-panel.warning { background: #FFFBEB; border-color: var(--gold); }
-    .info-panel.primary { background: #EFF8FF; border-color: var(--navy-mid); }
-    .info-panel .panel-label {
-      font-size: 0.7rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 0.5rem;
-    }
 
     /* ============================================================
        FORM CONTROLS
@@ -1693,6 +1675,7 @@ $show_popup = (count($active_popups) > 0);
       overflow: hidden;
       border: 2px solid rgba(255,255,255,0.1);
     }
+    .footer-map-wrap iframe { height: 220px; }
     .footer-map-label {
       padding: 0.65rem 1rem;
       background: rgba(255,255,255,0.07);
@@ -1710,166 +1693,110 @@ $show_popup = (count($active_popups) > 0);
     }
     .footer-bottom p { font-size: 0.8rem; color: rgba(255,255,255,0.38); margin: 0; }
 
+    .footer-contact-item a:hover .fci-value {
+      color: #bd3030 !important;
+      transition: 0.3s;
+    }
+
     /* ============================================================
        PROMO POPUP
     ============================================================ */
-    /* --- Container Modal Utama --- */
     #promoPopupCarousel .modal-content { 
-        border-radius: 24px !important; 
-        overflow: hidden; 
-        border: none;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+      border-radius: 24px !important; 
+      overflow: hidden; 
+      border: none;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
     }
 
-    /* --- Tombol Close (X) Melayang --- */
     .btn-close-custom {
-        position: absolute;
-        right: 16px;
-        top: 16px;
-        z-index: 1100;
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(8px); /* Efek blur premium */
-        border: none;
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        color: #8a3033;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        cursor: pointer;
+      position: absolute;
+      right: 16px; top: 16px;
+      z-index: 1100;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      border: none;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      color: #8a3033;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
     }
+    .btn-close-custom:hover { transform: rotate(90deg) scale(1.1); background: #8a3033; color: #fff; }
 
-    .btn-close-custom:hover { 
-        transform: rotate(90deg) scale(1.1); 
-        background: #8a3033; 
-        color: #fff; 
-    }
-
-    /* --- Kontainer Gambar --- */
     .popup-img-container {
-        background: #f8f9fa; /* Background netral */
-        height: 400px; /* Tinggi proporsional */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        position: relative;
+      background: #f8f9fa;
+      height: 400px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
     }
+    .popup-img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
 
-    .popup-img-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* Gambar memenuhi area agar rapi */
-        transition: transform 0.5s ease;
-    }
-
-    /* --- Area Konten Teks --- */
     .content-area {
-        padding: 2.5rem 2rem;
-        background: #fff;
-        text-align: center;
+      padding: 2.5rem 2rem;
+      background: #fff;
+      text-align: center;
     }
 
-    .popup-title { 
-        font-size: 1.35rem; 
-        font-weight: 800; 
-        color: #1a1a1a; 
-        margin-bottom: 0.75rem;
-        letter-spacing: -0.5px;
-    }
+    .popup-title { font-size: 1.35rem; font-weight: 800; color: #1a1a1a; margin-bottom: 0.75rem; letter-spacing: -0.5px; }
+    .popup-text { font-size: 0.95rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem; }
 
-    .popup-text { 
-        font-size: 0.95rem; 
-        color: #64748b; 
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
-    }
-
-    /* --- Navigasi Panah (Custom Nav) --- */
     .custom-nav {
-        width: 42px;
-        height: 42px;
-        background: rgba(255, 255, 255, 0.9);
-        color: #8a3033;
-        border-radius: 50%;
-        top: 40%; /* Posisi di area gambar */
-        opacity: 0; /* Tersembunyi, muncul saat hover */
-        margin: 0 15px;
-        font-size: 1rem;
-        border: none;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        transition: all 0.4s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 100;
+      width: 42px; height: 42px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #8a3033;
+      border-radius: 50%;
+      top: 40%;
+      opacity: 0;
+      margin: 0 15px;
+      font-size: 1rem;
+      border: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: all 0.4s ease;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100;
     }
+    .modal-content:hover .custom-nav { opacity: 1; }
+    .custom-nav:hover { background: #8a3033; color: #fff; transform: scale(1.1); }
 
-    /* Panah muncul saat modal di-hover */
-    .modal-content:hover .custom-nav {
-        opacity: 1;
-    }
-
-    .custom-nav:hover {
-        background: #8a3033;
-        color: #fff;
-        transform: scale(1.1);
-    }
-
-    /* --- Indikator Titik (Pill Style) --- */
-    .custom-indicators {
-        bottom: 0 !important;
-        transform: translateY(-175px); /* Letakkan pas di perbatasan gambar & teks */
-        margin-bottom: 0;
-    }
-
+    .custom-indicators { bottom: 0 !important; transform: translateY(-175px); margin-bottom: 0; }
     .custom-indicators button {
-        width: 8px !important;
-        height: 8px !important;
-        border-radius: 50% !important;
-        background-color: #becad9 !important; /* Warna pasif */
-        border: none !important;
-        margin: 0 4px !important;
-        transition: all 0.3s ease;
+      width: 8px !important; height: 8px !important;
+      border-radius: 50% !important;
+      background-color: #becad9 !important;
+      border: none !important;
+      margin: 0 4px !important;
+      transition: all 0.3s ease;
     }
-
     .custom-indicators button.active {
-        background-color: #8a3033 !important; /* Warna aktif */
-        width: 24px !important; /* Memanjang menjadi pill */
-        border-radius: 10px !important;
+      background-color: #8a3033 !important;
+      width: 24px !important;
+      border-radius: 10px !important;
     }
 
-    /* --- Tombol Action Utama --- */
     .btn-danger.rounded-pill {
-        padding: 12px 45px;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 1px;
-        background: linear-gradient(135deg, #8a3033 0%, #bd3030 100%);
-        border: none;
-        box-shadow: 0 8px 20px -5px rgba(138, 48, 51, 0.4);
-        transition: 0.3s;
+      padding: 12px 45px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, #8a3033 0%, #bd3030 100%);
+      border: none;
+      box-shadow: 0 8px 20px -5px rgba(138, 48, 51, 0.4);
+      transition: 0.3s;
     }
-
     .btn-danger.rounded-pill:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 25px -5px rgba(138, 48, 51, 0.5);
-        opacity: 0.95;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px -5px rgba(138, 48, 51, 0.5);
+      opacity: 0.95;
     }
 
-    /* --- Animasi Muncul (Pop-in) --- */
     .modal.fade .modal-dialog {
-        transform: scale(0.8) translateY(40px);
-        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform: scale(0.8) translateY(40px);
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-
-    .modal.show .modal-dialog {
-        transform: scale(1) translateY(0);
-    }
+    .modal.show .modal-dialog { transform: scale(1) translateY(0); }
 
     /* ============================================================
        SPINNER
@@ -1900,11 +1827,6 @@ $show_popup = (count($active_popups) > 0);
     @media (max-width: 768px) {
       .gap-container { padding: 0 1.25rem; }
     }
-
-    .footer-contact-item a:hover .fci-value {
-    color: #bd3030 !important; /* Warna merah saat diarahkan kursor */
-    transition: 0.3s;
-    }
   </style>
 </head>
 <body>
@@ -1926,14 +1848,11 @@ $show_popup = (count($active_popups) > 0);
   ============================================================ -->
   <nav class="site-nav" id="mainNavbar" role="navigation" aria-label="Navigasi Utama">
     <div class="nav-inner">
-
-      <!-- Col 1: Brand / Logo -->
       <a class="nav-brand" href="index.php" aria-label="RS JHC Tasikmalaya - Home">
         <?php $header_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/JHC_Logo.png'; ?>
         <img src="public/<?= htmlspecialchars($header_logo); ?>" alt="JHC Logo">
       </a>
 
-      <!-- Col 2: Center Navigation Links -->
       <ul class="nav-links" id="navMenu" role="list">
         <li><a href="index.php#about_us">Tentang Kami</a></li>
         <li><a href="index.php#departments">Layanan</a></li>
@@ -1943,7 +1862,6 @@ $show_popup = (count($active_popups) > 0);
         <li><a href="index.php#news">Berita</a></li>
       </ul>
 
-      <!-- Col 3: CTA (desktop) + Hamburger (mobile) -->
       <div class="nav-cta-wrap" id="navCta">
         <a class="nav-cta" href="career.php">
           <i class="fas fa-briefcase"></i>
@@ -1954,7 +1872,6 @@ $show_popup = (count($active_popups) > 0);
       <button class="nav-hamburger" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Toggle menu">
         <span></span><span></span><span></span>
       </button>
-
     </div>
   </nav>
 
@@ -1976,7 +1893,6 @@ $show_popup = (count($active_popups) > 0);
        HERO / BANNER
   ============================================================ -->
   <section class="hero-wrap p-0" id="home" aria-label="Banner Utama">
-
     <div id="heroCarousel" class="carousel slide carousel-fade h-100"
          data-bs-ride="carousel" data-bs-interval="6000" aria-roledescription="carousel">
       <div class="carousel-inner hero-carousel-inner">
@@ -1991,12 +1907,11 @@ $show_popup = (count($active_popups) > 0);
                  aria-label="<?= htmlspecialchars($banner['title']); ?>">
             </div>
             <div class="hero-overlay" aria-hidden="true"></div>
-
             <div class="hero-body">
               <div class="hero-text">
                 <div class="hero-badge" aria-hidden="true">
                   <i class="fas fa-heart"></i>
-                  RS Jantung Heart Center
+                  RS Jantung Tasikmalaya
                 </div>
                 <h1 class="hero-title"><?= htmlspecialchars($banner['title']); ?></h1>
                 <p class="hero-desc"><?= htmlspecialchars($banner['description']); ?></p>
@@ -2013,7 +1928,6 @@ $show_popup = (count($active_popups) > 0);
         <?php endif; ?>
       </div>
 
-      <!-- Custom controls -->
       <div class="carousel-ctrl" aria-label="Navigasi carousel">
         <button type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="Sebelumnya">
           <i class="fas fa-chevron-left"></i>
@@ -2035,56 +1949,67 @@ $show_popup = (count($active_popups) > 0);
         <?php endforeach; ?>
       </div>
     </div>
-
   </section>
 
   <!-- ============================================================
-       ABOUT US
+       ABOUT US — Layout Baru: Tabs [1][2][3] di atas, Gambar kiri | Konten kanan
   ============================================================ -->
   <section id="about_us" class="about-section">
     <div class="container" style="max-width:1280px;">
-      <div class="row g-4 g-lg-5 align-items-center">
 
-        <!-- Image -->
-        <div class="col-lg-4 col-md-6">
-          <div class="about-img-frame">
-            <?php 
-              $first_key  = array_key_first($tabs_config);
-              $db_path    = $about_sections[$first_key]['image_path'] ?? '';
-              $display_img = !empty($db_path) ? 'public/' . $db_path : 'public/assets/img/default-about.jpg';
-            ?>
-            <img src="<?= $display_img; ?>" id="main-about-image" alt="Tentang RS JHC Tasikmalaya">
+      <!-- Header Section -->
+      <div class="sec-header-center mb-4">
+        <div class="sec-eyebrow" aria-hidden="true">Mengenal Kami</div>
+        <h2 class="sec-title">RS Jantung <em>Tasikmalaya</em></h2>
+      </div>
+
+      <!-- Tab Buttons [1][2][3] — centered, di atas dua kolom -->
+      <div class="about-tabs-row" role="tablist" aria-label="Informasi RS JHC Tasikmalaya">
+        <?php $no = 0; foreach ($tabs_config as $key => $info): ?>
+          <button class="about-tab-btn <?= $no === 0 ? 'active' : ''; ?>"
+                  role="tab"
+                  aria-selected="<?= $no === 0 ? 'true' : 'false'; ?>"
+                  aria-controls="atab-<?= $key; ?>"
+                  data-img="<?= $about_sections[$key]['image_path'] ?? ''; ?>"
+                  onclick="switchAboutTab(this, 'atab-<?= $key; ?>')">
+            <span class="tab-num"><?= $no + 1; ?></span>
+            <i class="fas <?= $info['icon']; ?>"></i>
+            <?= $info['label']; ?>
+          </button>
+        <?php $no++; endforeach; ?>
+      </div>
+
+      <!-- Body: Gambar kiri | Kata-kata kanan -->
+      <div class="about-body-grid">
+
+        <!-- Kolom Kiri: Gambar -->
+        <div class="about-img-col">
+          <?php 
+            $first_key   = array_key_first($tabs_config);
+            $db_path     = $about_sections[$first_key]['image_path'] ?? '';
+            $display_img = !empty($db_path) ? 'public/' . $db_path : 'public/assets/img/default-about.jpg';
+          ?>
+          <img src="<?= $display_img; ?>"
+               id="main-about-image"
+               alt="Tentang RS JHC Tasikmalaya">
+          <div class="about-img-badge">
+            <i class="fas fa-hospital-alt"></i>
+            RS JHC Tasikmalaya
           </div>
         </div>
 
-        <!-- Content -->
-        <div class="col-lg-8 col-md-6">
-          <div class="sec-eyebrow" aria-hidden="true">Mengenal Kami</div>
-          <h2 class="sec-title mb-4">RS Jantung <em>Heart Center</em></h2>
-
-          <!-- Tabs -->
-          <div class="about-tabs" role="tablist" aria-label="Informasi tentang RS JHC">
-            <?php $no = 0; foreach ($tabs_config as $key => $info): ?>
-              <button class="about-tab-btn <?= $no === 0 ? 'active' : ''; ?>"
-                      role="tab"
-                      aria-selected="<?= $no === 0 ? 'true' : 'false'; ?>"
-                      aria-controls="atab-<?= $key; ?>"
-                      data-img="<?= $about_sections[$key]['image_path'] ?? ''; ?>"
-                      onclick="switchAboutTab(this, 'atab-<?= $key; ?>')">
-                <i class="fas <?= $info['icon']; ?>"></i>
-                <?= $info['label']; ?>
-              </button>
-            <?php $no++; endforeach; ?>
-          </div>
-
-          <!-- Content Box -->
-          <div class="about-content-box" id="aboutContentBox">
+        <!-- Kolom Kanan: Konten / Kata-kata -->
+        <div class="about-content-panel">
+          <div class="about-pane-wrap">
             <?php $no = 0; foreach ($tabs_config as $key => $info): ?>
               <div class="about-tab-pane <?= $no === 0 ? 'active' : ''; ?>"
                    id="atab-<?= $key; ?>"
                    role="tabpanel"
                    aria-labelledby="btn-<?= $key; ?>">
-                <h3><?= htmlspecialchars($about_sections[$key]['title'] ?? $info['label']); ?></h3>
+                <h3>
+                  <i class="fas <?= $info['icon']; ?>"></i>
+                  <?= htmlspecialchars($about_sections[$key]['title'] ?? $info['label']); ?>
+                </h3>
                 <p class="tab-text">
                   <?= (isset($about_sections[$key]['content']) && $about_sections[$key]['content'] !== '')
                     ? nl2br(htmlspecialchars((string)$about_sections[$key]['content']))
@@ -2093,9 +2018,10 @@ $show_popup = (count($active_popups) > 0);
               </div>
             <?php $no++; endforeach; ?>
           </div>
-
         </div>
-      </div>
+
+      </div><!-- /about-body-grid -->
+
     </div>
   </section>
 
@@ -2112,7 +2038,6 @@ $show_popup = (count($active_popups) > 0);
       </div>
 
       <?php 
-      /* ── Poliklinik: icon-card renderer ── */
       function render_poliklinik_cards($data_list) {
         foreach ($data_list as $item): ?>
           <div class="col-6 col-md-4 col-lg-3 mb-4">
@@ -2134,55 +2059,9 @@ $show_popup = (count($active_popups) > 0);
           </div>
         <?php endforeach;
       }
-
-      function render_layanan_dokter_cards($data_list) {
-        foreach ($data_list as $item): ?>
-          <div class="col-12 col-md-6 col-lg-4 mb-4">
-            <div class="lu-card shadow-sm border-0 h-100" style="border-radius: 20px; overflow: hidden; background: #fff;">
-              
-              <div class="p-4 text-center" style="background: #f8f9fa;">
-                <div class="svc-icon-wrap mb-3" style="width: 70px; height: 70px; margin: 0 auto; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                  <?php if (!empty($item['icon_path'])): ?>
-                    <img src="<?= htmlspecialchars($item['icon_path']); ?>" alt="<?= htmlspecialchars($item['name']); ?>" style="width: 40px;">
-                  <?php else: ?>
-                    <i class="fas fa-stethoscope text-danger fa-2x"></i>
-                  <?php endif; ?>
-                </div>
-                <h3 class="svc-name fw-bold mb-0" style="font-size: 1.1rem; color: #8a3033;">
-                  <?= htmlspecialchars($item['name']); ?>
-                </h3>
-              </div>
-
-              <div class="card-body p-4 text-center">
-                <p class="text-muted small mb-4" style="line-height: 1.6; min-height: 40px;">
-                  <?= !empty($item['description']) ? substr(strip_tags($item['description']), 0, 80) . '...' : 'Layanan kesehatan unggulan dengan tenaga medis profesional.'; ?>
-                </p>
-                
-                <div class="d-grid gap-2">
-                  <a href="doctors_list.php?dept_id=<?= $item['id']; ?>" class="btn btn-danger py-2 fw-bold" style="border-radius: 12px; background: linear-gradient(135deg, #8a3033 0%, #bd3030 100%); border: none;">
-                    <i class="fas fa-user-md me-2"></i> Lihat Jadwal Dokter
-                  </a>
-                  
-                  <button class="btn btn-outline-secondary py-2 small fw-bold" 
-                          style="border-radius: 12px; font-size: 0.8rem;"
-                          data-bs-toggle="modal" 
-                          data-bs-target="#modalLayanan"
-                          data-id="<?= $item['id']; ?>"
-                          data-name="<?= htmlspecialchars($item['name']); ?>"
-                          data-desc="<?= htmlspecialchars($item['description'] ?? ''); ?>"
-                          data-image="<?= htmlspecialchars($item['icon_path'] ?? ''); ?>">
-                    <i class="fas fa-info-circle me-1"></i> Informasi Unit
-                  </button>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        <?php endforeach;
-      } 
       ?>
 
-      <!-- ── Layanan Unggulan: clean white icon-card ── -->
+      <!-- Layanan Unggulan -->
       <?php if (!empty($layanan_data)): ?>
         <div class="dept-divider mt-2">
           <div class="dept-divider-line"></div>
@@ -2238,7 +2117,7 @@ $show_popup = (count($active_popups) > 0);
         </div>
       <?php endif; ?>
 
-      <!-- ── Poliklinik Spesialis: icon-card grid ── -->
+      <!-- Poliklinik Spesialis -->
       <?php if (!empty($poliklinik_data)): ?>
         <div class="dept-divider mt-2">
           <div class="dept-divider-line"></div>
@@ -2276,7 +2155,6 @@ $show_popup = (count($active_popups) > 0);
                 <div id="m-desc" class="text-secondary small" style="line-height: 1.6;"></div>
             </div>
           </div>
-
           <hr class="opacity-5">
         </div>
 
@@ -2308,11 +2186,6 @@ $show_popup = (count($active_popups) > 0);
                   ? "background-image: url('public/" . htmlspecialchars($fac['image_path']) . "');"
                   : "background: linear-gradient(135deg, #0f1f3d 0%, #1E3A5F 100%);";
               
-              /* MODIFIKASI PENTING: 
-                 Karena Fasilitas Utama tidak memiliki kategori (null), 
-                 maka kita gunakan 'name' sebagai parameter untuk memfilter 
-                 item-item di halaman facilities_list.php
-              */
               $cat_param = urlencode($fac['name']); 
               $target_link = "facilities_list.php?category=" . $cat_param;
           ?>
@@ -2442,7 +2315,6 @@ $show_popup = (count($active_popups) > 0);
     <div class="container" style="max-width:1280px;">
       <div class="row align-items-center g-4 g-lg-5">
 
-        <!-- Video side -->
         <div class="col-lg-6 order-2 order-lg-1">
           <div class="vr-video-wrap">
             <?php if (!empty($vr_data['video_url'])): 
@@ -2468,7 +2340,6 @@ $show_popup = (count($active_popups) > 0);
           </div>
         </div>
 
-        <!-- Text side -->
         <div class="col-lg-6 order-1 order-lg-2">
           <div class="sec-eyebrow" aria-hidden="true">Virtual Room</div>
           <h2 class="sec-title mb-4"><?= htmlspecialchars($vr_data['title']); ?></h2>
@@ -2595,15 +2466,15 @@ $show_popup = (count($active_popups) > 0);
   <!-- ============================================================
        PARTNERS
   ============================================================ -->
- <section id="partners" style="background:linear-gradient(135deg,#f8f9fa 0%,#fff 100%);">
-    <div class="container">
-      <div class="row justify-content-center mb-5">
-        <div class="col-lg-7 text-center">
-          <span class="section-label"><i class="fas fa-handshake me-2"></i>Mitra Kami</span>
-          <h2 class="section-title">Mitra Asuransi & Perusahaan</h2>
-          <div class="section-divider mx-auto"></div>
-          <p class="text-muted mt-4">Bekerja sama dengan berbagai mitra terpercaya untuk pelayanan terbaik.</p>
+  <section id="partners" style="background:linear-gradient(135deg,#f8f9fa 0%,#fff 100%); padding: 5rem 0;">
+    <div class="container" style="max-width:1280px;">
+      <div class="sec-header-center mb-5">
+        <div class="sec-eyebrow" aria-hidden="true">
+          <i class="fas fa-handshake"></i>
+          Mitra Kami
         </div>
+        <h2 class="sec-title">Mitra Asuransi & <em>Perusahaan</em></h2>
+        <p class="sec-subtitle">Bekerja sama dengan berbagai mitra terpercaya untuk pelayanan terbaik.</p>
       </div>
 
       <div class="row justify-content-center align-items-center g-4">
@@ -2613,10 +2484,10 @@ $show_popup = (count($active_popups) > 0);
             <a href="<?= htmlspecialchars(!empty($partner['url']) ? $partner['url'] : '#'); ?>"
                target="<?= !empty($partner['url']) ? '_blank' : '_self'; ?>"
                rel="noopener noreferrer"
-               class="d-block p-3"
+               class="partner-item d-block"
                data-bs-toggle="tooltip" title="<?= htmlspecialchars($partner['name']); ?>">
               <img src="public/<?= htmlspecialchars($partner['logo_path']); ?>"
-                   class="img-fluid partner-logo"
+                   class="partner-logo"
                    alt="<?= htmlspecialchars($partner['name']); ?>"
                    onerror="this.src='public/assets/img/gallery/default-partner.png';">
             </a>
@@ -2624,7 +2495,7 @@ $show_popup = (count($active_popups) > 0);
           <?php endforeach; ?>
         <?php else: ?>
           <div class="col-12 text-center text-muted py-5">
-            <i class="fas fa-info-circle fa-3x mb-3"></i>
+            <i class="fas fa-info-circle fa-3x mb-3 d-block opacity-25"></i>
             <p>Belum ada mitra yang ditampilkan.</p>
           </div>
         <?php endif; ?>
@@ -2702,7 +2573,7 @@ $show_popup = (count($active_popups) > 0);
             </div>
         </div>
     </div>
-    <?php endif; ?>
+  <?php endif; ?>
 
   <!-- ============================================================
        FOOTER
@@ -2731,7 +2602,6 @@ $show_popup = (count($active_popups) > 0);
                   <p class="fci-label">Gawat Darurat (IGD)</p>
                   <?php 
                     $igd_raw = $settings['contact_igd'] ?? '(0265) 3172112';
-                    // Membersihkan karakter non-angka agar bisa didial otomatis oleh HP
                     $igd_dial = preg_replace('/[^0-9]/', '', $igd_raw);
                   ?>
                   <a href="tel:<?= $igd_dial; ?>" class="text-decoration-none">
@@ -2746,7 +2616,6 @@ $show_popup = (count($active_popups) > 0);
                   <p class="fci-label">WhatsApp RS</p>
                   <?php 
                     $wa_raw = $settings['contact_whatsapp'] ?? '+62 851-7500-0375';
-                    // Format nomor WA: hilangkan karakter simbol & ubah 0 di depan jadi 62
                     $wa_link = preg_replace('/[^0-9]/', '', $wa_raw);
                     if (substr($wa_link, 0, 1) === '0') {
                         $wa_link = '62' . substr($wa_link, 1);
@@ -2757,13 +2626,12 @@ $show_popup = (count($active_popups) > 0);
                   </a>
                 </div>
               </div>
+
               <div class="footer-contact-item">
                 <div class="fci-icon"><i class="fas fa-envelope"></i></div>
                 <div>
                   <p class="fci-label">Email Resmi</p>
-                  <?php 
-                    $email_raw = $settings['contact_email'] ?? 'jhc.tasik@gmail.com'; 
-                  ?>
+                  <?php $email_raw = $settings['contact_email'] ?? 'jhc.tasik@gmail.com'; ?>
                   <a href="mailto:<?= htmlspecialchars($email_raw); ?>" class="text-decoration-none">
                     <p class="fci-value"><?= htmlspecialchars($email_raw); ?></p>
                   </a>
@@ -2818,7 +2686,7 @@ $show_popup = (count($active_popups) > 0);
               <div class="footer-map-wrap">
                 <iframe
                   src="<?= $settings['contact_map_url'] ?? ''; ?>"
-                  width="100%" height="200" style="border:0;display:block;" allowfullscreen="" loading="lazy"
+                  width="100%" height="220" style="border:0;display:block;" allowfullscreen="" loading="lazy"
                   title="Lokasi RS JHC Tasikmalaya"></iframe>
                 <div class="footer-map-label">
                   <i class="fas fa-map-marker-alt"></i>
@@ -2879,7 +2747,6 @@ $show_popup = (count($active_popups) > 0);
       spans[1].style.opacity   = '0';
       spans[2].style.transform = 'translateY(-7px) rotate(-45deg)';
 
-      /* Stack CTA below the links panel */
       requestAnimationFrame(() => {
         const menuH = navMenu.offsetHeight;
         const navH  = navbar.offsetHeight;
@@ -2891,12 +2758,10 @@ $show_popup = (count($active_popups) > 0);
     }
   });
 
-  /* Close mobile menu on link click */
   navMenu.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', closeMenu);
   });
 
-  /* Close on outside click */
   document.addEventListener('click', function(e) {
     if (!navbar.contains(e.target)) closeMenu();
   });
@@ -2932,12 +2797,13 @@ $show_popup = (count($active_popups) > 0);
     const pane = document.getElementById(targetId);
     if (pane) pane.classList.add('active');
 
-    /* Swap image */
+    /* Swap image with smooth transition */
     const imgPath = btn.getAttribute('data-img');
     const mainImg = document.getElementById('main-about-image');
     if (imgPath && imgPath.trim()) {
       mainImg.style.opacity = '0';
-      mainImg.style.transform = 'scale(1.03)';
+      mainImg.style.transform = 'scale(1.04)';
+      mainImg.style.transition = 'opacity 0.28s ease, transform 0.4s var(--ease-out)';
       setTimeout(() => {
         mainImg.src = 'public/' + imgPath;
         mainImg.onload = () => {
@@ -2948,59 +2814,59 @@ $show_popup = (count($active_popups) > 0);
           mainImg.style.opacity = '1';
           mainImg.style.transform = 'scale(1)';
         };
-      }, 280);
+      }, 240);
     }
   };
 
-  /* ── Modal: Detail Layanan — event delegation covers lu-card clicks ── */
+  /* ── Modal: Detail Layanan ── */
   document.addEventListener('DOMContentLoaded', function() {
     const modalLayanan = document.getElementById('modalLayanan');
     
     modalLayanan.addEventListener('show.bs.modal', function (event) {
         const button = event.relatedTarget;
-        const deptId = button.getAttribute('data-id'); // Ambil ID Departemen
+        const deptId = button.getAttribute('data-id');
         
-        // Update info dasar modal
         document.getElementById('m-name').textContent = button.getAttribute('data-name');
         document.getElementById('m-desc').innerHTML = button.getAttribute('data-desc');
         document.getElementById('m-image').src = button.getAttribute('data-image');
 
-        // Reset & Load Daftar Dokter via AJAX
         const doctorContainer = document.getElementById('m-doctor-list');
-        doctorContainer.innerHTML = '<div class="col-12 text-center py-3"><div class="spinner-border spinner-border-sm text-danger" role="status"></div><span class="ms-2">Mencari dokter...</span></div>';
+        if (doctorContainer) {
+          doctorContainer.innerHTML = '<div class="col-12 text-center py-3"><div class="spinner-border spinner-border-sm text-danger" role="status"></div><span class="ms-2">Mencari dokter...</span></div>';
 
-        fetch('get_doctors_api.php?dept_id=' + deptId)
-            .then(response => response.json())
-            .then(data => {
-                doctorContainer.innerHTML = ''; // Bersihkan loading
-                
-                if (data.length > 0) {
-                    data.forEach(doc => {
-                        doctorContainer.innerHTML += `
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center p-2 border rounded-3 shadow-sm bg-white">
-                                    <img src="public/${doc.photo_path || 'assets/img/default-doctor.png'}" 
-                                         class="rounded-circle me-3" 
-                                         style="width: 50px; height: 50px; object-fit: cover;">
-                                    <div>
-                                        <div class="fw-bold small text-dark">${doc.name}</div>
-                                        <div class="text-danger" style="font-size: 0.65rem; font-weight: 700;">${doc.specialty}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    doctorContainer.innerHTML = '<div class="col-12 text-center py-3 text-muted small">Jadwal dokter belum tersedia untuk unit ini.</div>';
-                }
-            })
-            .catch(error => {
-                doctorContainer.innerHTML = '<div class="col-12 text-center py-3 text-danger small">Gagal memuat data dokter.</div>';
-            });
+          fetch('get_doctors_api.php?dept_id=' + deptId)
+              .then(response => response.json())
+              .then(data => {
+                  doctorContainer.innerHTML = '';
+                  
+                  if (data.length > 0) {
+                      data.forEach(doc => {
+                          doctorContainer.innerHTML += `
+                              <div class="col-md-6">
+                                  <div class="d-flex align-items-center p-2 border rounded-3 shadow-sm bg-white">
+                                      <img src="public/${doc.photo_path || 'assets/img/default-doctor.png'}" 
+                                           class="rounded-circle me-3" 
+                                           style="width: 50px; height: 50px; object-fit: cover;">
+                                      <div>
+                                          <div class="fw-bold small text-dark">${doc.name}</div>
+                                          <div class="text-danger" style="font-size: 0.65rem; font-weight: 700;">${doc.specialty}</div>
+                                      </div>
+                                  </div>
+                              </div>
+                          `;
+                      });
+                  } else {
+                      doctorContainer.innerHTML = '<div class="col-12 text-center py-3 text-muted small">Jadwal dokter belum tersedia untuk unit ini.</div>';
+                  }
+              })
+              .catch(error => {
+                  doctorContainer.innerHTML = '<div class="col-12 text-center py-3 text-danger small">Gagal memuat data dokter.</div>';
+              });
+        }
     });
   });
   
-  /* ── Fasilitas: expand / collapse description ── */
+  /* ── Fasilitas: expand / collapse ── */
   window.toggleFacDesc = function(idx) {
     const card       = document.getElementById('fac-' + idx);
     const toggleBtn  = card ? card.querySelector('.fac-toggle') : null;
@@ -3012,13 +2878,11 @@ $show_popup = (count($active_popups) > 0);
     if (toggleBtn) toggleBtn.setAttribute('aria-expanded', isExpanded.toString());
     if (toggleText) toggleText.textContent = isExpanded ? 'Sembunyikan' : 'Baca Selengkapnya';
 
-    /* Prevent card from hovering after expansion */
     if (isExpanded) {
       card.style.transform = 'none';
     }
   };
 
-  /* Stop fac-toggle click from bubbling */
   document.querySelectorAll('.fac-toggle').forEach(btn => {
     btn.addEventListener('click', e => e.stopPropagation());
   });
@@ -3039,14 +2903,13 @@ $show_popup = (count($active_popups) > 0);
   document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
   /* ── Promo Popup ── */
-  /* ── Promo Popup Carousel ── */
   document.addEventListener("DOMContentLoaded", function() {
     var promoElement = document.getElementById('promoPopupCarousel');
     if (promoElement) {
         var myModal = new bootstrap.Modal(promoElement);
         setTimeout(function() {
             myModal.show();
-        }, 1000); // Muncul setelah 1 detik
+        }, 1000);
     }
   });
 
