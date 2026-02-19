@@ -4,13 +4,24 @@ require_once 'config.php';
 $dept_id = isset($_GET['dept_id']) ? intval($_GET['dept_id']) : 0;
 $doctors_data = [];
 $dept_name = "Tim Dokter Spesialis";
+$is_layanan = false; // Flag tambahan
 
 if ($dept_id > 0) {
-    $stmt_dept = $mysqli->prepare("SELECT name FROM departments WHERE id = ?");
+    // Ambil data departemen termasuk kategorinya
+    $stmt_dept = $mysqli->prepare("SELECT name, category FROM departments WHERE id = ?");
     $stmt_dept->bind_param("i", $dept_id);
     $stmt_dept->execute();
     $res_dept = $stmt_dept->get_result()->fetch_assoc();
-    if($res_dept) $dept_name = "Poliklinik " . $res_dept['name'];
+    
+    if($res_dept) {
+        // Logika penamaan judul halaman
+        if ($res_dept['category'] == 'Layanan') {
+            $dept_name = $res_dept['name']; // Tetap Nama Layanan (Misal: IGD)
+            $is_layanan = true;
+        } else {
+            $dept_name = "" . $res_dept['name'];
+        }
+    }
 
     $stmt = $mysqli->prepare("SELECT * FROM doctors WHERE department_id = ? ORDER BY name ASC");
     $stmt->bind_param("i", $dept_id);
@@ -43,13 +54,12 @@ if ($dept_id > 0) {
             color: #444; 
         }
         
-        /* --- HERO SECTION --- */
         .hero-header { 
             background: var(--jhc-gradient); 
             color: white; 
             padding: 60px 0 80px; 
             border-radius: 0 0 40px 40px;
-            margin-bottom: -40px; /* Agar kartu overlap sedikit */
+            margin-bottom: -40px;
             position: relative;
             z-index: 1;
         }
@@ -66,7 +76,6 @@ if ($dept_id > 0) {
         }
         .btn-back:hover { background: rgba(255,255,255,0.3); color: white; }
 
-        /* --- DOCTOR CARD --- */
         .doctor-card { 
             border: none; 
             border-radius: 20px; 
@@ -113,11 +122,10 @@ if ($dept_id > 0) {
             border-color: var(--jhc-red); 
         }
 
-        /* --- MODAL MODERN STYLE --- */
         .modal-content { 
             border-radius: 25px; 
             border: none; 
-            overflow: visible; /* Penting agar foto bisa keluar */
+            overflow: visible;
         }
         
         .modal-header-custom {
@@ -135,13 +143,13 @@ if ($dept_id > 0) {
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            bottom: -70px; /* Membuat gambar setengah di header, setengah di body */
+            bottom: -70px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
             background: #fff;
         }
 
         .modal-body { 
-            padding-top: 80px; /* Memberi ruang untuk foto */
+            padding-top: 80px;
             padding-bottom: 30px;
             text-align: center;
         }
@@ -220,7 +228,8 @@ if ($dept_id > 0) {
                                         data-name="<?= htmlspecialchars($doc['name']); ?>"
                                         data-img="public/<?= htmlspecialchars($doc['photo_path']); ?>"
                                         data-desc="<?= htmlspecialchars($doc['description']); ?>"
-                                        data-schedule="<?= htmlspecialchars($doc['schedule']); ?>">
+                                        data-schedule="<?= htmlspecialchars($doc['schedule']); ?>"
+                                        data-category="<?= htmlspecialchars($res_dept['category'] ?? ''); ?>">
                                     Lihat Profil
                                 </button>
                             </div>
@@ -280,20 +289,22 @@ if ($dept_id > 0) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-   const modalDetail = document.getElementById('modalDetail');
+    const modalDetail = document.getElementById('modalDetail');
     modalDetail.addEventListener('show.bs.modal', function (event) {
         const button = event.relatedTarget;
         
-        // 1. Ambil data dari atribut kartu
         const name = button.getAttribute('data-name');
         const img = button.getAttribute('data-img');
         const desc = button.getAttribute('data-desc');
-        const schedule = button.getAttribute('data-schedule'); // Ini berisi Jam/Hari Praktik
+        const schedule = button.getAttribute('data-schedule');
+        const category = button.getAttribute('data-category');
         
-        // 2. Ambil Nama Poli dari Judul Halaman
-        const poliName = document.querySelector('.hero-header h2').innerText;
+        // Ambil Nama dari H2
+        const headerTitle = document.querySelector('.hero-header h2').innerText;
         
-        // 3. Isi data ke dalam modal (Tampilan Visual)
+        // Logika label: Jika kategori 'Layanan', tulis 'Layanan:', jika tidak tulis 'Layanan/Poli:'
+        const labelType = (category === 'Layanan') ? 'Layanan' : 'Layanan/Poli';
+        
         document.getElementById('mdl-name').innerText = name;
         document.getElementById('mdl-desc').innerText = desc || 'Informasi profil belum tersedia.';
         document.getElementById('mdl-schedule').innerText = schedule || 'Hubungi RS untuk jadwal.';
@@ -302,22 +313,19 @@ if ($dept_id > 0) {
         imgEl.src = img;
         imgEl.onerror = function() { this.src = 'assets/img/default-doctor.png'; };
         
-        // --- 4. LOGIKA WHATSAPP DENGAN JAM PRAKTIK ---
         const phoneNumber = "6285175000375";
         
-        // Menyusun pesan dengan tambahan Jam/Jadwal
+        // Template WA
         const message = `Halo RS JHC, saya ingin membuat janji temu.%0A%0A` +
                         `*Data Pendaftaran:*%0A` +
                         `- Nama Pasien: %0A` +
                         `- No. Telepon: %0A` +
-                        `- Layanan/Poli: ${poliName}%0A` +
+                        `- ${labelType}: ${headerTitle}%0A` + // Dinamis berdasarkan kategori
                         `- Dokter: ${name}%0A` +
                         `- Jadwal/Jam: ${schedule}%0A%0A` +
                         `Mohon konfirmasi pendaftaran saya. Terima kasih.`;
         
         const waLink = `https://api.whatsapp.com/send/?phone=${phoneNumber}&text=${message}&type=phone_number&app_absent=0`;
-        
-        // Set link ke tombol booking
         document.getElementById('mdl-booking-link').href = waLink;
     });
 </script>
