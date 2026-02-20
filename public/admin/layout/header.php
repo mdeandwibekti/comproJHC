@@ -228,7 +228,6 @@ if ($settings_result) {
                         <i class="fas fa-cog me-2"></i>Pengaturan
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropSettings">
-                        <li><a class="dropdown-item" href="background_settings2.php"><i class="fas fa-panorama me-2"></i>Background Hero</a></li>
                         <li><a class="dropdown-item" href="logo_settings.php"><i class="fas fa-icons me-2"></i>Logo & Favicon</a></li>
                         <li><a class="dropdown-item" href="popup_settings2.php"><i class="fas fa-bullhorn me-2"></i>Popup Promo</a></li>
                     </ul>

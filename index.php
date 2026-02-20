@@ -40,8 +40,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_appointment']))
 }
 
 $tabs_config = [
-    'sejarah'        => ['label' => 'Sejarah',     'icon' => 'fa-history'],
     'salam-direktur' => ['label' => 'Salam Direktur','icon' => 'fa-user-tie'],
+    'sejarah'        => ['label' => 'Sejarah',     'icon' => 'fa-history'],
     'visi-misi'      => ['label' => 'Visi & Misi', 'icon' => 'fa-bullseye']
 ];
 
@@ -545,11 +545,11 @@ $show_popup = !empty($active_popups);
       align-items: center;
       gap: 0.5rem;
       padding: 0.45rem 1rem;
-      background: rgba(200,16,46,0.25);
+      background: linear-gradient(135deg, #c8102e, #8a3033);
       backdrop-filter: blur(8px);
       border: 1px solid rgba(200,16,46,0.4);
       border-radius: 50px;
-      color: #FFB3BE;
+      color: #ffffff;
       font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 0.08em;
@@ -568,13 +568,13 @@ $show_popup = !empty($active_popups);
     }
     .hero-title em {
       font-style: normal;
-      color: #FF8A9B;
+      color: #ffffff;
       font-family: var(--font-serif);
     }
 
     .hero-desc {
       font-size: clamp(0.95rem, 2vw, 1.1rem);
-      color: rgba(255,255,255,0.82);
+      color: rgba(255, 255, 255, 0.82);
       line-height: 1.8;
       margin-bottom: 2.25rem;
       max-width: 520px;
@@ -588,65 +588,71 @@ $show_popup = !empty($active_popups);
       align-items: center;
     }
 
+    /* --- Modifikasi Navigasi Utama --- */
     .carousel-ctrl {
-      position: absolute;
-      bottom: 2.5rem;
-      right: 2rem;
-      z-index: 10;
-      display: flex;
-      gap: 0.75rem;
-      align-items: center;
+        position: absolute;
+        top: 50%; /* Posisi di tengah secara vertikal */
+        left: 0;
+        right: 0;
+        transform: translateY(-50%);
+        z-index: 10;
+        display: flex;
+        justify-content: space-between; /* Memisahkan tombol ke kiri dan kanan */
+        padding: 0 1.5rem; /* Jarak tombol dari tepi layar */
+        pointer-events: none; /* Agar area kosong di tengah tidak menghalangi klik konten */
     }
 
     .carousel-ctrl button {
-      width: 46px; height: 46px;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.4);
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(8px);
-      color: #fff;
-      font-size: 0.85rem;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.25s var(--ease-out);
-      cursor: pointer;
+        width: 50px; 
+        height: 50px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.25);
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(12px);
+        color: #fff;
+        font-size: 1rem;
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        pointer-events: auto; /* Mengaktifkan klik kembali khusus pada tombol */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
+    /* Efek Hover Tombol */
     .carousel-ctrl button:hover {
-      background: var(--crimson);
-      border-color: var(--crimson);
+        background: var(--jhc-red-dark, #8a3033); /* Menggunakan variabel warna RS Jantung */
+        border-color: var(--jhc-red-dark, #8a3033);
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(138, 48, 51, 0.4);
     }
 
-    .carousel-dots {
-      position: absolute;
-      bottom: 2.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 8px;
-      z-index: 10;
-    }
-
-    .carousel-dots button {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.4);
-      border: none;
-      padding: 0;
-      transition: all 0.3s var(--ease-out);
-      cursor: pointer;
-    }
-    .carousel-dots button.active {
-      width: 26px;
-      border-radius: 4px;
-      background: var(--crimson);
+    /* Penyesuaian Responsif */
+    @media (max-width: 767px) {
+        .carousel-dots {
+            bottom: 1.5rem;
+        }
+        .carousel-dots button.active {
+            width: 35px !important;
+        }
     }
 
     @media (max-width: 767px) {
-      .hero-wrap { height: 80vh; min-height: 480px; }
-      .hero-body { padding: 0 1.25rem; }
-    }
-    @media (max-width: 480px) {
-      .carousel-ctrl { display: none; }
+        /* Pada mobile, kontrol dipindah ke bawah untuk kemudahan jempol */
+        .carousel-ctrl {
+            top: auto;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            left: auto;
+            transform: none;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .carousel-dots {
+            left: 1.5rem;
+            bottom: 2rem;
+        }
     }
 
     /* ============================================================
@@ -1019,7 +1025,7 @@ $show_popup = !empty($active_popups);
       align-items: center;
       gap: 0.5rem;
       padding: 0.5rem 1.25rem;
-      background: linear-gradient(135deg, #8a3033, 50%, #c8102e);
+      background: linear-gradient(135deg, #c8102e, #8a3033);
       border: 1.5px solid #E2E8F0;
       border-radius: 50px;
       font-size: 0.75rem;
@@ -1035,6 +1041,7 @@ $show_popup = !empty($active_popups);
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1.25rem;
+      position: relative;
     }
     @media (max-width: 1100px) { .layanan-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 767px)  { .layanan-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
@@ -1180,6 +1187,27 @@ $show_popup = !empty($active_popups);
       color: #fff;
     }
 
+    .animate-fade-up {
+    animation: fadeUp 0.5s ease forwards;
+    opacity: 0;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Transisi halus saat container berubah ukuran */
+    #layananContainer {
+        transition: all 0.5s ease-in-out;
+    }
+
     /* ============================================================
        FACILITIES
     ============================================================ */
@@ -1211,7 +1239,7 @@ $show_popup = !empty($active_popups);
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      background-color: #1a2a4a;
+      background-color: #8e3a3a;
       transition: transform 0.55s var(--ease-out);
     }
     .fac-card:hover .fac-bg { transform: scale(1.04); }
@@ -2076,9 +2104,9 @@ $show_popup = !empty($active_popups);
           <div class="dept-divider-line"></div>
         </div>
 
-        <div class="layanan-grid mb-5">
-          <?php foreach ($layanan_data as $item): ?>
-            <div class="lu-card btn-open-layanan"
+        <div class="layanan-grid mb-4" id="layananContainer">
+          <?php foreach ($layanan_data as $index => $item): ?>
+            <div class="lu-card btn-open-layanan <?= ($index >= 8) ? 'd-none' : ''; ?>"
                 role="button"
                 tabindex="0"
                 data-id="<?= $item['id']; ?>" 
@@ -2118,13 +2146,21 @@ $show_popup = !empty($active_popups);
                   <i class="fas fa-user-md me-1"></i> Lihat Dokter
                 </a>
               </div>
-
             </div>
           <?php endforeach; ?>
         </div>
+
+        <?php if (count($layanan_data) > 8): ?>
+          <div class="text-center mb-5">
+            <button id="toggleLayanan" class="btn btn-danger rounded-pill px-5 shadow-sm fw-bold" 
+                    style="background: #8a3033; border: none; padding-top: 12px; padding-bottom: 12px;">
+              <span id="toggleText">Lihat Lebih Banyak</span> 
+              <i class="fas fa-chevron-down ms-2" id="toggleIcon"></i>
+            </button>
+          </div>
+        <?php endif; ?>
       <?php endif; ?>
 
-      <!-- Poliklinik Spesialis -->
       <?php if (!empty($poliklinik_data)): ?>
         <div class="dept-divider mt-2">
           <div class="dept-divider-line"></div>
@@ -2182,12 +2218,11 @@ $show_popup = !empty($active_popups);
       <div class="container" style="max-width:1280px;">
 
         <div class="sec-header-center mb-5">
-          <div class="sec-eyebrow" aria-hidden="true">Layanan & Fasilitas</div>
           <h2 class="sec-title">Fasilitas <em>RS Jantung</em> Tasikmalaya</h2>
           <p class="sec-subtitle">Fasilitas modern dan lengkap untuk kenyamanan dan kesembuhan Anda.</p>
         </div>
 
-        <div class="fac-grid">
+        <div class="fac-grid mb-4" id="facContainer">
           <?php foreach ($facilities_data as $idx => $fac):
               $bg_style = !empty($fac['image_path'])
                   ? "background-image: url('public/" . htmlspecialchars($fac['image_path']) . "');"
@@ -2197,7 +2232,9 @@ $show_popup = !empty($active_popups);
               $target_link = "facilities_list.php?category=" . $cat_param;
           ?>
           
-          <a href="<?= $target_link; ?>" class="fac-card text-decoration-none" id="fac-<?= $idx; ?>">
+          <a href="<?= $target_link; ?>" 
+             class="fac-card text-decoration-none <?= ($idx >= 6) ? 'fac-hidden d-none' : ''; ?>" 
+             id="fac-<?= $idx; ?>">
               <div class="fac-bg" style="<?= $bg_style ?>"></div>
               <div class="fac-overlay"></div>
               <span class="fac-number" aria-hidden="true"><?= str_pad($idx + 1, 2, '0', STR_PAD_LEFT); ?></span>
@@ -2216,6 +2253,16 @@ $show_popup = !empty($active_popups);
           </a>
           <?php endforeach; ?>
         </div>
+
+        <?php if (count($facilities_data) > 6): ?>
+          <div class="text-center mt-4">
+            <button id="btnToggleFac" class="btn btn-outline-danger rounded-pill px-5 fw-bold shadow-sm" 
+                    style="border-width: 2px; transition: 0.3s;">
+                <span id="textFac">Lihat Lebih Banyak</span>
+                <i class="fas fa-chevron-down ms-2" id="iconFac"></i>
+            </button>
+          </div>
+        <?php endif; ?>
 
       </div>
     </section>
@@ -2825,54 +2872,97 @@ $show_popup = !empty($active_popups);
 
   /* ── Modal: Detail Layanan ── */
   document.addEventListener('DOMContentLoaded', function() {
+    // === 1. LOGIKA SHOW MORE / LIHAT LEBIH BANYAK ===
+    const btnToggle = document.getElementById('toggleLayanan');
+    const container = document.getElementById('layananContainer');
+    
+    if (btnToggle) {
+        btnToggle.addEventListener('click', function() {
+            const hiddenCards = container.querySelectorAll('.lu-card.d-none');
+            const allCards = container.querySelectorAll('.lu-card');
+            const textSpan = document.getElementById('toggleText');
+            const iconI = document.getElementById('toggleIcon');
+            
+            if (hiddenCards.length > 0) {
+                // Tampilkan semua kartu
+                allCards.forEach(card => {
+                    card.classList.remove('d-none');
+                    // Menambahkan animasi fade in jika ada library animate.css
+                    card.classList.add('animate__animated', 'animate__fadeIn');
+                });
+                textSpan.innerText = 'Lihat Lebih Sedikit';
+                iconI.classList.replace('fa-chevron-down', 'fa-chevron-up');
+            } else {
+                // Sembunyikan kembali kartu ke-9 ke atas (index >= 8)
+                allCards.forEach((card, index) => {
+                    if (index >= 8) {
+                        card.classList.add('d-none');
+                    }
+                });
+                textSpan.innerText = 'Lihat Lebih Banyak';
+                iconI.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                
+                // Scroll halus kembali ke atas container layanan
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+
+    // === 2. LOGIKA MODAL LAYANAN (SCRIPT ASLI ANDA) ===
     const modalLayanan = document.getElementById('modalLayanan');
     
-    modalLayanan.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const deptId = button.getAttribute('data-id');
-        
-        document.getElementById('m-name').textContent = button.getAttribute('data-name');
-        document.getElementById('m-desc').innerHTML = button.getAttribute('data-desc');
-        document.getElementById('m-image').src = button.getAttribute('data-image');
+    if (modalLayanan) {
+        modalLayanan.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const deptId = button.getAttribute('data-id');
+            
+            // Mengisi konten modal dari atribut data tombol
+            document.getElementById('m-name').textContent = button.getAttribute('data-name');
+            document.getElementById('m-desc').innerHTML = button.getAttribute('data-desc');
+            document.getElementById('m-image').src = button.getAttribute('data-image');
 
-        const doctorContainer = document.getElementById('m-doctor-list');
-        if (doctorContainer) {
-          doctorContainer.innerHTML = '<div class="col-12 text-center py-3"><div class="spinner-border spinner-border-sm text-danger" role="status"></div><span class="ms-2">Mencari dokter...</span></div>';
+            const doctorContainer = document.getElementById('m-doctor-list');
+            if (doctorContainer) {
+                // Menampilkan loading spinner
+                doctorContainer.innerHTML = '<div class="col-12 text-center py-3"><div class="spinner-border spinner-border-sm text-danger" role="status"></div><span class="ms-2">Mencari dokter...</span></div>';
 
-          fetch('get_doctors_api.php?dept_id=' + deptId)
-              .then(response => response.json())
-              .then(data => {
-                  doctorContainer.innerHTML = '';
-                  
-                  if (data.length > 0) {
-                      data.forEach(doc => {
-                          doctorContainer.innerHTML += `
-                              <div class="col-md-6">
-                                  <div class="d-flex align-items-center p-2 border rounded-3 shadow-sm bg-white">
-                                      <img src="public/${doc.photo_path || 'assets/img/default-doctor.png'}" 
-                                           class="rounded-circle me-3" 
-                                           style="width: 50px; height: 50px; object-fit: cover;">
-                                      <div>
-                                          <div class="fw-bold small text-dark">${doc.name}</div>
-                                          <div class="text-danger" style="font-size: 0.65rem; font-weight: 700;">${doc.specialty}</div>
-                                      </div>
-                                  </div>
-                              </div>
-                          `;
-                      });
-                  } else {
-                      doctorContainer.innerHTML = '<div class="col-12 text-center py-3 text-muted small">Jadwal dokter belum tersedia untuk unit ini.</div>';
-                  }
-              })
-              .catch(error => {
-                  doctorContainer.innerHTML = '<div class="col-12 text-center py-3 text-danger small">Gagal memuat data dokter.</div>';
-              });
-        }
-    });
-  });
+                // Mengambil data dokter melalui API eksternal
+                fetch('get_doctors_api.php?dept_id=' + deptId)
+                    .then(response => response.json())
+                    .then(data => {
+                        doctorContainer.innerHTML = '';
+                        
+                        if (data.length > 0) {
+                            data.forEach(doc => {
+                                doctorContainer.innerHTML += `
+                                    <div class="col-md-6 mb-2">
+                                        <div class="d-flex align-items-center p-2 border rounded-3 shadow-sm bg-white">
+                                            <img src="public/${doc.photo_path || 'assets/img/default-doctor.png'}" 
+                                                 class="rounded-circle me-3" 
+                                                 style="width: 50px; height: 50px; object-fit: cover;">
+                                            <div>
+                                                <div class="fw-bold small text-dark">${doc.name}</div>
+                                                <div class="text-danger" style="font-size: 0.65rem; font-weight: 700;">${doc.specialty}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            doctorContainer.innerHTML = '<div class="col-12 text-center py-3 text-muted small">Jadwal dokter belum tersedia untuk unit ini.</div>';
+                        }
+                    })
+                    .catch(error => {
+                        doctorContainer.innerHTML = '<div class="col-12 text-center py-3 text-danger small">Gagal memuat data dokter.</div>';
+                    });
+            }
+        });
+    }
+});
   
   /* ── Fasilitas: expand / collapse ── */
-  window.toggleFacDesc = function(idx) {
+  // --- LOGIKA TOGGLE DESKRIPSI (Fungsi Asli Anda - Tidak Diubah) ---
+window.toggleFacDesc = function(idx) {
     const card       = document.getElementById('fac-' + idx);
     const toggleBtn  = card ? card.querySelector('.fac-toggle') : null;
     const toggleText = card ? card.querySelector('.fac-toggle-text') : null;
@@ -2886,12 +2976,63 @@ $show_popup = !empty($active_popups);
     if (isExpanded) {
       card.style.transform = 'none';
     }
-  };
+};
 
-  document.querySelectorAll('.fac-toggle').forEach(btn => {
+document.querySelectorAll('.fac-toggle').forEach(btn => {
     btn.addEventListener('click', e => e.stopPropagation());
-  });
+});
 
+
+// --- LOGIKA LIHAT LEBIH BANYAK/SEDIKIT (Tambahan Baru) ---
+document.addEventListener('DOMContentLoaded', function() {
+    const btnFac = document.getElementById('btnToggleFac');
+    const containerFac = document.getElementById('facContainer');
+
+    if (btnFac) {
+        btnFac.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Mencari kartu yang saat ini sedang tersembunyi
+            const hiddenFacs = containerFac.querySelectorAll('.fac-card.d-none');
+            const allFacs = containerFac.querySelectorAll('.fac-card');
+            const textFac = document.getElementById('textFac');
+            const iconFac = document.getElementById('iconFac');
+
+            if (hiddenFacs.length > 0) {
+                // AKSI: LIHAT LEBIH BANYAK
+                hiddenFacs.forEach((card, index) => {
+                    card.classList.remove('d-none');
+                    card.style.animationDelay = (index * 0.1) + 's';
+                    card.classList.add('fac-animate'); // Pastikan CSS animasi sudah ada
+                });
+                textFac.innerText = 'Lihat Lebih Sedikit';
+                iconFac.classList.replace('fa-chevron-down', 'fa-chevron-up');
+            } else {
+                // AKSI: LIHAT LEBIH SEDIKIT (Perbaikan di sini: index >= 6)
+                allFacs.forEach((card, index) => {
+                    if (index >= 6) { 
+                        card.classList.add('d-none');
+                        card.classList.remove('fac-animate');
+                    }
+                });
+                textFac.innerText = 'Lihat Lebih Banyak';
+                iconFac.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                
+                // Scroll kembali ke atas grid agar user tidak bingung
+                containerFac.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+});
+
+// Fungsi toggle deskripsi asli Anda tetap dipertahankan di bawah ini
+window.toggleFacDesc = function(idx) {
+    const card = document.getElementById('fac-' + idx);
+    if (!card) return;
+    const isExpanded = card.classList.toggle('expanded');
+    const toggleText = card.querySelector('.fac-toggle-text');
+    if (toggleText) toggleText.textContent = isExpanded ? 'Sembunyikan' : 'Baca Selengkapnya';
+};
   /* ── Modal: Artikel ── */
   document.querySelectorAll('.btn-read-more').forEach(btn => {
     btn.addEventListener('click', function() {
