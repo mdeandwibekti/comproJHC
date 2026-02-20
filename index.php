@@ -40,9 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_appointment']))
 }
 
 $tabs_config = [
-    'visi-misi'      => ['label' => 'Visi & Misi', 'icon' => 'fa-bullseye'],
     'sejarah'        => ['label' => 'Sejarah',     'icon' => 'fa-history'],
-    'salam-direktur' => ['label' => 'Salam Direktur','icon' => 'fa-user-tie']
+    'salam-direktur' => ['label' => 'Salam Direktur','icon' => 'fa-user-tie'],
+    'visi-misi'      => ['label' => 'Visi & Misi', 'icon' => 'fa-bullseye']
 ];
 
 $about_sections = [];
