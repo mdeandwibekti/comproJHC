@@ -1726,113 +1726,88 @@ $show_popup = !empty($active_popups);
     /* ============================================================
        PROMO POPUP
     ============================================================ */
-    /* --- MODAL CONTAINER --- */
-    #promoPopupCarousel .modal-content { 
-      border-radius: 24px !important; 
-      overflow: hidden; 
-      border: none;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-    }
+    /* 1. Pastikan posisi button adalah absolute terhadap modal-content */
+    /* --- 1. MODIFIKASI KARTU (WARNA & LAYOUT) --- */
+#promoPopupCarousel .modal-content {
+    position: relative;
+    overflow: visible !important;
+    border-radius: 30px !important;
+    border: none !important;
+    /* Memberikan warna gradasi halus pada kartu */
+    background: linear-gradient(165deg, #ffffff 0%, #fff5f5 100%) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(138, 48, 51, 0.05) !important;
+}
 
-    /* --- TOMBOL TUTUP (CLOSE) --- */
-    .btn-close-custom {
-      position: absolute;
-      right: 16px; top: 16px;
-      z-index: 1100;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(8px);
-      border: none;
-      width: 34px; height: 34px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      color: #8a3033;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      cursor: pointer;
-    }
-    .btn-close-custom:hover { transform: rotate(90deg) scale(1.1); background: #8a3033; color: #fff; }
+/* Dekorasi garis merah di bagian atas kartu */
+#promoPopupCarousel .modal-content::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    border-radius: 30px 30px 0 0;
+    z-index: 1051;
+}
 
-    /* --- GAMBAR KONTEN --- */
-    .popup-img-container {
-        width: 100%;
-        height: 350px; /* Tinggi tetap agar konsisten */
-        background: #f8f9fa;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-    }
-    .popup-img-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* Gambar akan memenuhi kontainer tanpa distorsi */
-    }
-
-    /* --- AREA TEKS --- */
-    .content-area {
-      padding: 2.5rem 2rem;
-      background: #fff;
-      text-align: center;
-    }
-    .popup-title { font-size: 1.35rem; font-weight: 800; color: #1a1a1a; margin-bottom: 0.75rem; letter-spacing: -0.5px; }
-    .popup-text { font-size: 0.95rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem; }
-
-   /* Navigasi Carousel Panah agar Terlihat Jelas */
-.custom-nav {
-    width: 40px;
-    height: 40px;
-    background-color: var(--crimson) !important;
+/* --- 2. MODIFIKASI TOMBOL "X" (CLOSE) TERAPUNG --- */
+.btn-close-custom {
+    position: absolute;
+    /* Memindahkan ke luar area gambar (kanan luar) */
+    right: 15px; 
+    top: 15px;
+    width: 38px;
+    height: 38px;
+    background: #8a3033 !important; /* Warna merah JHC */
+    color: #fff !important;
     border-radius: 50%;
-    top: 40%;
-    opacity: 0.8;
-    border: 2px solid #fff !important;
+    border: 3px solid #fff !important; /* Border putih agar kontras */
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1200;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
 }
-.custom-nav:hover { opacity: 1; transform: scale(1.1); }
-.custom-nav i { color: #fff; font-size: 1rem; }
 
-    /* --- INDIKATOR TITIK (DI ATAS GAMBAR) --- */
-    .custom-indicators { 
-      bottom: 20px !important; 
-      transform: none; 
-      margin-bottom: 0; 
-      z-index: 1060;
-    }
-    .custom-indicators button {
-      width: 10px !important; height: 10px !important;
-      border-radius: 50% !important;
-      background-color: rgba(255,255,255,0.7) !important;
-      border: 1px solid rgba(0,0,0,0.2) !important;
-      margin: 0 5px !important;
-      transition: all 0.3s ease;
-    }
-    .custom-indicators button.active {
-      background-color: #8a3033 !important;
-      width: 28px !important; /* Efek memanjang untuk posisi aktif */
-      border-radius: 10px !important;
-    }
+.btn-close-custom:hover {
+    transform: rotate(90deg) scale(1.1);
+    background: #bd3030 !important;
+}
 
-    /* --- TOMBOL AKSI UTAMA --- */
-    .btn-danger.rounded-pill {
-      padding: 12px 45px;
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 0.85rem;
-      letter-spacing: 1px;
-      background: linear-gradient(135deg, #8a3033 0%, #bd3030 100%);
-      border: none;
-      box-shadow: 0 8px 20px -5px rgba(138, 48, 51, 0.4);
-      transition: 0.3s;
-    }
+/* --- 3. TOMBOL NAVIGASI SAMPING (KODE ASLI ANDA) --- */
+.custom-side-nav {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0; 
+    z-index: 1100;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
 
-    /* --- ANIMASI MODAL ZOOM --- */
-    .modal.fade .modal-dialog {
-      transform: scale(0.8);
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .modal.show .modal-dialog { transform: scale(1); }
+.carousel-control-prev.custom-side-nav { left: 10px; }
+.carousel-control-next.custom-side-nav { right: 10px; }
+
+.custom-side-nav i {
+    color: #8a3033 !important;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.custom-side-nav:hover { background: #8a3033 !important; }
+.custom-side-nav:hover i { color: #fff !important; }
+
+/* Efek muncul saat hover pada kartu */
+#promoPopupCarousel:hover .custom-side-nav { opacity: 1; }
 
     /* ============================================================
        SPINNER
