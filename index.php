@@ -1728,86 +1728,86 @@ $show_popup = !empty($active_popups);
     ============================================================ */
     /* 1. Pastikan posisi button adalah absolute terhadap modal-content */
     /* --- 1. MODIFIKASI KARTU (WARNA & LAYOUT) --- */
-#promoPopupCarousel .modal-content {
-    position: relative;
-    overflow: visible !important;
-    border-radius: 30px !important;
-    border: none !important;
-    /* Memberikan warna gradasi halus pada kartu */
-    background: linear-gradient(165deg, #ffffff 0%, #fff5f5 100%) !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(138, 48, 51, 0.05) !important;
-}
+    #promoPopupCarousel .modal-content {
+        position: relative;
+        overflow: visible !important;
+        border-radius: 30px !important;
+        border: none !important;
+        /* Memberikan warna gradasi halus pada kartu */
+        background: linear-gradient(165deg, #ffffff 0%, #fff5f5 100%) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(138, 48, 51, 0.05) !important;
+    }
 
-/* Dekorasi garis merah di bagian atas kartu */
-#promoPopupCarousel .modal-content::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 5px;
-    border-radius: 30px 30px 0 0;
-    z-index: 1051;
-}
+    /* Dekorasi garis merah di bagian atas kartu */
+    #promoPopupCarousel .modal-content::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 5px;
+        border-radius: 30px 30px 0 0;
+        z-index: 1051;
+    }
 
-/* --- 2. MODIFIKASI TOMBOL "X" (CLOSE) TERAPUNG --- */
-.btn-close-custom {
-    position: absolute;
-    /* Memindahkan ke luar area gambar (kanan luar) */
-    right: 15px; 
-    top: 15px;
-    width: 38px;
-    height: 38px;
-    background: #8a3033 !important; /* Warna merah JHC */
-    color: #fff !important;
-    border-radius: 50%;
-    border: 3px solid #fff !important; /* Border putih agar kontras */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1200;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    cursor: pointer;
-}
+    /* --- 2. MODIFIKASI TOMBOL "X" (CLOSE) TERAPUNG --- */
+    .btn-close-custom {
+        position: absolute;
+        /* Memindahkan ke luar area gambar (kanan luar) */
+        right: 15px; 
+        top: 15px;
+        width: 38px;
+        height: 38px;
+        background: #8a3033 !important; /* Warna merah JHC */
+        color: #fff !important;
+        border-radius: 50%;
+        border: 3px solid #fff !important; /* Border putih agar kontras */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1200;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        cursor: pointer;
+    }
 
-.btn-close-custom:hover {
-    transform: rotate(90deg) scale(1.1);
-    background: #bd3030 !important;
-}
+    .btn-close-custom:hover {
+        transform: rotate(90deg) scale(1.1);
+        background: #bd3030 !important;
+    }
 
-/* --- 3. TOMBOL NAVIGASI SAMPING (KODE ASLI ANDA) --- */
-.custom-side-nav {
-    width: 45px;
-    height: 45px;
-    background: rgba(255, 255, 255, 0.9) !important;
-    backdrop-filter: blur(10px);
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0; 
-    z-index: 1100;
-    border: 1px solid rgba(0,0,0,0.1) !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
+    /* --- 3. TOMBOL NAVIGASI SAMPING (KODE ASLI ANDA) --- */
+    .custom-side-nav {
+        width: 45px;
+        height: 45px;
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0; 
+        z-index: 1100;
+        border: 1px solid rgba(0,0,0,0.1) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
 
-.carousel-control-prev.custom-side-nav { left: 10px; }
-.carousel-control-next.custom-side-nav { right: 10px; }
+    .carousel-control-prev.custom-side-nav { left: 10px; }
+    .carousel-control-next.custom-side-nav { right: 10px; }
 
-.custom-side-nav i {
-    color: #8a3033 !important;
-    font-size: 1.2rem;
-    font-weight: bold;
-}
+    .custom-side-nav i {
+        color: #8a3033 !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
 
-.custom-side-nav:hover { background: #8a3033 !important; }
-.custom-side-nav:hover i { color: #fff !important; }
+    .custom-side-nav:hover { background: #8a3033 !important; }
+    .custom-side-nav:hover i { color: #fff !important; }
 
-/* Efek muncul saat hover pada kartu */
-#promoPopupCarousel:hover .custom-side-nav { opacity: 1; }
+    /* Efek muncul saat hover pada kartu */
+    #promoPopupCarousel:hover .custom-side-nav { opacity: 1; }
 
     /* ============================================================
        SPINNER

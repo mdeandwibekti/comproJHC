@@ -21,7 +21,15 @@ if ($settings_result) {
         $settings[$setting['setting_key']] = $setting['setting_value']; 
     }
 }
+
+$fav_query = $mysqli->query("SELECT setting_value FROM settings2 WHERE setting_key = 'favicon_path' LIMIT 1");
+$fav_data = $fav_query->fetch_assoc();
+$favicon_url = !empty($fav_data['setting_value']) ? $fav_data['setting_value'] : 'assets/img/favicons/favicon.ico'; // Fallback default
 ?>
+
+<link rel="icon" type="image/x-icon" href="../<?= htmlspecialchars($favicon_url); ?>?v=<?= time(); ?>">
+<link rel="shortcut icon" href="../<?= htmlspecialchars($favicon_url); ?>?v=<?= time(); ?>">
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
