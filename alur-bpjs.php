@@ -27,6 +27,26 @@ $data = $query->fetch_assoc();
             border-radius: 0 0 50px 50px;
         }
 
+        /* Button Kembali — style doctors_list.php */
+        .btn-back {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 8px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+        }
+
         /* Timeline Style */
         .timeline-steps {
             position: relative;
@@ -83,11 +103,12 @@ $data = $query->fetch_assoc();
 <body>
 
 <header class="header-bpjs text-center mb-5">
-    
     <div class="container">
-        <a href="index.php" class="text-white-50 text-decoration-none small mb-3 d-inline-block">
-            <i class="fas fa-arrow-left"></i> Kembali ke Beranda
-        </a>
+        <div class="text-start mb-3">
+            <a href="index.php" class="btn-back">
+                <i class="fas fa-chevron-left"></i> Kembali
+            </a>
+        </div>
         <h1 class="fw-bold">Alur Pendaftaran BPJS</h1>
         <p class="opacity-75">Panduan langkah demi langkah bagi pasien Jaminan Kesehatan Nasional (JKN).</p>
     </div>
@@ -161,7 +182,7 @@ $data = $query->fetch_assoc();
 </main>
 
 <footer class="text-center py-4 text-muted small">
-    &copy; 2026 RS Jantung Jakarta - Memberikan Layanan Jantung Terintegrasi
+    &copy; 2026 RS Jantung Tasikmalaya - Memberikan Layanan Jantung Terintegrasi
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
