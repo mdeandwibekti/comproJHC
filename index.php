@@ -2046,7 +2046,6 @@ $show_popup = !empty($active_popups);
         <h2 class="sec-title">Layanan <em>Unggulan</em></h2>
         <p class="sec-subtitle">Layanan unggulan dan poliklinik spesialis untuk mendukung kesehatan Anda.</p>
       </div>
-
       <?php 
       function render_poliklinik_cards($data_list) {
         foreach ($data_list as $item): ?>
@@ -2054,8 +2053,13 @@ $show_popup = !empty($active_popups);
             <div class="service-card">
               <div class="svc-card-inner">
                 <div class="svc-icon-wrap">
-                  <?php if (!empty($item['icon_path'])): ?>
-                    <img src="<?= htmlspecialchars($item['icon_path']); ?>" alt="">
+                  <?php 
+                  // Tambahkan prefix public/ agar path sesuai dengan lokasi folder di server
+                  $full_icon_path = !empty($item['icon_path']) ? 'public/' . $item['icon_path'] : '';
+                  
+                  // Cek apakah data path ada dan filenya benar-benar ada di server
+                  if (!empty($item['icon_path']) && file_exists($full_icon_path)): ?>
+                    <img src="<?= htmlspecialchars($full_icon_path); ?>" alt="<?= htmlspecialchars($item['name']); ?>">
                   <?php else: ?>
                     <i class="fas fa-heartbeat text-primary"></i>
                   <?php endif; ?>
@@ -2095,8 +2099,12 @@ $show_popup = !empty($active_popups);
                 data-bs-toggle="modal" data-bs-target="#modalLayanan">
 
               <div class="lu-icon">
-                <?php if (!empty($item['icon_path'])): ?>
-                  <img src="<?= htmlspecialchars($item['icon_path']); ?>"
+                <?php 
+                // Gabungkan path agar mengarah ke folder public
+                $icon_src = !empty($item['icon_path']) ? 'public/' . $item['icon_path'] : '';
+                
+                if (!empty($item['icon_path']) && file_exists($icon_src)): ?>
+                  <img src="<?= $icon_src; ?>"
                       alt="<?= htmlspecialchars($item['name']); ?>"
                       onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                   <span class="lu-fallback-icon" style="display:none;">
@@ -2859,16 +2867,13 @@ $show_popup = !empty($active_popups);
             const iconI = document.getElementById('toggleIcon');
             
             if (hiddenCards.length > 0) {
-                // Tampilkan semua kartu
                 allCards.forEach(card => {
                     card.classList.remove('d-none');
-                    // Menambahkan animasi fade in jika ada library animate.css
                     card.classList.add('animate__animated', 'animate__fadeIn');
                 });
                 textSpan.innerText = 'Lihat Lebih Sedikit';
                 iconI.classList.replace('fa-chevron-down', 'fa-chevron-up');
             } else {
-                // Sembunyikan kembali kartu ke-9 ke atas (index >= 8)
                 allCards.forEach((card, index) => {
                     if (index >= 8) {
                         card.classList.add('d-none');
@@ -2876,37 +2881,42 @@ $show_popup = !empty($active_popups);
                 });
                 textSpan.innerText = 'Lihat Lebih Banyak';
                 iconI.classList.replace('fa-chevron-up', 'fa-chevron-down');
-                
-                // Scroll halus kembali ke atas container layanan
                 container.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
     }
 
-    // === 2. LOGIKA MODAL LAYANAN (SCRIPT ASLI ANDA) ===
+    // === 2. LOGIKA MODAL LAYANAN (Disesuaikan untuk Path Ikon) ===
     const modalLayanan = document.getElementById('modalLayanan');
     
     if (modalLayanan) {
         modalLayanan.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
             const deptId = button.getAttribute('data-id');
+            const iconPath = button.getAttribute('data-image'); // Ambil path dari data-image
             
-            // Mengisi konten modal dari atribut data tombol
             document.getElementById('m-name').textContent = button.getAttribute('data-name');
             document.getElementById('m-desc').innerHTML = button.getAttribute('data-desc');
-            document.getElementById('m-image').src = button.getAttribute('data-image');
+
+            // --- PERBAIKAN PATH IKON DISINI ---
+            const imgModal = document.getElementById('m-image');
+            if (iconPath) {
+                // Menambahkan prefix 'public/' agar sesuai dengan lokasi folder di server
+                imgModal.src = 'public/' + iconPath;
+                imgModal.style.display = 'block';
+            } else {
+                // Jika tidak ada ikon, sembunyikan atau gunakan gambar default
+                imgModal.src = 'public/assets/img/gallery/logo.png'; 
+            }
 
             const doctorContainer = document.getElementById('m-doctor-list');
             if (doctorContainer) {
-                // Menampilkan loading spinner
                 doctorContainer.innerHTML = '<div class="col-12 text-center py-3"><div class="spinner-border spinner-border-sm text-danger" role="status"></div><span class="ms-2">Mencari dokter...</span></div>';
 
-                // Mengambil data dokter melalui API eksternal
                 fetch('get_doctors_api.php?dept_id=' + deptId)
                     .then(response => response.json())
                     .then(data => {
                         doctorContainer.innerHTML = '';
-                        
                         if (data.length > 0) {
                             data.forEach(doc => {
                                 doctorContainer.innerHTML += `
