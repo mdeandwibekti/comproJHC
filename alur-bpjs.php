@@ -182,8 +182,57 @@ $data = $query->fetch_assoc();
 </main>
 
 <footer class="text-center py-4 text-muted small">
-    &copy; 2026 RS Jantung Tasikmalaya - Memberikan Layanan Jantung Terintegrasi
+    &copy; 2026 RS Jantung Jakarta - Memberikan Layanan Jantung Terintegrasi
 </footer>
+
+<!-- Floating WhatsApp Button -->
+<style>
+    .wa-float {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #25D366;
+        color: white;
+        text-decoration: none;
+        padding: 12px 20px 12px 14px;
+        border-radius: 50px;
+        box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
+        font-size: 14px;
+        font-weight: 600;
+        transition: transform 0.2s, box-shadow 0.2s;
+        animation: wa-bounce 2.5s ease-in-out infinite;
+    }
+    .wa-float:hover {
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(37, 211, 102, 0.5);
+        animation: none;
+    }
+    .wa-float svg {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+    @keyframes wa-bounce {
+        0%, 100% { transform: translateY(0); }
+        50%       { transform: translateY(-6px); }
+    }
+</style>
+
+<a href="https://wa.me/6285175000375?text=Halo%20RS%20Jantung%2C%20saya%20ingin%20bertanya%20mengenai%20alur%20pendaftaran%20pasien%20BPJS.%20Mohon%20informasinya%2C%20terima%20kasih%20%F0%9F%99%8F"
+   target="_blank"
+   rel="noopener noreferrer"
+   class="wa-float">
+    <!-- WhatsApp Icon SVG -->
+    <svg viewBox="0 0 32 32" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2C8.268 2 2 8.268 2 16c0 2.492.678 4.827 1.86 6.83L2 30l7.38-1.832A13.94 13.94 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2zm0 25.5a11.44 11.44 0 0 1-5.84-1.603l-.418-.248-4.38 1.087 1.115-4.27-.272-.44A11.457 11.457 0 0 1 4.5 16C4.5 9.596 9.596 4.5 16 4.5S27.5 9.596 27.5 16 22.404 27.5 16 27.5zm6.29-8.618c-.344-.172-2.036-1.004-2.352-1.118-.316-.115-.546-.172-.776.172-.23.344-.89 1.118-1.09 1.348-.2.23-.4.258-.744.086-.344-.172-1.452-.535-2.766-1.707-1.022-.912-1.712-2.038-1.912-2.382-.2-.344-.021-.53.15-.701.155-.154.344-.402.516-.603.172-.2.23-.344.344-.573.115-.23.058-.431-.029-.603-.086-.172-.776-1.87-1.063-2.56-.28-.672-.564-.581-.776-.592l-.66-.011c-.23 0-.603.086-.919.43-.316.344-1.205 1.177-1.205 2.87s1.234 3.328 1.406 3.558c.172.23 2.428 3.707 5.882 5.198.823.355 1.465.567 1.966.726.826.263 1.578.226 2.172.137.662-.099 2.036-.832 2.323-1.635.287-.803.287-1.492.2-1.635-.086-.143-.316-.23-.66-.402z"/>
+    </svg>
+    Ada yang ingin ditanyakan?
+</a>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
