@@ -460,9 +460,21 @@ $show_popup = !empty($active_popups);
     }
     .float-pill:hover .fp-text { opacity: 1; }
 
-    .float-igd { background: var(--grad-primary); color: #fff; }
+    .float-igd { 
+  background: var(--grad-primary); 
+  color: #ffffff !important; /* Memaksa warna teks menjadi putih */
+}
+.float-igd .fp-text {
+  color: #ffffff !important;
+}
     .float-igd .fp-icon { background: rgba(255,255,255,0.2); }
-    .float-wa { background: #25D366; color: #fff; }
+    .float-wa { 
+  background: #25D366; 
+  color: #FFFFFF !important; /* Mengubah warna teks utama menjadi putih */
+}
+.float-wa .fp-text {
+  color: #FFFFFF !important;
+}
     .float-wa .fp-icon { background: rgba(255,255,255,0.2); }
 
     @keyframes float-pulse {
