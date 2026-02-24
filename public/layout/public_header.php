@@ -82,13 +82,15 @@ while($setting = $settings_result->fetch_assoc()){
 
         .main-navbar {
           background: linear-gradient(90deg, #b63d3f, #d8584a);
-          margin: 10px auto 0 auto;
+          margin: 10px auto;
           padding: 8px 22px;
           width: 90%;
           border-radius: 50px;
           display: flex;
           align-items: center;
-          justify-content: space-between;
+          /* Penting: jadikan relatif agar container menu bisa diposisikan absolute */
+          position: relative; 
+          min-height: 70px;
           box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
 
@@ -101,7 +103,7 @@ while($setting = $settings_result->fetch_assoc()){
         }
 
         .main-navbar .navbar-brand img {
-          height: 58px;       /* Matches Heartology logo height in reference */
+          height: 60px;       /* Matches Heartology logo height in reference */
           width: auto;
           max-width: 200px;
           object-fit: contain;
@@ -111,23 +113,38 @@ while($setting = $settings_result->fetch_assoc()){
 
         /* ── Nav Links ─────────────────────────────────── */
         .main-navbar .nav-links {
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%); /* Menarik container tepat ke titik tengah */
           display: flex;
-          gap: 22px;
-          margin: 0 auto;
+          gap: 30px; /* Jarak antar menu yang lebih lega */
+          margin: 0;
+          padding: 0;
+          list-style: none;
         }
 
         .main-navbar .nav-links a {
-          color: rgba(255,255,255,0.92);
+          color: rgba(255,255,255,0.95);
           text-decoration: none;
-          font-size: 14.5px;
-          font-weight: 500;
-          letter-spacing: 0.01em;
+          font-size: 16px; /* Sesuai font Aptos yang sebelumnya diminta */
+          font-weight: 600;
           white-space: nowrap;
-          transition: color 0.2s;
+          transition: all 0.2s ease;
         }
 
         .main-navbar .nav-links a:hover {
           color: #ffffff;
+          transform: scale(1.05);
+        }
+
+        .main-navbar .navbar-brand {
+          z-index: 10; /* Agar tidak tertutup container menu */
+        }
+
+        /* Dorong Search Box atau Tombol ke paling kanan */
+        .search-box, .nav-actions {
+          margin-left: auto;
+          z-index: 10;
         }
 
         /* ── Search Box ────────────────────────────────── */
@@ -139,6 +156,7 @@ while($setting = $settings_result->fetch_assoc()){
           border-radius: 20px;
           gap: 6px;
           flex-shrink: 0;
+          flex-basis: auto;
         }
 
         .search-box input {
