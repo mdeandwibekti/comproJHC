@@ -2507,10 +2507,6 @@ $show_popup = !empty($active_popups);
                    class="btn btn-whatsapp-modal w-100 mb-3">
                     <i class="fab fa-whatsapp me-2"></i> Hubungi WhatsApp
                 </a>
-
-                <a href="tel:+<?= $wa_number ?>" class="text-decoration-none fw-bold" style="font-size: 13px; color: #8a3033;">
-                    <i class="fas fa-phone-alt me-1"></i> +<?= $wa_number ?>
-                </a>
             </div>
         </div>
     </div>
@@ -3172,6 +3168,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
   });
+  
 
   /* ── Animate on scroll ── */
   const observer = new IntersectionObserver((entries) => {
