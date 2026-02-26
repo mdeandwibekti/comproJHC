@@ -319,4 +319,38 @@ $page_title_text = empty($id) ? "Input Isi Fasilitas" : "Edit Isi Fasilitas";
     </div>
 </div>
 
+<script>
+    // Fitur Pratinjau Gambar Instan
+    document.querySelector('input[name="image"]').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const previewContainer = document.querySelector('.img-preview-box');
+        
+        if (file) {
+            // Validasi sederhana sebelum pratinjau
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                // Membuat elemen gambar jika sebelumnya kosong (ikon), atau mengganti src jika sudah ada gambar
+                let imgElement = previewContainer.querySelector('img');
+                
+                if (!imgElement) {
+                    // Jika sebelumnya hanya ikon, hapus isi box dan ganti dengan tag img
+                    previewContainer.innerHTML = '';
+                    imgElement = document.createElement('img');
+                    imgElement.className = 'img-fluid';
+                    previewContainer.appendChild(imgElement);
+                }
+                
+                imgElement.src = event.target.result;
+                imgElement.style.maxHeight = '250px';
+                imgElement.style.borderRadius = '15px';
+                imgElement.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+                imgElement.style.border = '3px solid #fff';
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
 <?php require_once 'layout/footer.php'; ?>
