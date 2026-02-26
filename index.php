@@ -230,198 +230,207 @@ $show_popup = !empty($active_popups);
     /* ============================================================
       FULL NAVBAR FLOATING CAPSULE (JOIN US VERSION)
     ============================================================ */
-    :root {
-        --nav-height: 70px;
-        --jhc-red-dark: #742528;
-        --jhc-red-mid: #b71c1c;
-        --jhc-red-light: #c1362d;
-        --ease-out: cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-
-      .site-nav {
-      position: fixed;
-      top: 20px; /* Jarak melayang dari atas */
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1040;
-      width: 95%;
-      max-width: 1340px;
-      height: var(--nav-height);
-      /* Gradasi Merah JHC */
-      background: linear-gradient(90deg, #742528 0%, #b71c1c 50%, #c1362d 100%);
-      border-radius: 50px; 
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      border: none;
-      display: flex;
-      align-items: center;
-      transition: background 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
-  }
-
-    /* Penyesuaian saat Scroll */
-    .site-nav.scrolled {
-    top: 20px; /* Tetap sama dengan posisi awal */
-    height: var(--nav-height); /* Tetap 80px */
-    background: linear-gradient(90deg, #742528 0%, #b71c1c 100%); /* Warna sedikit lebih gelap saat scroll */
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-    }
-
-    .nav-inner {
-        width: 100%;
-        height: 100%;
-        padding: 0 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-.nav-brand {
-        display: flex;
-        align-items: center;
-        background: transparent !important; /* Menghapus warna putih */
-        padding: 0;
-        border-radius: 0; /* Menghapus bentuk lingkaran */
-        width: auto;
-        height: auto;
-        box-shadow: none !important; /* Menghapus bayangan */
-    }
-
-    .nav-brand img {
-        height: 75px;
-        width: auto;
-        object-fit: contain;
-        transition: height 0.3s ease;
-    }
-
-    .brand-divider {
-        width: 1px;
-        height: 35px;
-        background: #eee;
-    }
-
-    .site-nav.scrolled .nav-brand {
-        height: 60px;
-        padding: 5px 15px;
-    }
-
-    .site-nav.scrolled .nav-brand img {
-        height: 42px;
-    }
-
-    /* MENU NAVIGASI: Teks Putih Bersih */
-    .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem; /* Jarak antar menu sesuai gambar */
-        list-style: none;
-        margin: 0 auto; /* Menengahkan menu jika logo di kiri & tombol di kanan */
-        padding: 0;
-    }
-
-    .nav-links a {
-        color: #ffffff !important;
-        font-size: 0.95rem; /* Ukuran teks lebih besar agar profesional */
-        font-weight: 600;
-        text-decoration: none;
-        padding: 0.5rem 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .nav-links a:hover {
-        opacity: 0.8;
-        background: transparent;
-    }
-
-    /* AKSES KANAN: Ikon Profil & Button Join Us */
-    .nav-cta-wrap {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    /* Ikon User/Profil (Lingkaran Putih Transparan) */
-    .nav-user-icon {
-        width: 38px;
-        height: 38px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 255, 255, 0.2);
-        color: #ffffff !important;
-        border-radius: 50%;
-        font-size: 1.2rem;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .nav-user-icon:hover {
-        background: #ffffff;
-        color: var(--jhc-red-dark) !important;
-    }
-
-    /* Tombol Join Us (Pengganti Search) */
-    .nav-cta-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.55rem 1.4rem;
-        background: #ffffff;
-        color: var(--jhc-red-dark) !important;
-        border-radius: 50px;
-        font-weight: 800;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        text-decoration: none;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        transition: all 0.3s var(--ease-out);
-    }
-
-    .nav-cta-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 18px rgba(255, 255, 255, 0.3);
-        background: #f8f9fa;
-    }
-
-    /* HAMBURGER MENU (Mobile) */
-    .nav-hamburger {
-        display: none;
-        flex-direction: column;
-        gap: 5px;
-        padding: 8px;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 10px;
-        cursor: pointer;
-    }
-
-    .nav-hamburger span {
-        display: block;
-        width: 20px;
-        height: 2px;
-        background: #ffffff;
-        border-radius: 2px;
-    }
-
-    /* RESPONSIVE (Mobile & Tablet) */
-    @media (max-width: 1080px) {
-        .site-nav {
-            top: 15px;
-            width: 92%;
-        }
-        .nav-links, .nav-cta-btn {
-            display: none; /* Sembunyikan menu teks di mobile */
-        }
-        .nav-hamburger {
-            display: flex;
-        }
-        .nav-brand {
-            top: -10px;
-            left: 5px;
-        }
-        .nav-brand img {
-            height: 50px;
-        }
+      :root {
+          --nav-height: 70px;
+          --jhc-red-dark: #742528;
+          --jhc-red-mid: #b71c1c;
+          --jhc-red-light: #c1362d;
+          --ease-out: cubic-bezier(0.165, 0.84, 0.44, 1);
       }
+
+        .site-nav {
+        position: fixed;
+        top: 20px; /* Jarak melayang dari atas */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1040;
+        width: 95%;
+        max-width: 1340px;
+        height: var(--nav-height);
+        /* Gradasi Merah JHC */
+        background: linear-gradient(90deg, #742528 0%, #b71c1c 50%, #c1362d 100%);
+        border-radius: 50px; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        border: none;
+        display: flex;
+        align-items: center;
+        transition: background 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+    }
+
+      /* Penyesuaian saat Scroll */
+      .site-nav.scrolled {
+      top: 20px; /* Tetap sama dengan posisi awal */
+      height: var(--nav-height); /* Tetap 80px */
+      background: linear-gradient(90deg, #742528 0%, #b71c1c 100%); /* Warna sedikit lebih gelap saat scroll */
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      }
+
+      .nav-inner {
+          width: 100%;
+          height: 100%;
+          padding: 0 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+      }
+
+      .nav-brand {
+          display: flex;
+          align-items: center;
+          gap: 10px; /* Jarak antara logo dan divider */
+          background: transparent !important;
+          padding: 0;
+          width: auto;
+          height: 100%;
+      }
+
+      .nav-brand img {
+          /* Membuat Logo Menjadi Bulat */
+          width: 65px; /* Sesuaikan ukuran agar pas di dalam nav-height 70px */
+          height: 65px;
+          background-color: #ffffff; /* Latar belakang putih agar logo terlihat jelas */
+          border-radius: 50%; /* Membuat lingkaran sempurna */
+          padding: 5px; /* Jarak antara gambar logo dengan tepi lingkaran putih */
+          object-fit: contain; /* Memastikan gambar tidak terpotong */
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Bayangan halus agar logo menonjol */
+          transition: all 0.3s var(--ease-out);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          transition: all 0.4s var(--ease-out);
+      }
+
+      .brand-divider {
+          width: 1.5px !important;
+          height: 35px !important;
+          background: rgba(255, 255, 255, 0.3) !important;
+          margin: 0 5px !important;
+      }
+
+      .site-nav.scrolled .nav-brand {
+          height: 60px;
+          padding: 5px 15px;
+      }
+
+      .site-nav.scrolled .nav-brand img {
+          width: 50px;
+          height: 50px;
+          padding: 4px;
+      }
+
+      /* MENU NAVIGASI: Teks Putih Bersih */
+      .nav-links {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem; /* Jarak antar menu sesuai gambar */
+          list-style: none;
+          margin: 0 auto; /* Menengahkan menu jika logo di kiri & tombol di kanan */
+          padding: 0;
+      }
+
+      .nav-links a {
+          color: #ffffff !important;
+          font-size: 0.95rem; /* Ukuran teks lebih besar agar profesional */
+          font-weight: 600;
+          text-decoration: none;
+          padding: 0.5rem 0;
+          transition: opacity 0.3s ease;
+      }
+
+      .nav-links a:hover {
+          opacity: 0.8;
+          background: transparent;
+      }
+
+      /* AKSES KANAN: Ikon Profil & Button Join Us */
+      .nav-cta-wrap {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+      }
+
+      /* Ikon User/Profil (Lingkaran Putih Transparan) */
+      .nav-user-icon {
+          width: 38px;
+          height: 38px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.2);
+          color: #ffffff !important;
+          border-radius: 50%;
+          font-size: 1.2rem;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          text-decoration: none;
+          transition: all 0.3s ease;
+      }
+
+      .nav-user-icon:hover {
+          background: #ffffff;
+          color: var(--jhc-red-dark) !important;
+      }
+
+      /* Tombol Join Us (Pengganti Search) */
+      .nav-cta-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.55rem 1.4rem;
+          background: #ffffff;
+          color: var(--jhc-red-dark) !important;
+          border-radius: 50px;
+          font-weight: 800;
+          font-size: 0.8rem;
+          text-transform: uppercase;
+          text-decoration: none;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          transition: all 0.3s var(--ease-out);
+      }
+
+      .nav-cta-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 18px rgba(255, 255, 255, 0.3);
+          background: #f8f9fa;
+      }
+
+      /* HAMBURGER MENU (Mobile) */
+      .nav-hamburger {
+          display: none;
+          flex-direction: column;
+          gap: 5px;
+          padding: 8px;
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 10px;
+          cursor: pointer;
+      }
+
+      .nav-hamburger span {
+          display: block;
+          width: 20px;
+          height: 2px;
+          background: #ffffff;
+          border-radius: 2px;
+      }
+
+      /* RESPONSIVE (Mobile & Tablet) */
+      @media (max-width: 1080px) {
+          .site-nav {
+              top: 15px;
+              width: 92%;
+          }
+          .nav-links, .nav-cta-btn {
+              display: none; /* Sembunyikan menu teks di mobile */
+          }
+          .nav-hamburger {
+              display: flex;
+          }
+          .nav-brand {
+              top: -10px;
+              left: 5px;
+          }
+          .nav-brand img {
+              height: 50px;
+          }
+        }
 
     /* ============================================================
        FLOATING BUTTONS
