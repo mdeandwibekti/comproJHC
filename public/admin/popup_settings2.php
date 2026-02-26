@@ -1,10 +1,6 @@
 <?php
 require_once "../../config.php";
 
-/**
- * --- 1. LOGIKA HAPUS (DELETE CRUD) ---
- * Menghapus data dari database dan file fisik agar hosting tidak penuh
- */
 if (isset($_GET['delete_id'])) {
     $del_id = intval($_GET['delete_id']);
     
@@ -15,8 +11,8 @@ if (isset($_GET['delete_id'])) {
     
     if ($row = $res->fetch_assoc()) {
         // Hapus fisik file dari folder public
-        if (!empty($row['image_path']) && file_exists("../public/" . $row['image_path'])) {
-            @unlink("../public/" . $row['image_path']);
+        if (!empty($row['image_path']) && file_exists("../" . $row['image_path'])) {
+            @unlink("../" . $row['image_path']);
         }
     }
     
@@ -25,16 +21,12 @@ if (isset($_GET['delete_id'])) {
     exit();
 }
 
-/**
- * --- 2. LOGIKA SIMPAN (INSERT / UPDATE) ---
- * Integrasi kolom wa_link sesuai struktur database terbaru
- */
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id         = intval($_POST['id'] ?? 0);
     $title      = trim($_POST['title'] ?? '');
     $content    = trim($_POST['content'] ?? '');
     $status     = $_POST['status'] ?? 'inactive';
-    $wa_link    = trim($_POST['wa_link'] ?? ''); 
+    $wa_link    = trim($_POST['wa_link'] ?? '');
     $image_path = $_POST['current_image'] ?? '';
 
     // Folder target fisik: ../public/assets/img/popups/
@@ -48,13 +40,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (in_array($ext, $allowed)) {
             $new_filename = 'popup_' . time() . '_' . uniqid() . '.' . $ext;
-            
+
             if (move_uploaded_file($_FILES["popup_image"]["tmp_name"], $upload_dir . $new_filename)) {
                 // Hapus gambar lama jika ganti file
-                if (!empty($_POST['current_image']) && file_exists("../public/" . $_POST['current_image'])) {
-                    @unlink("../public/" . $_POST['current_image']);
+                if (!empty($_POST['current_image']) && file_exists("../" . $_POST['current_image'])) {
+                    @unlink("../" . $_POST['current_image']);
                 }
-                // Simpan path relatif terhadap folder public
+                // Simpan path relatif terhadap folder root (bukan public/)
                 $image_path = 'public/assets/img/popups/' . $new_filename;
             }
         }
@@ -69,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $mysqli->prepare("INSERT INTO popups (title, content, image_path, status, wa_link) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("sssss", $title, $content, $image_path, $status, $wa_link);
     }
-    
+
     $stmt->execute();
     header("location: popup_settings2.php?msg=saved");
     exit();
@@ -108,7 +100,7 @@ require_once 'layout/header.php';
                 <thead class="table-light">
                     <tr>
                         <th>Preview</th>
-                        <th>Informasi Promo & WhatsApp</th>
+                        <th>Informasi Promo &amp; WhatsApp</th>
                         <th class="text-center">Status</th>
                         <th class="text-end">Aksi</th>
                     </tr>
@@ -117,8 +109,8 @@ require_once 'layout/header.php';
                     <?php while($p = $popups->fetch_assoc()): ?>
                     <tr>
                         <td>
-                            <img src="../public/<?= htmlspecialchars($p['image_path']) ?>?t=<?= time() ?>" 
-                                 class="img-preview-mini shadow-sm" 
+                            <img src="../<?= htmlspecialchars($p['image_path']) ?>?t=<?= time() ?>"
+                                 class="img-preview-mini shadow-sm"
                                  onerror="this.src='../public/assets/img/gallery/logo.png'">
                         </td>
                         <td>
@@ -180,6 +172,16 @@ require_once 'layout/header.php';
                             <i class="fas fa-image fa-3x opacity-25"></i>
                         </div>
                         <input type="file" name="popup_image" id="imageInput" class="form-control form-control-sm shadow-sm" accept="image/*">
+                        <div class="mt-2 p-2 bg-light rounded-3 border">
+                            <div class="small text-muted mb-1"><i class="fas fa-info-circle text-primary me-1"></i> <strong>Panduan Ukuran Gambar</strong></div>
+                            <ul class="mb-0 ps-3" style="font-size: 0.75rem; color: #666;">
+                                <li>Resolusi ideal: <strong>600 × 800 px</strong> (portrait)</li>
+                                <li>Rasio aspek: <strong>3:4</strong> agar tidak terpotong</li>
+                                <li>Ukuran file maks: <strong>2 MB</strong></li>
+                                <li>Format: <strong>JPG, PNG, WebP</strong></li>
+                            </ul>
+                        </div>
+                        <div id="imgInfo" class="small text-muted mt-1 text-center" style="display:none;"></div>
                     </div>
                 </div>
             </div>
@@ -208,17 +210,38 @@ require_once 'layout/header.php';
         document.getElementById('form_wa_link').value = data.wa_link || '';
         document.getElementById('form_status').value = data.status;
         document.getElementById('form_current_image').value = data.image_path;
-        
-        if(data.image_path) {
-            document.getElementById('previewContainer').innerHTML = `<img src="../public/${data.image_path}" class="img-fluid rounded-3 shadow-sm">`;
+
+        if (data.image_path) {
+            // Path di DB sudah: public/assets/img/popups/filename.jpg
+            // Dari folder admin, akses via ../public/assets/img/...
+            document.getElementById('previewContainer').innerHTML = `<img src="../${data.image_path}" class="img-fluid rounded-3 shadow-sm">`;
+        } else {
+            document.getElementById('previewContainer').innerHTML = '<i class="fas fa-image fa-3x opacity-25"></i>';
         }
+
         new bootstrap.Modal(document.getElementById('popupModal')).show();
     }
 
-    document.getElementById('imageInput').onchange = function (evt) {
+    document.getElementById('imageInput').onchange = function () {
         const [file] = this.files;
         if (file) {
-            document.getElementById('previewContainer').innerHTML = `<img src="${URL.createObjectURL(file)}" class="img-fluid rounded-3 shadow-sm">`;
+            const objectUrl = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = function () {
+                const sizeKB = (file.size / 1024).toFixed(0);
+                const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                const sizeLabel = file.size >= 1024 * 1024 ? `${sizeMB} MB` : `${sizeKB} KB`;
+                const isOversized = file.size > 2 * 1024 * 1024;
+                const infoEl = document.getElementById('imgInfo');
+                infoEl.style.display = 'block';
+                infoEl.innerHTML = `
+                    <span class="badge bg-secondary me-1">${img.width} × ${img.height} px</span>
+                    <span class="badge ${isOversized ? 'bg-danger' : 'bg-success'}">${sizeLabel}</span>
+                    ${isOversized ? '<span class="text-danger d-block mt-1"><i class="fas fa-exclamation-triangle me-1"></i>Ukuran file terlalu besar! Maks 2 MB.</span>' : ''}
+                `;
+            };
+            img.src = objectUrl;
+            document.getElementById('previewContainer').innerHTML = `<img src="${objectUrl}" class="img-fluid rounded-3 shadow-sm">`;
         }
     };
 </script>
