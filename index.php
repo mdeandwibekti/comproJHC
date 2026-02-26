@@ -248,7 +248,7 @@ $show_popup = !empty($active_popups);
       max-width: 1340px;
       height: var(--nav-height);
       /* Gradasi Merah JHC */
-      background: linear-gradient(90deg, var(--jhc-red-dark) 0%, var(--jhc-red-mid) 50%, var(--jhc-red-light) 100%);
+      background: linear-gradient(90deg, #742528 0%, #b71c1c 50%, #c1362d 100%);
       border-radius: 50px; 
       box-shadow: 0 10px 30px rgba(0,0,0,0.15);
       border: none;
@@ -274,56 +274,61 @@ $show_popup = !empty($active_popups);
         justify-content: space-between;
     }
 
-    /* POSISI LOGO: Melayang menonjol ke atas luar kapsul */
-    .nav-brand {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #ffffff;
-    padding: 5px;
-    border-radius: 50%;
-    width: 65px; /* Proporsional untuk tinggi 80px */
-    height: 65px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    flex-shrink: 0;
+.nav-brand {
+        display: flex;
+        align-items: center;
+        background: transparent !important; /* Menghapus warna putih */
+        padding: 0;
+        border-radius: 0; /* Menghapus bentuk lingkaran */
+        width: auto;
+        height: auto;
+        box-shadow: none !important; /* Menghapus bayangan */
     }
 
     .nav-brand img {
-        height: 62px;
+        height: 75px;
         width: auto;
         object-fit: contain;
+        transition: height 0.3s ease;
+    }
+
+    .brand-divider {
+        width: 1px;
+        height: 35px;
+        background: #eee;
     }
 
     .site-nav.scrolled .nav-brand {
-        top: -10px;
+        height: 60px;
+        padding: 5px 15px;
     }
 
     .site-nav.scrolled .nav-brand img {
-        height: 52px;
+        height: 42px;
     }
 
     /* MENU NAVIGASI: Teks Putih Bersih */
     .nav-links {
         display: flex;
         align-items: center;
-        gap: 0.3rem;
+        gap: 1.5rem; /* Jarak antar menu sesuai gambar */
         list-style: none;
-        margin: 0 0 0 90px; /* Ruang agar tidak tertutup logo melayang */
+        margin: 0 auto; /* Menengahkan menu jika logo di kiri & tombol di kanan */
         padding: 0;
     }
 
     .nav-links a {
         color: #ffffff !important;
-        font-size: 0.85rem;
-        font-weight: 700;
-        padding: 0.5rem 0.9rem;
-        border-radius: 20px;
-        transition: all 0.25s ease;
+        font-size: 0.95rem; /* Ukuran teks lebih besar agar profesional */
+        font-weight: 600;
         text-decoration: none;
+        padding: 0.5rem 0;
+        transition: opacity 0.3s ease;
     }
 
     .nav-links a:hover {
-        background: rgba(255, 255, 255, 0.15);
+        opacity: 0.8;
+        background: transparent;
     }
 
     /* AKSES KANAN: Ikon Profil & Button Join Us */
@@ -1928,13 +1933,17 @@ $show_popup = !empty($active_popups);
   <!-- ============================================================
        NAVBAR
   ============================================================ -->
-  <nav class="site-nav" id="mainNavbar" role="navigation" aria-label="Navigasi Utama">
+ <nav class="site-nav" id="mainNavbar" role="navigation" aria-label="Navigasi Utama">
     <div class="nav-inner">
       
-      <a class="nav-brand" href="index.php" aria-label="RS JHC Tasikmalaya - Home">
-        <?php $header_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/JHC_Logo.png'; ?>
-        <img src="public/<?= htmlspecialchars($header_logo); ?>" alt="JHC Logo">
-      </a>
+      <a class="nav-brand" href="index.php">
+    <img src="public/<?= htmlspecialchars($settings['header_logo_path']); ?>" alt="Logo 1">
+    
+    <?php if(!empty($settings['header_logo_path_2'])): ?>
+        <div class="brand-divider" style="width: 1.5px; height: 40px; background: rgba(255,255,255,0.2); margin: 0 10px;"></div>
+        <img src="public/<?= htmlspecialchars($settings['header_logo_path_2']); ?>" alt="Logo 2">
+    <?php endif; ?>
+</a>
 
       <ul class="nav-links" id="navMenu" role="list">
         <li><a href="index.php#about_us">Tentang Kami</a></li>
@@ -1948,7 +1957,7 @@ $show_popup = !empty($active_popups);
 
       <div class="nav-cta-wrap">
         <a class="nav-cta-btn" href="career.php">
-          <i class="fas fa-briefcase"></i> Join Us
+          <i class="fas fa-briefcase"></i> <span>Join Us</span>
         </a>
       </div>
 
@@ -1957,7 +1966,7 @@ $show_popup = !empty($active_popups);
       </button>
 
     </div>
-  </nav>
+</nav>
 
   <!-- ============================================================
        FLOATING BUTTONS
