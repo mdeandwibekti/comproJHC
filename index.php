@@ -468,20 +468,20 @@ $show_popup = !empty($active_popups);
     .float-pill:hover .fp-text { opacity: 1; }
 
     .float-igd { 
-  background: var(--grad-primary); 
-  color: #ffffff !important; /* Memaksa warna teks menjadi putih */
-}
-.float-igd .fp-text {
-  color: #ffffff !important;
-}
-    .float-igd .fp-icon { background: rgba(255,255,255,0.2); }
-    .float-wa { 
-  background: #25D366; 
-  color: #FFFFFF !important; /* Mengubah warna teks utama menjadi putih */
-}
-.float-wa .fp-text {
-  color: #FFFFFF !important;
-}
+      background: var(--grad-primary); 
+      color: #ffffff !important; /* Memaksa warna teks menjadi putih */
+    }
+    .float-igd .fp-text {
+      color: #ffffff !important;
+    }
+        .float-igd .fp-icon { background: rgba(255,255,255,0.2); }
+        .float-wa { 
+      background: #25D366; 
+      color: #FFFFFF !important; /* Mengubah warna teks utama menjadi putih */
+    }
+    .float-wa .fp-text {
+      color: #FFFFFF !important;
+    }
     .float-wa .fp-icon { background: rgba(255,255,255,0.2); }
 
     @keyframes float-pulse {
@@ -1440,6 +1440,58 @@ $show_popup = !empty($active_popups);
     .vr-feature-icon.blue-bg { background: rgba(30,58,95,0.08); color: var(--navy-mid); }
     .vr-feature-card h6 { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.15rem; color: var(--navy); }
     .vr-feature-card small { font-size: 0.75rem; color: var(--slate); }
+
+    .clickable-card {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    border: 1px solid transparent;
+    user-select: none;
+    }
+
+    /* Efek saat kursor diarahkan ke kartu */
+    .clickable-card:hover {
+      background-color: #fff5f5; /* Warna merah sangat muda sesuai identitas JHC */
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(138, 48, 51, 0.1);
+      border-color: rgba(138, 48, 51, 0.1);
+    }
+
+    /* Efek saat kartu ditekan */
+    .clickable-card:active {
+      transform: scale(0.98);
+    }
+
+    .vr-feature-icon.red-bg {
+      background-color: #8a3033; /* Warna brand RS Jantung Tasikmalaya */
+      color: #fff;
+    }
+
+    .icon-box-modal {
+        width: 70px; height: 70px;
+        background: #fff5f5;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto;
+    }
+
+    .btn-whatsapp-modal {
+        background: #25d366;
+        color: white;
+        border-radius: 15px;
+        padding: 12px;
+        font-weight: 700;
+        font-size: 14px;
+        transition: 0.3s;
+        border: none;
+    }
+
+    .btn-whatsapp-modal:hover {
+        background: #128c7e;
+        color: white;
+        transform: translateY(-2px);
+    }
 
     /* ============================================================
        NEWS CARDS
@@ -2419,20 +2471,50 @@ $show_popup = !empty($active_popups);
               </a>
             </div>
             <div class="col-sm-6">
-              <div class="vr-feature-card">
-                <div class="vr-feature-icon red-bg"><i class="fas fa-clock"></i></div>
-                <div>
-                  <h6>Layanan 24 Jam</h6>
-                  <small>Siap melayani kapan saja</small>
-                </div>
+              <div class="vr-feature-card clickable-card" data-bs-toggle="modal" data-bs-target="#escortModal" role="button">
+                  <div class="vr-feature-icon red-bg">
+                      <i class="fas fa-user-nurse"></i>
+                  </div>
+                  <div>
+                      <h6 style="font-size: 13px; font-weight: 800;">Layanan Escort</h6>
+                      <small style="font-size: 11px; color: #666;">Klik untuk info kontak</small>
+                  </div>
               </div>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </section>
+  <div class="modal fade" id="escortModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 30px;">
+            <div class="modal-body p-4 text-center">
+                <button type="button" class="btn-close float-end" data-bs-dismiss="modal" aria-label="Close"></button>
+                
+                <div class="icon-box-modal mb-3 mt-2">
+                    <i class="fas fa-user-nurse fa-2x text-danger"></i>
+                </div>
+
+                <h6 class="fw-bold mb-2" style="font-size: 16px;">Layanan Escort JHC</h6>
+                <p class="text-muted mb-4" style="font-size: 12px; line-height: 1.6;">
+                    Butuh pendampingan pasien? Hubungi admin siaga kami untuk bantuan mobilitas di area rumah sakit.
+                </p>
+
+                <?php $wa_number = "6285942141906"; ?>
+                <a href="https://wa.me/<?= $wa_number ?>?text=Halo%20Admin%20JHC%2C%20saya%20membutuhkan%20layanan%20escort%20segera." 
+                   target="_blank" 
+                   class="btn btn-whatsapp-modal w-100 mb-3">
+                    <i class="fab fa-whatsapp me-2"></i> Hubungi WhatsApp
+                </a>
+
+                <a href="tel:+<?= $wa_number ?>" class="text-decoration-none fw-bold" style="font-size: 13px; color: #8a3033;">
+                    <i class="fas fa-phone-alt me-1"></i> +<?= $wa_number ?>
+                </a>
+            </div>
+        </div>
+    </div>
+  </div>
   <?php endif; ?>
 
   <!-- ============================================================
@@ -3080,7 +3162,16 @@ document.addEventListener("DOMContentLoaded", function() {
             myModal.show();
         }, 1000);
     }
-});
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    window.showEscort = function(featureId) {
+        console.log("Fungsi showEscort dipanggil dengan ID:", featureId); // Cek di console
+        if (featureId === 'layanan-24jam' || featureId === 'layanan-escort') {
+            window.location.href = "escort_service.php";
+        }
+    };
+  });
 
   /* ── Animate on scroll ── */
   const observer = new IntersectionObserver((entries) => {
