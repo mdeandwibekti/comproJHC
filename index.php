@@ -2498,10 +2498,10 @@ $show_popup = !empty($active_popups);
 
                 <h6 class="fw-bold mb-2" style="font-size: 16px;">Layanan Escort JHC</h6>
                 <p class="text-muted mb-4" style="font-size: 12px; line-height: 1.6;">
-                    Butuh pendampingan pasien? Hubungi admin siaga kami untuk bantuan mobilitas di area rumah sakit.
+                    Butuh pendampingan pasien? Pendaftaran Umum dan Asuransi
                 </p>
 
-                <?php $wa_number = "6285942141906"; ?>
+                <?php $wa_number = "6289507645174"; ?>
                 <a href="https://wa.me/<?= $wa_number ?>?text=Halo%20Admin%20JHC%2C%20saya%20membutuhkan%20layanan%20escort%20segera." 
                    target="_blank" 
                    class="btn btn-whatsapp-modal w-100 mb-3">
