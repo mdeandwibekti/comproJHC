@@ -54,12 +54,13 @@ if ($res) {
 }
 
 $settings = [];
-$res_settings = $mysqli->query("SELECT * FROM settings2 WHERE setting_key LIKE 'contact_%' OR setting_key LIKE 'social_%'");
-if ($res_settings) {
-    while($row = $res_settings->fetch_assoc()){
-        $settings[$row['setting_key']] = $row['setting_value'];
-    }
+$settings_result = $mysqli->query("SELECT setting_key, setting_value FROM settings2");
+while($setting = $settings_result->fetch_assoc()){
+    $settings[$setting['setting_key']] = $setting['setting_value'];
 }
+
+// Path Favicon Dinamis
+$favicon = !empty($settings['favicon_path']) ? $settings['favicon_path'] : 'assets/img/favicons/favicon.ico';
 
 $banners_data = [];
 $banner_result = $mysqli->query("SELECT image_path, title, description FROM banners ORDER BY display_order ASC");
@@ -133,6 +134,7 @@ $active_popups = [];
 $popup_res = $mysqli->query("SELECT * FROM popups WHERE status = 'active' ORDER BY created_at DESC");
 while($row = $popup_res->fetch_assoc()){ $active_popups[] = $row; }
 $show_popup = !empty($active_popups);
+
 ?>
 
 <!DOCTYPE html>
@@ -191,8 +193,8 @@ $show_popup = !empty($active_popups);
       --ease-in:    cubic-bezier(0.4, 0, 1, 1);
       --ease-both:  cubic-bezier(0.4, 0, 0.2, 1);
 
-      --font-display: 'Outfit', sans-serif;
-      --font-serif:   'Lora', serif;
+      --font-display: 'Aptos', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --font-serif:   'Lora', serif; 
 
       --nav-height: 76px;
     }
@@ -210,6 +212,13 @@ $show_popup = !empty($active_popups);
     a { text-decoration: none; color: inherit; }
     button { font-family: inherit; cursor: pointer; }
     section { padding: 6rem 0; }
+    button, input, select, textarea, .nav-links a, .sec-title, .hero-title {
+        font-family: var(--font-display) !important;
+    }
+
+    .hero-title em, .sec-title em {
+      font-family: var(--font-serif) !important;
+    }
 
     /* ============================================================
        SCROLLBAR
@@ -219,197 +228,195 @@ $show_popup = !empty($active_popups);
     ::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 10px; }
 
     /* ============================================================
-       NAVBAR
+      FULL NAVBAR FLOATING CAPSULE (JOIN US VERSION)
     ============================================================ */
-    .site-nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 1040;
-      height: var(--nav-height);
-      background: rgba(255,255,255,0.97);
-      backdrop-filter: blur(18px) saturate(160%);
-      -webkit-backdrop-filter: blur(18px) saturate(160%);
-      border-bottom: 1px solid rgba(0,0,0,0.07);
-      transition: all 0.38s var(--ease-out);
+    :root {
+        --nav-height: 70px;
+        --jhc-red-dark: #742528;
+        --jhc-red-mid: #b71c1c;
+        --jhc-red-light: #c1362d;
+        --ease-out: cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
+      .site-nav {
+      position: fixed;
+      top: 20px; /* Jarak melayang dari atas */
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1040;
+      width: 95%;
+      max-width: 1340px;
+      height: var(--nav-height);
+      /* Gradasi Merah JHC */
+      background: linear-gradient(90deg, var(--jhc-red-dark) 0%, var(--jhc-red-mid) 50%, var(--jhc-red-light) 100%);
+      border-radius: 50px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      border: none;
+      display: flex;
+      align-items: center;
+      transition: background 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+  }
+
+    /* Penyesuaian saat Scroll */
     .site-nav.scrolled {
-      height: 64px;
-      background: #fff;
-      border-bottom: 1px solid rgba(200,16,46,0.15);
-      box-shadow: 0 2px 16px rgba(10,22,40,0.08);
+    top: 20px; /* Tetap sama dengan posisi awal */
+    height: var(--nav-height); /* Tetap 80px */
+    background: linear-gradient(90deg, #742528 0%, #b71c1c 100%); /* Warna sedikit lebih gelap saat scroll */
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
     }
 
     .nav-inner {
-      max-width: 1340px;
-      width: 100%;
-      height: 100%;
-      margin: 0 auto;
-      padding: 0 2.5rem;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      grid-template-areas: "brand links cta";
-      align-items: center;
-      gap: 1.5rem;
+        width: 100%;
+        height: 100%;
+        padding: 0 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
-    .nav-brand   { grid-area: brand; }
-    .nav-links   { grid-area: links; }
-    .nav-cta-wrap { grid-area: cta; }
-    .nav-hamburger { display: none; grid-area: cta; }
-
+    /* POSISI LOGO: Melayang menonjol ke atas luar kapsul */
     .nav-brand {
-      display: flex;
-      align-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    padding: 5px;
+    border-radius: 50%;
+    width: 65px; /* Proporsional untuk tinggi 80px */
+    height: 65px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    flex-shrink: 0;
     }
-    .nav-brand img {
-      height: 56px;
-      width: auto;
-      object-fit: contain;
-      transition: height 0.3s var(--ease-out);
-    }
-    .site-nav.scrolled .nav-brand img { height: 46px; }
 
+    .nav-brand img {
+        height: 62px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    .site-nav.scrolled .nav-brand {
+        top: -10px;
+    }
+
+    .site-nav.scrolled .nav-brand img {
+        height: 52px;
+    }
+
+    /* MENU NAVIGASI: Teks Putih Bersih */
     .nav-links {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.1rem;
-      list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        list-style: none;
+        margin: 0 0 0 90px; /* Ruang agar tidak tertutup logo melayang */
+        padding: 0;
     }
 
     .nav-links a {
-      display: block;
-      padding: 0.52rem 0.9rem;
-      font-size: 0.875rem;
-      font-weight: 700;
-      color: #1a1a2e;
-      border-radius: var(--radius-sm);
-      transition: color 0.22s var(--ease-both);
-      white-space: nowrap;
-      position: relative;
-      letter-spacing: 0.005em;
-    }
-
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: 4px; left: 50%;
-      transform: translateX(-50%);
-      width: 0; height: 2.5px;
-      background: var(--crimson);
-      border-radius: 2px;
-      transition: width 0.28s var(--ease-out);
-    }
-    .nav-links a:hover { color: var(--crimson); }
-    .nav-links a:hover::after { width: 65%; }
-
-    .nav-cta-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-    }
-
-    .nav-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem;
-      padding: 0.72rem 1.6rem;
-      background: var(--crimson);
-      color: #fff !important;
-      font-size: 0.9rem;
-      font-weight: 800;
-      border-radius: 50px;
-      border: none;
-      box-shadow: 0 6px 22px rgba(200,16,46,.35);
-      transition: all 0.28s var(--ease-out);
-      white-space: nowrap;
-      letter-spacing: 0.01em;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    .nav-cta i { font-size: 0.88rem; }
-    .nav-cta:hover {
-      background: var(--crimson-deep);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 28px rgba(200,16,46,.45);
-      color: #fff !important;
-    }
-
-    .nav-hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      padding: 8px;
-      background: none;
-      border: 2px solid var(--crimson);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-    }
-    .nav-hamburger span {
-      display: block;
-      width: 22px; height: 2px;
-      background: var(--crimson);
-      border-radius: 2px;
-      transition: all 0.3s var(--ease-out);
-    }
-
-    @media (max-width: 1080px) {
-      .nav-inner {
-        grid-template-columns: auto 1fr;
-        grid-template-areas: "brand ham";
-        padding: 0 1.25rem;
-        gap: 0;
-      }
-      .nav-links    { display: none !important; grid-area: unset; }
-      .nav-cta-wrap { display: none !important; grid-area: unset; }
-      .nav-hamburger {
-        display: flex;
-        grid-area: ham;
-        justify-self: end;
-      }
-      .nav-links.mobile-open {
-        display: flex !important;
-        position: absolute;
-        top: calc(var(--nav-height) + 6px);
-        left: 1rem; right: 1rem;
-        background: var(--white);
-        border-top: 3px solid var(--crimson);
-        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-        box-shadow: var(--shadow-xl);
-        padding: 0.65rem;
-        flex-direction: column;
-        gap: 0.1rem;
-        justify-content: flex-start;
-        z-index: 200;
-      }
-      .nav-cta-wrap.mobile-open {
-        display: flex !important;
-        position: absolute;
-        left: 1rem; right: 1rem;
-        background: var(--white);
-        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-        border-top: 1px solid rgba(0,0,0,0.07);
-        padding: 0.65rem;
-        z-index: 200;
-        justify-content: stretch;
-        box-shadow: 0 20px 40px rgba(10,22,40,.15);
-      }
-      .nav-links.mobile-open a {
-        padding: 0.78rem 1rem;
-        border-radius: var(--radius-sm);
-        font-size: 0.93rem;
+        color: #ffffff !important;
+        font-size: 0.85rem;
         font-weight: 700;
-        color: var(--navy);
-      }
-      .nav-links.mobile-open a:hover { background: var(--crimson-soft); color: var(--crimson); }
-      .nav-links.mobile-open a::after { display: none !important; }
-      .nav-cta-wrap.mobile-open .nav-cta { width: 100%; justify-content: center; }
+        padding: 0.5rem 0.9rem;
+        border-radius: 20px;
+        transition: all 0.25s ease;
+        text-decoration: none;
     }
 
-    @media (max-width: 575px) {
-      .nav-inner { padding: 0 1rem; }
+    .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.15);
     }
+
+    /* AKSES KANAN: Ikon Profil & Button Join Us */
+    .nav-cta-wrap {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    /* Ikon User/Profil (Lingkaran Putih Transparan) */
+    .nav-user-icon {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff !important;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .nav-user-icon:hover {
+        background: #ffffff;
+        color: var(--jhc-red-dark) !important;
+    }
+
+    /* Tombol Join Us (Pengganti Search) */
+    .nav-cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem 1.4rem;
+        background: #ffffff;
+        color: var(--jhc-red-dark) !important;
+        border-radius: 50px;
+        font-weight: 800;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: all 0.3s var(--ease-out);
+    }
+
+    .nav-cta-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(255, 255, 255, 0.3);
+        background: #f8f9fa;
+    }
+
+    /* HAMBURGER MENU (Mobile) */
+    .nav-hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .nav-hamburger span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: #ffffff;
+        border-radius: 2px;
+    }
+
+    /* RESPONSIVE (Mobile & Tablet) */
+    @media (max-width: 1080px) {
+        .site-nav {
+            top: 15px;
+            width: 92%;
+        }
+        .nav-links, .nav-cta-btn {
+            display: none; /* Sembunyikan menu teks di mobile */
+        }
+        .nav-hamburger {
+            display: flex;
+        }
+        .nav-brand {
+            top: -10px;
+            left: 5px;
+        }
+        .nav-brand img {
+            height: 50px;
+        }
+      }
 
     /* ============================================================
        FLOATING BUTTONS
@@ -1871,6 +1878,7 @@ $show_popup = !empty($active_popups);
   ============================================================ -->
   <nav class="site-nav" id="mainNavbar" role="navigation" aria-label="Navigasi Utama">
     <div class="nav-inner">
+      
       <a class="nav-brand" href="index.php" aria-label="RS JHC Tasikmalaya - Home">
         <?php $header_logo = !empty($settings['header_logo_path']) ? $settings['header_logo_path'] : 'assets/img/gallery/JHC_Logo.png'; ?>
         <img src="public/<?= htmlspecialchars($header_logo); ?>" alt="JHC Logo">
@@ -1883,18 +1891,19 @@ $show_popup = !empty($active_popups);
         <li><a href="index.php#mcu_packages_data">Paket MCU</a></li>
         <li><a href="index.php#virtual_room">Virtual Room</a></li>
         <li><a href="index.php#news">Berita</a></li>
+        <li><a href="index.php#partners">Partners</a></li>
       </ul>
 
-      <div class="nav-cta-wrap" id="navCta">
-        <a class="nav-cta" href="career.php">
-          <i class="fas fa-briefcase"></i>
-          Apply Job
+      <div class="nav-cta-wrap">
+        <a class="nav-cta-btn" href="career.php">
+          <i class="fas fa-briefcase"></i> Join Us
         </a>
       </div>
 
       <button class="nav-hamburger" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Toggle menu">
         <span></span><span></span><span></span>
       </button>
+
     </div>
   </nav>
 
@@ -2709,7 +2718,7 @@ $show_popup = !empty($active_popups);
               <ul class="footer-links">
                 <li><a href="index.php#about_us">Tentang Kami</a></li>
                 <li><a href="index.php#facilities">Fasilitas</a></li>
-                <li><a href="index.php#doctors">Tim Dokter</a></li>
+                <li><a href="index.php#departments">Layanan</a></li>
                 <li><a href="index.php#news">Berita & Artikel</a></li>
                 <li><a href="career.php">Karir / Lowongan</a></li>
               </ul>
