@@ -85,6 +85,11 @@ require_once 'layout/header.php';
 </style>
 
 <div class="container-fluid py-4">
+    <div class="breadcrumb-jhc px-2">
+        <a href="dashboard.php">Dashboard</a> 
+        <span class="text-muted opacity-50">/</span> 
+        <span class="current">virtual room</span>
+    </div>
     <div class="admin-wrapper">
         <form id="vrForm" action="virtual_room.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="current_image_360" value="<?= $data['image_path_360']; ?>">
@@ -107,16 +112,6 @@ require_once 'layout/header.php';
                     <div class="mb-4">
                         <label class="form-label">Judul Utama Halaman</label>
                         <input type="text" name="title" class="form-control fw-bold" value="<?= htmlspecialchars($data['title']); ?>" required>
-                    </div>
-
-                    <div class="card card-settings border-primary border-start border-4">
-                        <div class="status-pill pill-bpjs"><i class="fas fa-route me-1"></i> Navigasi Pasien</div>
-                        <label class="form-label text-primary">Link Tujuan Alur BPJS</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0"><i class="fas fa-external-link-alt text-primary"></i></span>
-                            <input type="text" name="bpjs_link" class="form-control border-start-0" value="<?= htmlspecialchars($data['bpjs_link']); ?>" placeholder="alur-bpjs.php">
-                        </div>
-                        <small class="text-muted mt-2 d-block">Arahkan tombol "Alur BPJS" di halaman depan ke file (misal: <b>alur-bpjs.php</b>) atau link eksternal.</small>
                     </div>
 
                     <div class="card card-settings">

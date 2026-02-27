@@ -111,6 +111,11 @@ require_once 'layout/header.php';
 </style>
 
 <div class="container-fluid py-4">
+    <div class="breadcrumb-jhc px-2">
+        <a href="dashboard.php">Dashboard</a> 
+        <span class="text-muted opacity-50">/</span> 
+        <span class="current">Manajemen Paket MCU</span>
+    </div>
     <div class="main-wrapper">
         <div class="page-header-jhc d-flex justify-content-between align-items-center">
             <div>

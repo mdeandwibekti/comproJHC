@@ -65,6 +65,11 @@ require_once 'layout/header.php';
 </style>
 
 <div class="container-fluid py-4">
+    <div class="breadcrumb-jhc px-2">
+        <a href="dashboard.php">Dashboard</a> 
+        <span class="text-muted opacity-50">/</span> 
+        <span class="current">Logo Settings</span>
+    </div>
     <div class="admin-wrapper">
         <div class="d-flex justify-content-between align-items-center manage-header">
             <div>

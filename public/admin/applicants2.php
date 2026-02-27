@@ -24,6 +24,11 @@ $result = $mysqli->query($sql);
 </style>
 
 <div class="container-fluid py-4">
+    <div class="breadcrumb-jhc px-2">
+        <a href="dashboard.php">Dashboard</a> 
+        <span class="text-muted opacity-50">/</span> 
+        <span class="current">applicants</span>
+    </div>
     <div class="main-wrapper">
         <div class="page-header-jhc">
             <h3 class="fw-bold mb-1">Daftar Pelamar Pekerjaan</h3>

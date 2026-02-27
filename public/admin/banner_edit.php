@@ -127,6 +127,13 @@ $page_title_text = empty($id) ? "Tambah Banner Baru" : "Edit Banner";
 </style>
 
 <div class="container-fluid py-4">
+    <div class="breadcrumb-jhc px-2">
+        <a href="dashboard.php">Dashboard</a> 
+        <span class="text-muted opacity-50">/</span> 
+        <span class="current">manage banner</span>
+        <span class="text-muted opacity-50">/</span> 
+        <span class="current">Manage edit</span>
+    </div>
     <div class="main-wrapper">
         <div class="page-header-jhc d-flex justify-content-between align-items-center">
             <div>

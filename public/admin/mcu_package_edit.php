@@ -117,6 +117,14 @@ $page_title_text = ($id === 0) ? "Tambah Paket MCU" : "Edit Paket MCU";
 </style>
 
 <div class="container-fluid py-4">
+    <div class="breadcrumb-jhc px-2">
+        <a href="dashboard.php">Dashboard</a> 
+        <span class="text-muted opacity-50">/</span> 
+        <span class="current">Manajemen Paket MCU</span>
+        <span class="text-muted opacity-50">/</span> 
+        <span class="current">edit paket</span>
+
+    </div>
     <div class="main-wrapper">
         <div class="page-header-jhc d-flex justify-content-between align-items-center">
             <div>
