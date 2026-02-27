@@ -1614,7 +1614,7 @@ $show_popup = !empty($active_popups);
       transform: translateY(-3px);
     }
     .partner-logo {
-      max-height: 52px;
+      max-height: 70px;
       width: auto;
       object-fit: contain;
       filter: grayscale(20%) opacity(0.85);
@@ -2476,17 +2476,18 @@ $show_popup = !empty($active_popups);
 
           <div class="row g-3">
             <div class="col-sm-6">
-              <a href="<?= !empty($vr_data['bpjs_link']) ? htmlspecialchars($vr_data['bpjs_link']) : '#'; ?>" 
-                class="text-decoration-none">
-                <div class="vr-feature-card" style="transition: 0.3s; cursor: pointer;">
+              <div class="vr-feature-card" 
+                  style="transition: 0.3s; cursor: pointer;" 
+                  data-bs-toggle="modal" 
+                  data-bs-target="#modalAlurBPJS">
                   <div class="vr-feature-icon blue-bg">
-                    <i class="fas fa-file-medical"></i> </div>
-                  <div>
-                    <h6 class="text-dark">Alur BPJS</h6>
-                    <small class="text-muted">Klik untuk panduan pendaftaran</small>
+                      <i class="fas fa-file-medical"></i> 
                   </div>
-                </div>
-              </a>
+                  <div>
+                      <h6 class="text-dark">Alur BPJS</h6>
+                      <small class="text-muted">Klik untuk lihat gambar panduan</small>
+                  </div>
+              </div>
             </div>
             <div class="col-sm-6">
               <div class="vr-feature-card clickable-card" data-bs-toggle="modal" data-bs-target="#escortModal" role="button">
@@ -2504,6 +2505,24 @@ $show_popup = !empty($active_popups);
       </div>
     </div>
   </section>
+  <div class="modal fade" id="modalAlurBPJS" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-0 pb-0">
+                <h6 class="fw-bold m-0" style="font-size: 14px;">Panduan Alur Pelayanan BPJS</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3">
+                  <img src="public/assets/img/gallery/alur.jpg" class="img-fluid rounded-3 w-100 shadow-sm" alt="Gambar Alur BPJS">
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <p class="text-muted w-100 text-center" style="font-size: 11px;">
+                    <i class="fas fa-info-circle me-1"></i> Gunakan cubit jari atau zoom untuk melihat lebih detail.
+                </p>
+            </div>
+        </div>
+    </div>
+  </div>
   <div class="modal fade" id="escortModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 30px;">
