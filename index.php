@@ -59,7 +59,6 @@ while($setting = $settings_result->fetch_assoc()){
     $settings[$setting['setting_key']] = $setting['setting_value'];
 }
 
-// Path Favicon Dinamis
 $favicon = !empty($settings['favicon_path']) ? $settings['favicon_path'] : 'assets/img/favicons/favicon.ico';
 
 $banners_data = [];
@@ -129,7 +128,6 @@ if ($fac_result) {
 }
 
 
-// Ambil data popup aktif
 $active_popups = [];
 $popup_res = $mysqli->query("SELECT * FROM popups WHERE status = 'active' ORDER BY created_at DESC");
 while($row = $popup_res->fetch_assoc()){ $active_popups[] = $row; }
@@ -156,9 +154,7 @@ $show_popup = !empty($active_popups);
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 
   <style>
-    /* ============================================================
-       TOKENS & RESET
-    ============================================================ */
+    
     :root {
       --crimson:      #C8102E;
       --crimson-deep: #8C0D20;
@@ -2145,10 +2141,8 @@ $show_popup = !empty($active_popups);
               <div class="svc-card-inner">
                 <div class="svc-icon-wrap">
                   <?php 
-                  // Tambahkan prefix public/ agar path sesuai dengan lokasi folder di server
                   $full_icon_path = !empty($item['icon_path']) ? 'public/' . $item['icon_path'] : '';
                   
-                  // Cek apakah data path ada dan filenya benar-benar ada di server
                   if (!empty($item['icon_path']) && file_exists($full_icon_path)): ?>
                     <img src="<?= htmlspecialchars($full_icon_path); ?>" alt="<?= htmlspecialchars($item['name']); ?>">
                   <?php else: ?>
@@ -2191,7 +2185,6 @@ $show_popup = !empty($active_popups);
 
               <div class="lu-icon">
                 <?php 
-                // Gabungkan path agar mengarah ke folder public
                 $icon_src = !empty($item['icon_path']) ? 'public/' . $item['icon_path'] : '';
                 
                 if (!empty($item['icon_path']) && file_exists($icon_src)): ?>
@@ -2702,7 +2695,6 @@ $show_popup = !empty($active_popups);
 
                 <div class="carousel-inner">
                     <?php foreach ($active_popups as $index => $popup): 
-                        // SINKRONISASI PATH: Tambahkan public/ agar gambar muncul
                         $img_url = 'public/' . htmlspecialchars($popup['image_path']);
                     ?>
                     <div class="carousel-item <?= $index === 0 ? 'active' : ''; ?>">
@@ -2991,7 +2983,6 @@ $show_popup = !empty($active_popups);
 
   /* ── Modal: Detail Layanan ── */
   document.addEventListener('DOMContentLoaded', function() {
-    // === 1. LOGIKA SHOW MORE / LIHAT LEBIH BANYAK ===
     const btnToggle = document.getElementById('toggleLayanan');
     const container = document.getElementById('layananContainer');
     
@@ -3022,26 +3013,23 @@ $show_popup = !empty($active_popups);
         });
     }
 
-    // === 2. LOGIKA MODAL LAYANAN (Disesuaikan untuk Path Ikon) ===
     const modalLayanan = document.getElementById('modalLayanan');
     
     if (modalLayanan) {
         modalLayanan.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
             const deptId = button.getAttribute('data-id');
-            const iconPath = button.getAttribute('data-image'); // Ambil path dari data-image
+            const iconPath = button.getAttribute('data-image'); 
             
             document.getElementById('m-name').textContent = button.getAttribute('data-name');
             document.getElementById('m-desc').innerHTML = button.getAttribute('data-desc');
 
-            // --- PERBAIKAN PATH IKON DISINI ---
+           
             const imgModal = document.getElementById('m-image');
             if (iconPath) {
-                // Menambahkan prefix 'public/' agar sesuai dengan lokasi folder di server
                 imgModal.src = 'public/' + iconPath;
                 imgModal.style.display = 'block';
             } else {
-                // Jika tidak ada ikon, sembunyikan atau gunakan gambar default
                 imgModal.src = 'public/assets/img/gallery/logo.png'; 
             }
 
@@ -3081,8 +3069,7 @@ $show_popup = !empty($active_popups);
     }
 });
   
-  /* ── Fasilitas: expand / collapse ── */
-  // --- LOGIKA TOGGLE DESKRIPSI (Fungsi Asli Anda - Tidak Diubah) ---
+
 window.toggleFacDesc = function(idx) {
     const card       = document.getElementById('fac-' + idx);
     const toggleBtn  = card ? card.querySelector('.fac-toggle') : null;
@@ -3104,7 +3091,6 @@ document.querySelectorAll('.fac-toggle').forEach(btn => {
 });
 
 
-// --- LOGIKA LIHAT LEBIH BANYAK/SEDIKIT (Tambahan Baru) ---
 document.addEventListener('DOMContentLoaded', function() {
     const btnFac = document.getElementById('btnToggleFac');
     const containerFac = document.getElementById('facContainer');
@@ -3113,23 +3099,20 @@ document.addEventListener('DOMContentLoaded', function() {
         btnFac.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Mencari kartu yang saat ini sedang tersembunyi
             const hiddenFacs = containerFac.querySelectorAll('.fac-card.d-none');
             const allFacs = containerFac.querySelectorAll('.fac-card');
             const textFac = document.getElementById('textFac');
             const iconFac = document.getElementById('iconFac');
 
             if (hiddenFacs.length > 0) {
-                // AKSI: LIHAT LEBIH BANYAK
                 hiddenFacs.forEach((card, index) => {
                     card.classList.remove('d-none');
                     card.style.animationDelay = (index * 0.1) + 's';
-                    card.classList.add('fac-animate'); // Pastikan CSS animasi sudah ada
+                    card.classList.add('fac-animate'); 
                 });
                 textFac.innerText = 'Lihat Lebih Sedikit';
                 iconFac.classList.replace('fa-chevron-down', 'fa-chevron-up');
             } else {
-                // AKSI: LIHAT LEBIH SEDIKIT (Perbaikan di sini: index >= 6)
                 allFacs.forEach((card, index) => {
                     if (index >= 6) { 
                         card.classList.add('d-none');
@@ -3139,14 +3122,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 textFac.innerText = 'Lihat Lebih Banyak';
                 iconFac.classList.replace('fa-chevron-up', 'fa-chevron-down');
                 
-                // Scroll kembali ke atas grid agar user tidak bingung
                 containerFac.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
     }
 });
 
-// Fungsi toggle deskripsi asli Anda tetap dipertahankan di bawah ini
 window.toggleFacDesc = function(idx) {
     const card = document.getElementById('fac-' + idx);
     if (!card) return;
@@ -3154,7 +3135,6 @@ window.toggleFacDesc = function(idx) {
     const toggleText = card.querySelector('.fac-toggle-text');
     if (toggleText) toggleText.textContent = isExpanded ? 'Sembunyikan' : 'Baca Selengkapnya';
 };
-  /* ── Modal: Artikel ── */
   document.querySelectorAll('.btn-read-more').forEach(btn => {
     btn.addEventListener('click', function() {
       document.getElementById('article-title').textContent    = this.dataset.title    || '';
@@ -3166,40 +3146,51 @@ window.toggleFacDesc = function(idx) {
     });
   });
 
-  /* ── Tooltips ── */
   document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
-/* Promo Popup */
-document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function() {
     const promoElement = document.getElementById('promoPopupCarousel');
     
     if (promoElement) {
-        // Inisialisasi Modal
-        const myModal = new bootstrap.Modal(promoElement, {
-            keyboard: true,
-            backdrop: 'static'
-        });
+        // Deteksi apakah halaman dibuka via refresh (reload)
+        const navEntry = performance.getEntriesByType('navigation')[0];
+        const isReload = navEntry && navEntry.type === 'reload';
 
-        // Inisialisasi Carousel agar bisa digeser
-        const carouselElement = document.getElementById('carouselPromo');
-        if (carouselElement) {
-            new bootstrap.Carousel(carouselElement, {
-                interval: 4000, // Geser otomatis tiap 4 detik
-                ride: 'carousel',
-                pause: 'hover'
-            });
+        // Jika refresh, hapus flag agar popup muncul kembali
+        if (isReload) {
+            sessionStorage.removeItem('jhc_popup_shown');
         }
 
-        // Munculkan modal setelah jeda 1 detik
-        setTimeout(() => {
-            myModal.show();
-        }, 1000);
+        // Hanya tampilkan popup jika belum ditampilkan di sesi navigasi ini
+        const popupShown = sessionStorage.getItem('jhc_popup_shown');
+
+        if (!popupShown) {
+            const myModal = new bootstrap.Modal(promoElement, {
+                keyboard: true,
+                backdrop: 'static'
+            });
+
+            const carouselElement = document.getElementById('carouselPromo');
+            if (carouselElement) {
+                new bootstrap.Carousel(carouselElement, {
+                    interval: 4000,
+                    ride: 'carousel',
+                    pause: 'hover'
+                });
+            }
+
+            setTimeout(() => {
+                myModal.show();
+                // Tandai bahwa popup sudah ditampilkan di sesi ini
+                sessionStorage.setItem('jhc_popup_shown', '1');
+            }, 1000);
+        }
     }
   });
 
   document.addEventListener('DOMContentLoaded', function() {
     window.showEscort = function(featureId) {
-        console.log("Fungsi showEscort dipanggil dengan ID:", featureId); // Cek di console
+        console.log("Fungsi showEscort dipanggil dengan ID:", featureId);
         if (featureId === 'layanan-24jam' || featureId === 'layanan-escort') {
             window.location.href = "escort_service.php";
         }
@@ -3207,7 +3198,7 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   
 
-  /* ── Animate on scroll ── */
+  
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
