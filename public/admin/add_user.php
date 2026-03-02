@@ -1,5 +1,4 @@
 <?php
-// Pastikan path config sesuai dengan struktur folder Anda
 require_once "../../config.php"; 
 
 $username = "admin";
@@ -9,7 +8,6 @@ $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 $message = "";
 $status = "";
 
-// 1. Cek apakah username sudah ada untuk menghindari error duplikasi
 $check_user = $mysqli->prepare("SELECT id FROM users WHERE username = ?");
 $check_user->bind_param("s", $username);
 $check_user->execute();
@@ -19,7 +17,6 @@ if($check_user->num_rows > 0) {
     $status = "warning";
     $message = "User <b>'$username'</b> sudah ada di database.";
 } else {
-    // 2. Jika belum ada, lakukan INSERT
     $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
 
     if($stmt = $mysqli->prepare($sql)){

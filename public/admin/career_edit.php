@@ -1,7 +1,6 @@
 <?php
 require_once "../../config.php";
 
-// --- LOGIKA PEMROSESAN TETAP (Form Submission & Edit Mode) ---
 $job_title = $description = $location = $deadline = "";
 $status = 'open';
 $job_title_err = $description_err = $location_err = ""; 

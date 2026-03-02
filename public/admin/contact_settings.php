@@ -1,7 +1,6 @@
 <?php
 require_once "../../config.php";
 
-// --- LOGIKA PEMROSESAN (Tetap Sama) ---
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO settings2 (setting_key, setting_value) 
             VALUES (?, ?) 
@@ -42,7 +41,6 @@ require_once 'layout/header.php';
 
     body { background-color: var(--admin-bg) !important; font-family: 'Inter', sans-serif; }
 
-    /* Breadcrumb */
     .breadcrumb-jhc { font-size: 0.85rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
     .breadcrumb-jhc a { text-decoration: none; color: #64748b; font-weight: 500; }
     .breadcrumb-jhc .current { color: var(--jhc-red-dark); font-weight: 700; }
@@ -55,7 +53,6 @@ require_once 'layout/header.php';
 
     .manage-header { border-left: 6px solid var(--jhc-red-dark); padding-left: 24px; margin-bottom: 40px; }
 
-    /* Input Styling */
     .form-label { font-weight: 700; color: #475569; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; display: flex; align-items: center; }
     .form-label i { margin-right: 8px; color: var(--jhc-red-dark); opacity: 0.8; font-size: 0.9rem; }
     
@@ -68,7 +65,6 @@ require_once 'layout/header.php';
         background-color: #fff; 
     }
 
-    /* Section Divider */
     .form-section-title { 
         font-size: 0.85rem; font-weight: 800; color: var(--jhc-red-dark); 
         text-transform: uppercase; letter-spacing: 1.5px; margin: 45px 0 25px 0; 

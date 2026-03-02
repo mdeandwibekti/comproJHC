@@ -1,7 +1,6 @@
 <?php
 require_once "../../config.php";
 
-// --- LOGIKA HAPUS DATA (DELETE) TETAP ---
 if (isset($_GET['delete'])) {
     $id_to_delete = intval($_GET['delete']);
     $sql = "DELETE FROM careers WHERE id = ?";
@@ -15,7 +14,6 @@ if (isset($_GET['delete'])) {
     }
 }
 
-// --- LOGIKA AMBIL DATA (READ) TETAP ---
 $sql = "SELECT id, job_title, location, status, post_date, deadline FROM careers ORDER BY post_date DESC";
 $result = $mysqli->query($sql);
 
@@ -33,7 +31,6 @@ require_once 'layout/header.php';
 
     body { background-color: var(--admin-bg) !important; font-family: 'Inter', sans-serif; }
 
-    /* Breadcrumb Styling */
     .breadcrumb-jhc { font-size: 0.85rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
     .breadcrumb-jhc a { text-decoration: none; color: #64748b; font-weight: 500; transition: 0.3s; }
     .breadcrumb-jhc a:hover { color: var(--jhc-red-dark); }
@@ -55,7 +52,6 @@ require_once 'layout/header.php';
     }
     .btn-jhc-main:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(138, 48, 51, 0.3); color: white !important; }
 
-    /* Table Styling Modern */
     .table thead th { 
         background-color: #fcfdfe; color: #94a3b8; text-transform: uppercase; 
         font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; 

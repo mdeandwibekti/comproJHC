@@ -1,7 +1,6 @@
 <?php
 require_once "../../config.php";
 
-// --- 1. LOGIKA PEMROSESAN STATUS ---
 if(isset($_GET['action']) && isset($_GET['id'])){
     $id = intval($_GET['id']);
     $status = $_GET['action'] == 'read' ? 'read' : 'contacted';
@@ -16,7 +15,6 @@ if(isset($_GET['action']) && isset($_GET['id'])){
     $stmt->close();
 }
 
-// --- 2. AMBIL DATA & HITUNG STATISTIK ---
 $sql = "SELECT * FROM appointments ORDER BY submission_date DESC";
 $result = $mysqli->query($sql);
 
@@ -47,7 +45,6 @@ require_once 'layout/header.php';
         padding: 30px; border: 1px solid rgba(0,0,0,0.05);
     }
 
-    /* Stats Box Minimalis */
     .stat-box {
         background: var(--bg-light); border-radius: 12px;
         padding: 12px 18px; border-left: 4px solid #ddd;
@@ -55,7 +52,6 @@ require_once 'layout/header.php';
     }
     .stat-box:hover { background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
 
-    /* Table Styling Compact */
     .table-container { border-radius: 12px; overflow: hidden; border: 1px solid #f1f1f1; }
     .table thead th { 
         background-color: #fcfcfc; color: #6c757d; 
@@ -69,7 +65,6 @@ require_once 'layout/header.php';
     .row-unread { background-color: rgba(138, 48, 51, 0.02); }
     .row-unread td { font-weight: 600; }
 
-    /* Badge Status */
     .status-badge {
         padding: 4px 10px; border-radius: 6px;
         font-size: 0.65rem; font-weight: 800;
@@ -143,7 +138,6 @@ require_once 'layout/header.php';
                                 $is_new = ($row['status'] == 'new');
                                 $badge_class = 'badge-' . $row['status'];
                                 
-                                // Format WA Link
                                 $wa_number = preg_replace('/[^0-9]/', '', $row['phone']);
                                 if(substr($wa_number, 0, 1) == '0') $wa_number = '62' . substr($wa_number, 1);
                                 $wa_link = "https://wa.me/{$wa_number}";

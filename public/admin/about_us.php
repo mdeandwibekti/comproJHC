@@ -1,7 +1,6 @@
 <?php
 require_once "../../config.php";
 
-// --- LOGIKA PEMROSESAN (Tetap Sama) ---
 $sections = [
     'visi-misi' => 'Visi-Misi',
     'sejarah' => 'Sejarah',
@@ -64,17 +63,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Ambil semua data bagian
 $all_sections_data = [];
 $res = $mysqli->query("SELECT * FROM about_us_sections");
 while($row = $res->fetch_assoc()) { 
     $all_sections_data[$row['section_key']] = $row; 
 }
 
-// Tentukan tab aktif untuk logika Sidebar
 $active_tab = $_GET['tab'] ?? 'visi-misi';
 
-// Ambil waktu update dari database untuk tab yang sedang dibuka
 $display_last_update = isset($all_sections_data[$active_tab]['updated_at']) 
     ? date('d M Y, H:i', strtotime($all_sections_data[$active_tab]['updated_at'])) 
     : 'Belum ada data';

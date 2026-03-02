@@ -1,14 +1,12 @@
 <?php
 require_once "../../config.php";
 
-// --- LOGIKA PEMROSESAN DATA (Harus SEBELUM require layout/header.php) ---
 $title = $description = $image_path = "";
 $display_order = 0;
 $title_err = $image_err = "";
 $id = isset($_POST['id']) ? trim($_POST['id']) : (isset($_GET['id']) ? trim($_GET['id']) : null);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validasi Judul
     if (empty(trim($_POST["title"]))) {
         $title_err = "Silakan masukkan judul banner.";
     } else {
@@ -19,7 +17,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $display_order = (int)$_POST['display_order'];
     $image_path = $_POST['current_image'];
 
-    // Handle Upload Gambar Baru
     if (isset($_FILES["image"]) && $_FILES["image"]["error"] == 0) {
         $upload_dir = "../assets/img/banners/";
         if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
@@ -28,7 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $new_filename = uniqid('banner_') . '.' . $file_ext;
         
         if (move_uploaded_file($_FILES["image"]["tmp_name"], $upload_dir . $new_filename)) {
-            // Hapus file lama jika ada penggantian
             if (!empty($_POST['current_image']) && file_exists("../" . $_POST['current_image'])) {
                 unlink("../" . $_POST['current_image']);
             }
@@ -40,7 +36,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $image_err = "Harap pilih gambar untuk banner baru.";
     }
 
-    // Simpan ke Database
     if (empty($title_err) && empty($image_err)) {
         if (empty($id)) {
             $sql = "INSERT INTO banners (image_path, title, description, display_order) VALUES (?, ?, ?, ?)";
@@ -63,7 +58,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 } elseif (!empty($id)) {
-    // Ambil data untuk mode EDIT
     $sql = "SELECT image_path, title, description, display_order FROM banners WHERE id = ?";
     if ($stmt = $mysqli->prepare($sql)) {
         $stmt->bind_param("i", $id);

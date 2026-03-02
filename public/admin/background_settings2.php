@@ -1,7 +1,6 @@
 <?php
 require_once "../../config.php";
 
-// --- LOGIKA PEMROSESAN POST (Harus SEBELUM require layout/header.php) ---
 $background_keys = [
     'hero_background_path' => 'Hero Section Background',
     'bg_departments_path' => 'Departments Title BG',
@@ -20,7 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($background_keys as $key => $label) {
             $current_path = $_POST['current_' . $key] ?? '';
 
-            // Proses Upload Jika Ada File Baru
             if (isset($_FILES[$key]) && $_FILES[$key]["error"] == 0) {
                 $upload_dir = "../assets/img/gallery/"; 
                 if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
@@ -29,7 +27,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $new_filename = uniqid('bg_') . '.' . $file_ext;
 
                 if (move_uploaded_file($_FILES[$key]["tmp_name"], $upload_dir . $new_filename)) {
-                    // Hapus file lama untuk efisiensi server
                     if (!empty($current_path) && file_exists("../" . $current_path)) {
                         unlink("../" . $current_path);
                     }
@@ -46,7 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit();
 }
 
-// Ambil data settings terbaru
 $settings = [];
 $set_result = $mysqli->query("SELECT * FROM settings2");
 if ($set_result) { 
@@ -64,7 +60,6 @@ require_once 'layout/header.php';
         --jhc-red-dark: #8a3033;
     }
 
-    /* Wrapper Neumorphism sesuai image_bf1502.png */
     .admin-wrapper {
         background: #ffffff;
         border-radius: 20px;
@@ -80,7 +75,6 @@ require_once 'layout/header.php';
         margin-bottom: 30px;
     }
 
-    /* Tombol Gradasi Linear 90 derajat */
     .btn-jhc-save {
         background: var(--jhc-gradient);
         border: none;

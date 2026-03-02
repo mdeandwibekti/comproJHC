@@ -1,19 +1,15 @@
 <?php
-// 1. Inisialisasi Session
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 2. Cek Keamanan Login
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: index.php");
     exit;
 }
 
-// 3. Import Konfigurasi Database
 require_once __DIR__ . '/../../../config.php';
 
-// 4. Ambil Pengaturan Global dari Database
 $settings = [];
 $settings_result = $mysqli->query("SELECT setting_key, setting_value FROM settings2");
 if ($settings_result) {
@@ -24,7 +20,7 @@ if ($settings_result) {
 
 $fav_query = $mysqli->query("SELECT setting_value FROM settings2 WHERE setting_key = 'favicon_path' LIMIT 1");
 $fav_data = $fav_query->fetch_assoc();
-$favicon_url = !empty($fav_data['setting_value']) ? $fav_data['setting_value'] : 'assets/img/favicons/favicon.ico'; // Fallback default
+$favicon_url = !empty($fav_data['setting_value']) ? $fav_data['setting_value'] : 'assets/img/favicons/favicon.ico'; 
 ?>
 
 <link rel="icon" type="image/x-icon" href="../<?= htmlspecialchars($favicon_url); ?>?v=<?= time(); ?>">
@@ -55,7 +51,7 @@ $favicon_url = !empty($fav_data['setting_value']) ? $fav_data['setting_value'] :
         font-family: 'Inter', sans-serif;
         }
         
-        /* Navbar dengan Gradasi Linear 90 derajat */
+        
         .navbar-admin {
             background: linear-gradient(90deg, #8a3033 0%, #bd3030 100%) !important;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -75,7 +71,7 @@ $favicon_url = !empty($fav_data['setting_value']) ? $fav_data['setting_value'] :
             transform: translateY(-1px);
         }
 
-        /* Text Admin Panel */
+        
         .navbar-admin .navbar-brand {
             color: white !important;
             font-size: 1.5rem;
@@ -91,7 +87,7 @@ $favicon_url = !empty($fav_data['setting_value']) ? $fav_data['setting_value'] :
             text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        /* Dropdown Menu */
+       
         .navbar-admin .dropdown-menu {
             border: none;
             box-shadow: 0 5px 20px rgba(0,0,0,0.15);
@@ -161,12 +157,12 @@ $favicon_url = !empty($fav_data['setting_value']) ? $fav_data['setting_value'] :
             box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
         }
 
-        /* Navbar Container */
+        
         .navbar-admin .container {
             max-width: 1320px;
         }
 
-        /* Responsive */
+        
         @media (max-width: 991px) {
             .navbar-admin .navbar-brand {
                 font-size: 1.25rem;
@@ -249,7 +245,7 @@ $favicon_url = !empty($fav_data['setting_value']) ? $fav_data['setting_value'] :
     </div>
 </nav>
 
-<!-- Spacer untuk fixed navbar -->
+
 <div style="height: 80px;"></div>
 
 <main class="main" id="top">

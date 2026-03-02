@@ -1,11 +1,9 @@
 <?php
 require_once "../../config.php";
 
-// --- LOGIKA PEMROSESAN (Harus SEBELUM require layout/header.php) ---
 if (isset($_GET['delete_id'])) {
     $delete_id = intval($_GET['delete_id']);
     
-    // Ambil path gambar untuk dihapus dari server
     $stmt = $mysqli->prepare("SELECT image_path FROM banners WHERE id = ?");
     $stmt->bind_param("i", $delete_id);
     $stmt->execute();
@@ -17,7 +15,6 @@ if (isset($_GET['delete_id'])) {
         unlink('../' . $banner_to_delete['image_path']);
     }
 
-    // Hapus data dari database
     $stmt = $mysqli->prepare("DELETE FROM banners WHERE id = ?");
     $stmt->bind_param("i", $delete_id);
     if ($stmt->execute()) {
@@ -27,7 +24,6 @@ if (isset($_GET['delete_id'])) {
     $stmt->close();
 }
 
-// Ambil data banner
 $banners = [];
 $sql = "SELECT id, image_path, title, description, display_order FROM banners ORDER BY display_order ASC";
 $result = $mysqli->query($sql);
@@ -46,7 +42,6 @@ require_once 'layout/header.php';
         --jhc-gradient: linear-gradient(90deg, #8a3033 0%, #bd3030 100%);
     }
 
-    /* Wrapper Neumorphism sesuai referensi image_bf1502.png */
     .admin-wrapper {
         background: #ffffff;
         border-radius: 20px;
@@ -62,7 +57,6 @@ require_once 'layout/header.php';
         margin-bottom: 30px;
     }
 
-    /* Tombol Gradasi JHC */
     .btn-jhc-main {
         background: var(--jhc-gradient);
         color: white !important;
@@ -75,7 +69,6 @@ require_once 'layout/header.php';
     }
     .btn-jhc-main:hover { transform: translateY(-2px); opacity: 0.95; }
 
-    /* Tabel Styling sesuai image_bf1502.png */
     .table thead th {
         background-color: #f8f9fa;
         color: #6c757d;

@@ -272,33 +272,32 @@ $show_popup = !empty($active_popups);
       }
 
       .nav-brand img {
-          width: 65px; 
-          height: 65px;
-          background-color: #ffffff; 
+          width: 190px; 
+          height: 190px;
+          transform: scale(1.2); 
+          margin-right: -15px; 
+          margin-left: -40px;
+          background-color: transparent !important; 
           border-radius: 50%; 
           padding: 5px; 
           object-fit: contain; 
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
           transition: all 0.3s var(--ease-out);
-          border: 1px solid rgba(255, 255, 255, 0.2);
           transition: all 0.4s var(--ease-out);
+          filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));
       }
 
-      .brand-divider {
-          width: 1.5px !important;
-          height: 35px !important;
-          background: rgba(255, 255, 255, 0.3) !important;
-          margin: 0 5px !important;
-      }
-
+    
       .site-nav.scrolled .nav-brand {
           height: 60px;
           padding: 5px 15px;
       }
 
       .site-nav.scrolled .nav-brand img {
-          width: 50px;
-          height: 50px;
+          width: 200px;
+          height: 200px;
+          transform: scale(1.2); 
+          margin-right: -15px; 
+          margin-left: -10px;
           padding: 4px;
       }
 
@@ -1844,10 +1843,9 @@ $show_popup = !empty($active_popups);
     <img src="public/<?= htmlspecialchars($settings['header_logo_path']); ?>" alt="Logo 1">
     
     <?php if(!empty($settings['header_logo_path_2'])): ?>
-        <div class="brand-divider" style="width: 1.5px; height: 40px; background: rgba(255,255,255,0.2); margin: 0 10px;"></div>
         <img src="public/<?= htmlspecialchars($settings['header_logo_path_2']); ?>" alt="Logo 2">
     <?php endif; ?>
-</a>
+  </a>
 
       <ul class="nav-links" id="navMenu" role="list">
         <li><a href="index.php#about_us">Tentang Kami</a></li>
@@ -1870,7 +1868,7 @@ $show_popup = !empty($active_popups);
       </button>
 
     </div>
-</nav>
+  </nav>
 
   <div class="float-dock" role="complementary" aria-label="Kontak Cepat">
     <a href="tel:<?= $no_igd; ?>" class="float-pill float-igd" title="Darurat IGD" aria-label="Telepon IGD">

@@ -95,9 +95,7 @@ $result = $mysqli->query($sql);
 </div>
 
 <script>
-// Logic AJAX untuk Update & Delete tetap sama seperti sebelumnya
 document.addEventListener('DOMContentLoaded', function() {
-    // Update Status
     document.querySelectorAll('.update-status-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const id = this.dataset.id;
@@ -112,7 +110,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Delete
     document.querySelectorAll('.delete-applicant-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const id = this.dataset.id;

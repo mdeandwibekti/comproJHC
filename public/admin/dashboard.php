@@ -7,14 +7,12 @@
     :root {
         --jhc-red-dark: #8a3033;
         --jhc-red-light: #bd3030;
-        /* Gradasi merah khas JHC */
         --jhc-gradient: linear-gradient(135deg, #8a3033 0%, #bd3030 100%);
         --admin-bg: #f8fafb;
         --text-main: #1e293b;
         --text-muted: #64748b;
         --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
         
-        /* Warna Aksen Baru untuk kesan Colorful namun Profesional */
         --accent-blue: #3b82f6;
         --accent-amber: #f59e0b;
         --accent-emerald: #10b981;
@@ -27,7 +25,6 @@
         color: var(--text-main);
     }
 
-    /* Welcome Banner dengan Efek Pola Geometris Merah Putih */
     .welcome-banner {
         background: #ffffff;
         border-radius: 24px;
@@ -62,7 +59,6 @@
         font-weight: 800;
     }
 
-    /* Section Dividers dengan warna Merah */
     .section-divider {
         font-weight: 700;
         color: var(--jhc-red-dark);
@@ -82,7 +78,6 @@
         margin-left: 20px;
     }
 
-    /* Dashboard Cards dengan Hover Berwarna */
     .dashboard-card {
         border: none;
         border-radius: 20px;
@@ -98,7 +93,6 @@
         box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08);
     }
 
-    /* Berbagai Warna Border Bawah Saat Hover */
     .card-red:hover { border-color: var(--jhc-red-dark); }
     .card-blue:hover { border-color: var(--accent-blue); }
     .card-amber:hover { border-color: var(--accent-amber); }
@@ -107,7 +101,6 @@
 
     .card-body { padding: 2.5rem 2rem; }
 
-    /* Icon Box dengan variasi warna lembut */
     .icon-box {
         width: 60px;
         height: 60px;
@@ -120,14 +113,12 @@
         transition: all 0.3s ease;
     }
 
-    /* Warna Icon Box Default */
     .ib-red { background: #fff1f2; color: var(--jhc-red-dark); }
     .ib-blue { background: #eff6ff; color: var(--accent-blue); }
     .ib-amber { background: #fffbeb; color: var(--accent-amber); }
     .ib-emerald { background: #ecfdf5; color: var(--accent-emerald); }
     .ib-purple { background: #f5f3ff; color: var(--accent-purple); }
 
-    /* Hover States untuk Icons */
     .dashboard-card:hover .ib-red { background: var(--jhc-gradient); color: white; }
     .dashboard-card:hover .ib-blue { background: var(--accent-blue); color: white; }
     .dashboard-card:hover .ib-amber { background: var(--accent-amber); color: white; }
@@ -148,7 +139,6 @@
 
     .card-link { text-decoration: none !important; }
 
-    /* Animasi Masuk */
     .row > div { animation: fadeInUp 0.6s ease backwards; }
     @keyframes fadeInUp {
         from { opacity: 0; transform: translateY(20px); }
