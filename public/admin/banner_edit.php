@@ -183,7 +183,7 @@ $page_title_text = empty($id) ? "Tambah Banner Baru" : "Edit Banner";
                         <label class="small fw-bold mb-2">Pilih File Baru (Rekomendasi: 1920x1080px)</label>
                         <input type="file" name="image" class="form-control <?php echo (!empty($image_err)) ? 'is-invalid' : ''; ?>">
                         <div class="invalid-feedback"><?php echo $image_err; ?></div>
-                        <div class="form-text x-small mt-2">Format: JPG, JPEG, PNG. Maks: 5MB.</div>
+                        <div class="form-text x-small mt-2">Format: JPG, JPEG, PNG. Maks: 1mb.</div>
                     </div>
                 </div>
             </div>

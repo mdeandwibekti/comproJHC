@@ -303,7 +303,7 @@ $page_title_text = empty($id) ? "Input Isi Fasilitas" : "Edit Isi Fasilitas";
                         <div class="mt-3 p-3 rounded-3 bg-light border">
                             <div class="d-flex align-items-center text-muted" style="font-size: 0.75rem;">
                                 <i class="fas fa-compress-arrows-alt me-2"></i>
-                                <span>Rekomendasi: Format JPG/PNG (Max 5MB).</span>
+                                <span>Rekomendasi: Format JPG/PNG (Max 2MB).</span>
                             </div>
                         </div>
                     </div>

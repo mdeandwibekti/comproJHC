@@ -276,14 +276,13 @@ $show_popup = !empty($active_popups);
           height: 190px;
           transform: scale(1.2); 
           margin-right: -15px; 
-          margin-left: -40px;
+          margin-left: -30px;
           background-color: transparent !important; 
           border-radius: 50%; 
           padding: 5px; 
           object-fit: contain; 
           transition: all 0.3s var(--ease-out);
           transition: all 0.4s var(--ease-out);
-          filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));
       }
 
     
@@ -295,6 +294,8 @@ $show_popup = !empty($active_popups);
       .site-nav.scrolled .nav-brand img {
           width: 200px;
           height: 200px;
+          margin-right: -15px; 
+          margin-left: -60px;
           transform: scale(1.2); 
           margin-right: -15px; 
           margin-left: -10px;
