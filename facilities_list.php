@@ -133,6 +133,26 @@ if (!empty($category)) {
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
+
+        /* Mencegah gambar melonjak ukurannya saat dimuat */
+        #modalImg {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            object-fit: cover;
+            background-color: #f0f0f0; /* Warna dasar saat gambar loading */
+            display: block;
+        }
+
+        /* Memastikan transisi kolom halus */
+        #imgContainer.d-none + .col-md-12 {
+            transition: all 0.3s ease;
+        }
+
+        /* Tambahkan ini jika ingin gambar tetap di tengah secara vertikal */
+        .modal-body .row {
+            align-items: flex-start !important;
+        }
     </style>
 </head>
 <body>
@@ -202,13 +222,24 @@ if (!empty($category)) {
             </div>
             <div class="modal-body p-4 p-md-5">
                 <div class="row align-items-center g-4">
-                    <div class="col-md-6">
-                        <img src="" id="modalImg" class="img-fluid" alt="Detail Fasilitas" onerror="this.src='assets/img/gallery/gallery-1.jpg';">
+                    <div class="col-md-6 text-center" id="imgContainer">
+                        <img src="" id="modalImg" class="img-fluid rounded-4 shadow-sm" 
+                            onerror="this.src='assets/img/placeholder-facility.jpg';">
                     </div>
                     <div class="col-md-6">
                         <h4 class="fw-bold text-dark mb-3" id="modalName"></h4>
-                        <div class="p-3 bg-light rounded-3 border-start border-4 border-danger">
-                            <p id="modalDesc" class="text-muted mb-0" style="line-height: 1.7; font-size: 0.95rem;"></p>
+                        
+                        <div class="p-3 bg-light rounded-4 border-start border-4 border-danger shadow-sm" 
+                            style="height: auto; min-height: 100px; overflow: visible;">
+                            
+                            <div id="modalDesc" 
+                                class="text-muted mb-0" 
+                                style="line-height: 1.8; 
+                                        font-size: 0.95rem; 
+                                        white-space: pre-line; 
+                                        text-align: justify;
+                                        word-wrap: break-word;">
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -223,22 +254,44 @@ if (!empty($category)) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // Inisialisasi variabel modal agar tidak error
     const facilityModal = document.getElementById('facilityModal');
+
     facilityModal.addEventListener('show.bs.modal', function (event) {
         const card = event.relatedTarget;
         
-        // Ambil Data
+        // Ambil data dari atribut data-*
         const name = card.getAttribute('data-name');
         const desc = card.getAttribute('data-desc');
-        const img = card.getAttribute('data-img');
-
-        // Isi Modal
-        document.getElementById('modalTitle').textContent = name; // Judul Modal = Nama Fasilitas
-        document.getElementById('modalName').textContent = name;
-        document.getElementById('modalDesc').innerHTML = desc || 'Deskripsi belum tersedia.';
+        const imgPath = card.getAttribute('data-img');
         
-        const imgEl = document.getElementById('modalImg');
-        imgEl.src = img;
+        const imgElement = document.getElementById('modalImg');
+        const imgContainer = document.getElementById('imgContainer');
+        const descCol = imgContainer.nextElementSibling;
+
+        // Validasi Path Gambar untuk mencegah glitch
+        // Jika gambar tidak ada atau hanya string 'public/'
+        if (!imgPath || imgPath.trim() === 'public/' || imgPath.includes('undefined')) {
+            // Opsi: Sembunyikan container gambar agar teks menjadi full width (Mencegah Glitch Tata Letak)
+            imgContainer.classList.add('d-none');
+            descCol.classList.replace('col-md-6', 'col-md-12');
+        } else {
+            // Jika gambar ada, tampilkan dengan benar
+            imgContainer.classList.remove('d-none');
+            descCol.classList.replace('col-md-12', 'col-md-6');
+            imgElement.src = imgPath;
+        }
+        
+        // Isi konten teks
+        document.getElementById('modalTitle').textContent = name;
+        document.getElementById('modalName').textContent = name;
+        document.getElementById('modalDesc').innerHTML = desc || 'Deskripsi tidak tersedia.';
+    });
+
+    // Reset state saat modal ditutup agar tidak ada sisa gambar lama
+    facilityModal.addEventListener('hidden.bs.modal', function () {
+        const imgElement = document.getElementById('modalImg');
+        imgElement.src = ''; // Kosongkan src untuk mencegah 'flicker' saat dibuka lagi
     });
 </script>
 
