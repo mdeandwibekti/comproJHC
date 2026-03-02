@@ -12,7 +12,6 @@ if (isset($_GET['id'])) {
         $doctor = $result->fetch_assoc();
         $stmt->close();
     } else {
-        // Handle error if prepare fails
         error_log("MySQLi Prepare Error: " . $mysqli->error);
         $doctor = false;
     }

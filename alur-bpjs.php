@@ -1,6 +1,5 @@
 <?php 
 require_once 'config.php'; 
-// Ambil data dari database
 $query = $mysqli->query("SELECT bpjs_content FROM page_virtual_room WHERE id=1");
 $data = $query->fetch_assoc();
 ?>
@@ -27,7 +26,6 @@ $data = $query->fetch_assoc();
             border-radius: 0 0 50px 50px;
         }
 
-        /* Button Kembali — style doctors_list.php */
         .btn-back {
             background: rgba(255, 255, 255, 0.15);
             color: white;
@@ -185,7 +183,6 @@ $data = $query->fetch_assoc();
     &copy; 2026 RS Jantung Jakarta - Memberikan Layanan Jantung Terintegrasi
 </footer>
 
-<!-- Floating WhatsApp Button -->
 <style>
     .wa-float {
         position: fixed;
@@ -227,7 +224,6 @@ $data = $query->fetch_assoc();
    target="_blank"
    rel="noopener noreferrer"
    class="wa-float">
-    <!-- WhatsApp Icon SVG -->
     <svg viewBox="0 0 32 32" fill="white" xmlns="http://www.w3.org/2000/svg">
         <path d="M16 2C8.268 2 2 8.268 2 16c0 2.492.678 4.827 1.86 6.83L2 30l7.38-1.832A13.94 13.94 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2zm0 25.5a11.44 11.44 0 0 1-5.84-1.603l-.418-.248-4.38 1.087 1.115-4.27-.272-.44A11.457 11.457 0 0 1 4.5 16C4.5 9.596 9.596 4.5 16 4.5S27.5 9.596 27.5 16 22.404 27.5 16 27.5zm6.29-8.618c-.344-.172-2.036-1.004-2.352-1.118-.316-.115-.546-.172-.776.172-.23.344-.89 1.118-1.09 1.348-.2.23-.4.258-.744.086-.344-.172-1.452-.535-2.766-1.707-1.022-.912-1.712-2.038-1.912-2.382-.2-.344-.021-.53.15-.701.155-.154.344-.402.516-.603.172-.2.23-.344.344-.573.115-.23.058-.431-.029-.603-.086-.172-.776-1.87-1.063-2.56-.28-.672-.564-.581-.776-.592l-.66-.011c-.23 0-.603.086-.919.43-.316.344-1.205 1.177-1.205 2.87s1.234 3.328 1.406 3.558c.172.23 2.428 3.707 5.882 5.198.823.355 1.465.567 1.966.726.826.263 1.578.226 2.172.137.662-.099 2.036-.832 2.323-1.635.287-.803.287-1.492.2-1.635-.086-.143-.316-.23-.66-.402z"/>
     </svg>

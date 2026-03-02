@@ -216,16 +216,10 @@ $show_popup = !empty($active_popups);
       font-family: var(--font-serif) !important;
     }
 
-    /* ============================================================
-       SCROLLBAR
-    ============================================================ */
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: var(--mist); }
     ::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 10px; }
 
-    /* ============================================================
-      FULL NAVBAR FLOATING CAPSULE (JOIN US VERSION)
-    ============================================================ */
       :root {
           --nav-height: 70px;
           --jhc-red-dark: #742528;
@@ -236,14 +230,13 @@ $show_popup = !empty($active_popups);
 
         .site-nav {
         position: fixed;
-        top: 20px; /* Jarak melayang dari atas */
+        top: 20px; 
         left: 50%;
         transform: translateX(-50%);
         z-index: 1040;
         width: 95%;
         max-width: 1340px;
         height: var(--nav-height);
-        /* Gradasi Merah JHC */
         background: linear-gradient(90deg, #742528 0%, #b71c1c 50%, #c1362d 100%);
         border-radius: 50px; 
         box-shadow: 0 10px 30px rgba(0,0,0,0.15);
@@ -252,12 +245,10 @@ $show_popup = !empty($active_popups);
         align-items: center;
         transition: background 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
     }
-
-      /* Penyesuaian saat Scroll */
       .site-nav.scrolled {
-      top: 20px; /* Tetap sama dengan posisi awal */
-      height: var(--nav-height); /* Tetap 80px */
-      background: linear-gradient(90deg, #742528 0%, #b71c1c 100%); /* Warna sedikit lebih gelap saat scroll */
+      top: 20px; 
+      height: var(--nav-height); 
+      background: linear-gradient(90deg, #742528 0%, #b71c1c 100%); 
       box-shadow: 0 5px 20px rgba(0,0,0,0.2);
       }
 
@@ -273,7 +264,7 @@ $show_popup = !empty($active_popups);
       .nav-brand {
           display: flex;
           align-items: center;
-          gap: 10px; /* Jarak antara logo dan divider */
+          gap: 10px; 
           background: transparent !important;
           padding: 0;
           width: auto;
@@ -281,14 +272,13 @@ $show_popup = !empty($active_popups);
       }
 
       .nav-brand img {
-          /* Membuat Logo Menjadi Bulat */
-          width: 65px; /* Sesuaikan ukuran agar pas di dalam nav-height 70px */
+          width: 65px; 
           height: 65px;
-          background-color: #ffffff; /* Latar belakang putih agar logo terlihat jelas */
-          border-radius: 50%; /* Membuat lingkaran sempurna */
-          padding: 5px; /* Jarak antara gambar logo dengan tepi lingkaran putih */
-          object-fit: contain; /* Memastikan gambar tidak terpotong */
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Bayangan halus agar logo menonjol */
+          background-color: #ffffff; 
+          border-radius: 50%; 
+          padding: 5px; 
+          object-fit: contain; 
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
           transition: all 0.3s var(--ease-out);
           border: 1px solid rgba(255, 255, 255, 0.2);
           transition: all 0.4s var(--ease-out);
@@ -312,19 +302,18 @@ $show_popup = !empty($active_popups);
           padding: 4px;
       }
 
-      /* MENU NAVIGASI: Teks Putih Bersih */
       .nav-links {
           display: flex;
           align-items: center;
-          gap: 1.5rem; /* Jarak antar menu sesuai gambar */
+          gap: 1.5rem; 
           list-style: none;
-          margin: 0 auto; /* Menengahkan menu jika logo di kiri & tombol di kanan */
+          margin: 0 auto; 
           padding: 0;
       }
 
       .nav-links a {
           color: #ffffff !important;
-          font-size: 0.95rem; /* Ukuran teks lebih besar agar profesional */
+          font-size: 0.95rem; 
           font-weight: 600;
           text-decoration: none;
           padding: 0.5rem 0;
@@ -336,14 +325,12 @@ $show_popup = !empty($active_popups);
           background: transparent;
       }
 
-      /* AKSES KANAN: Ikon Profil & Button Join Us */
       .nav-cta-wrap {
           display: flex;
           align-items: center;
           gap: 1rem;
       }
 
-      /* Ikon User/Profil (Lingkaran Putih Transparan) */
       .nav-user-icon {
           width: 38px;
           height: 38px;
@@ -364,7 +351,6 @@ $show_popup = !empty($active_popups);
           color: var(--jhc-red-dark) !important;
       }
 
-      /* Tombol Join Us (Pengganti Search) */
       .nav-cta-btn {
           display: inline-flex;
           align-items: center;
@@ -386,8 +372,6 @@ $show_popup = !empty($active_popups);
           box-shadow: 0 6px 18px rgba(255, 255, 255, 0.3);
           background: #f8f9fa;
       }
-
-      /* HAMBURGER MENU (Mobile) */
       .nav-hamburger {
           display: none;
           flex-direction: column;
@@ -407,14 +391,13 @@ $show_popup = !empty($active_popups);
           border-radius: 2px;
       }
 
-      /* RESPONSIVE (Mobile & Tablet) */
       @media (max-width: 1080px) {
           .site-nav {
               top: 15px;
               width: 92%;
           }
           .nav-links, .nav-cta-btn {
-              display: none; /* Sembunyikan menu teks di mobile */
+              display: none; 
           }
           .nav-hamburger {
               display: flex;
@@ -428,9 +411,6 @@ $show_popup = !empty($active_popups);
           }
         }
 
-    /* ============================================================
-       FLOATING BUTTONS
-    ============================================================ */
     .float-dock {
       position: fixed;
       bottom: 28px; right: 24px;
@@ -479,7 +459,7 @@ $show_popup = !empty($active_popups);
 
     .float-igd { 
       background: var(--grad-primary); 
-      color: #ffffff !important; /* Memaksa warna teks menjadi putih */
+      color: #ffffff !important; 
     }
     .float-igd .fp-text {
       color: #ffffff !important;
@@ -487,7 +467,7 @@ $show_popup = !empty($active_popups);
         .float-igd .fp-icon { background: rgba(255,255,255,0.2); }
         .float-wa { 
       background: #25D366; 
-      color: #FFFFFF !important; /* Mengubah warna teks utama menjadi putih */
+      color: #FFFFFF !important; 
     }
     .float-wa .fp-text {
       color: #FFFFFF !important;
@@ -505,9 +485,6 @@ $show_popup = !empty($active_popups);
       .float-pill .fp-text { display: none; }
     }
 
-    /* ============================================================
-       HERO SECTION
-    ============================================================ */
     .hero-wrap {
       position: relative;
       width: 100%;
@@ -617,18 +594,17 @@ $show_popup = !empty($active_popups);
       align-items: center;
     }
 
-    /* --- Modifikasi Navigasi Utama --- */
     .carousel-ctrl {
         position: absolute;
-        top: 50%; /* Posisi di tengah secara vertikal */
+        top: 50%; 
         left: 0;
         right: 0;
         transform: translateY(-50%);
         z-index: 10;
         display: flex;
-        justify-content: space-between; /* Memisahkan tombol ke kiri dan kanan */
-        padding: 0 1.5rem; /* Jarak tombol dari tepi layar */
-        pointer-events: none; /* Agar area kosong di tengah tidak menghalangi klik konten */
+        justify-content: space-between; 
+        padding: 0 1.5rem; 
+        pointer-events: none; 
     }
 
     .carousel-ctrl button {
@@ -645,19 +621,16 @@ $show_popup = !empty($active_popups);
         justify-content: center;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
-        pointer-events: auto; /* Mengaktifkan klik kembali khusus pada tombol */
+        pointer-events: auto; 
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
-
-    /* Efek Hover Tombol */
     .carousel-ctrl button:hover {
-        background: var(--jhc-red-dark, #8a3033); /* Menggunakan variabel warna RS Jantung */
+        background: var(--jhc-red-dark, #8a3033); 
         border-color: var(--jhc-red-dark, #8a3033);
         transform: scale(1.1);
         box-shadow: 0 0 20px rgba(138, 48, 51, 0.4);
     }
 
-    /* Penyesuaian Responsif */
     @media (max-width: 767px) {
         .carousel-dots {
             bottom: 1.5rem;
@@ -668,7 +641,6 @@ $show_popup = !empty($active_popups);
     }
 
     @media (max-width: 767px) {
-        /* Pada mobile, kontrol dipindah ke bawah untuk kemudahan jempol */
         .carousel-ctrl {
             top: auto;
             bottom: 1.5rem;
@@ -684,9 +656,6 @@ $show_popup = !empty($active_popups);
         }
     }
 
-    /* ============================================================
-       SECTION HEADERS
-    ============================================================ */
     .sec-eyebrow {
       display: inline-flex;
       align-items: center;
@@ -733,9 +702,6 @@ $show_popup = !empty($active_popups);
     .sec-header-center .sec-eyebrow { justify-content: center; }
     .sec-header-center .sec-subtitle { margin: 0.75rem auto 0; }
 
-    /* ============================================================
-       BUTTONS
-    ============================================================ */
     .btn-primary-jhc {
       display: inline-flex;
       align-items: center;
@@ -808,9 +774,6 @@ $show_popup = !empty($active_popups);
       font-size: 0.78rem;
     }
 
-    /* ============================================================
-       HOVER LIFT
-    ============================================================ */
     .lift {
       transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
       will-change: transform;
@@ -819,18 +782,11 @@ $show_popup = !empty($active_popups);
       transform: translateY(-6px);
       box-shadow: var(--shadow-lg) !important;
     }
-
-    /* ============================================================
-       ABOUT SECTION — IMPROVED LAYOUT
-       Sesuai sketsa: [1][2][3] tabs di atas
-       Kolom kiri: Gambar | Kolom kanan: Kata-kata
-    ============================================================ */
     .about-section { 
       background: var(--mist);
       padding: 5rem 0;
     }
 
-    /* Tab buttons row — di atas, centered */
     .about-tabs-row {
       display: flex;
       align-items: center;
@@ -886,7 +842,6 @@ $show_popup = !empty($active_popups);
       background: rgba(255,255,255,0.25);
     }
 
-    /* Two-column body grid */
     .about-body-grid {
       display: grid;
       grid-template-columns: 300px 1fr;
@@ -907,7 +862,6 @@ $show_popup = !empty($active_popups);
       }
     }
 
-    /* Image column */
     .about-img-col {
       position: relative;
       border-radius: var(--radius-xl);
@@ -933,8 +887,6 @@ $show_popup = !empty($active_popups);
       object-fit: cover;
       transition: opacity 0.32s ease, transform 0.45s var(--ease-out);
     }
-
-    /* Decorative accents on image */
     .about-img-col::before {
       content: '';
       position: absolute;
@@ -955,7 +907,6 @@ $show_popup = !empty($active_popups);
       z-index: 5;
     }
 
-    /* Image badge overlay */
     .about-img-badge {
       position: absolute;
       bottom: 1rem; left: 1rem;
@@ -974,7 +925,6 @@ $show_popup = !empty($active_popups);
     }
     .about-img-badge i { color: #FF8A9B; font-size: 0.65rem; }
 
-    /* Content panel (right column) */
     .about-content-panel {
       background: var(--white);
       border-radius: var(--radius-xl);
@@ -1037,9 +987,6 @@ $show_popup = !empty($active_popups);
       text-align: justify;
     }
 
-    /* ============================================================
-       SERVICE CARDS
-    ============================================================ */
     .services-section { background: var(--white); }
 
     .dept-divider {
@@ -1065,7 +1012,6 @@ $show_popup = !empty($active_popups);
       color: var(--white);
     }
 
-    /* Layanan grid */
     .layanan-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -1232,14 +1178,10 @@ $show_popup = !empty($active_popups);
         }
     }
 
-    /* Transisi halus saat container berubah ukuran */
     #layananContainer {
         transition: all 0.5s ease-in-out;
     }
 
-    /* ============================================================
-       FACILITIES
-    ============================================================ */
     .facilities-section { background: linear-gradient(160deg, var(--mist) 0%, #EEF5FB 100%); }
 
     .fac-grid {
@@ -1364,9 +1306,6 @@ $show_popup = !empty($active_popups);
       user-select: none;
     }
 
-    /* ============================================================
-       MCU PACKAGES
-    ============================================================ */
     .mcu-section { background: var(--white); }
 
     .mcu-card {
@@ -1417,9 +1356,6 @@ $show_popup = !empty($active_popups);
     }
     .mcu-actions { display: flex; gap: 0.75rem; margin-top: 0.25rem; }
 
-    /* ============================================================
-       VIRTUAL ROOM
-    ============================================================ */
     .vr-section { background: var(--mist); }
 
     .vr-video-wrap {
@@ -1460,21 +1396,20 @@ $show_popup = !empty($active_popups);
     user-select: none;
     }
 
-    /* Efek saat kursor diarahkan ke kartu */
     .clickable-card:hover {
-      background-color: #fff5f5; /* Warna merah sangat muda sesuai identitas JHC */
+      background-color: #fff5f5; 
       transform: translateY(-3px);
       box-shadow: 0 10px 20px rgba(138, 48, 51, 0.1);
       border-color: rgba(138, 48, 51, 0.1);
     }
 
-    /* Efek saat kartu ditekan */
+ 
     .clickable-card:active {
       transform: scale(0.98);
     }
 
     .vr-feature-icon.red-bg {
-      background-color: #8a3033; /* Warna brand RS Jantung Tasikmalaya */
+      background-color: #8a3033; 
       color: #fff;
     }
 
@@ -1502,10 +1437,6 @@ $show_popup = !empty($active_popups);
         color: white;
         transform: translateY(-2px);
     }
-
-    /* ============================================================
-       NEWS CARDS
-    ============================================================ */
     .news-section { background: var(--white); }
 
     .news-card {
@@ -1590,9 +1521,6 @@ $show_popup = !empty($active_popups);
     .news-read-link:hover { gap: 0.65rem; }
     .news-read-link i { font-size: 0.7rem; }
 
-    /* ============================================================
-       PARTNERS
-    ============================================================ */
     .partners-section { background: var(--mist); }
 
     .partner-item {
@@ -1621,9 +1549,6 @@ $show_popup = !empty($active_popups);
       transform: scale(1.05);
     }
 
-    /* ============================================================
-       MODALS
-    ============================================================ */
     .modal-content {
       border: none;
       border-radius: var(--radius-xl) !important;
@@ -1650,9 +1575,6 @@ $show_popup = !empty($active_popups);
     .jhc-modal-header .btn-close { filter: brightness(0) invert(1); opacity: 0.8; }
     .jhc-modal-header .btn-close:hover { opacity: 1; }
 
-    /* ============================================================
-       FORM CONTROLS
-    ============================================================ */
     .jhc-input {
       width: 100%;
       padding: 0.8rem 1.1rem;
@@ -1667,9 +1589,6 @@ $show_popup = !empty($active_popups);
     }
     .jhc-input:focus { border-color: var(--crimson); box-shadow: 0 0 0 3px rgba(200,16,46,0.1); }
 
-    /* ============================================================
-       FOOTER
-    ============================================================ */
     .site-footer {
       background: var(--grad-dark);
       color: #fff;
@@ -1804,22 +1723,14 @@ $show_popup = !empty($active_popups);
       transition: 0.3s;
     }
 
-    /* ============================================================
-       PROMO POPUP
-    ============================================================ */
-    /* 1. Pastikan posisi button adalah absolute terhadap modal-content */
-    /* --- 1. MODIFIKASI KARTU (WARNA & LAYOUT) --- */
     #promoPopupCarousel .modal-content {
         position: relative;
         overflow: visible !important;
         border-radius: 30px !important;
         border: none !important;
-        /* Memberikan warna gradasi halus pada kartu */
         background: linear-gradient(165deg, #ffffff 0%, #fff5f5 100%) !important;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(138, 48, 51, 0.05) !important;
     }
-
-    /* Dekorasi garis merah di bagian atas kartu */
     #promoPopupCarousel .modal-content::before {
         content: "";
         position: absolute;
@@ -1829,18 +1740,16 @@ $show_popup = !empty($active_popups);
         z-index: 1051;
     }
 
-    /* --- 2. MODIFIKASI TOMBOL "X" (CLOSE) TERAPUNG --- */
     .btn-close-custom {
         position: absolute;
-        /* Memindahkan ke luar area gambar (kanan luar) */
         right: 15px; 
         top: 15px;
         width: 38px;
         height: 38px;
-        background: #8a3033 !important; /* Warna merah JHC */
+        background: #8a3033 !important;
         color: #fff !important;
         border-radius: 50%;
-        border: 3px solid #fff !important; /* Border putih agar kontras */
+        border: 3px solid #fff !important; 
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1855,7 +1764,6 @@ $show_popup = !empty($active_popups);
         background: #bd3030 !important;
     }
 
-    /* --- 3. TOMBOL NAVIGASI SAMPING (KODE ASLI ANDA) --- */
     .custom-side-nav {
         width: 45px;
         height: 45px;
@@ -1887,12 +1795,8 @@ $show_popup = !empty($active_popups);
     .custom-side-nav:hover { background: #8a3033 !important; }
     .custom-side-nav:hover i { color: #fff !important; }
 
-    /* Efek muncul saat hover pada kartu */
     #promoPopupCarousel:hover .custom-side-nav { opacity: 1; }
 
-    /* ============================================================
-       SPINNER
-    ============================================================ */
     .spinner-overlay {
       display: none;
       position: fixed;
@@ -1904,9 +1808,7 @@ $show_popup = !empty($active_popups);
     }
     .spinner-overlay.active { display: flex; }
 
-    /* ============================================================
-       UTILITIES
-    ============================================================ */
+    
     .text-crimson { color: var(--crimson) !important; }
     .text-navy    { color: var(--navy) !important; }
     .bg-mist      { background: var(--mist) !important; }
@@ -1923,7 +1825,7 @@ $show_popup = !empty($active_popups);
 </head>
 <body>
 
-<!-- Spinner -->
+
 <div class="spinner-overlay" id="loadingSpinner">
   <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;">
     <div class="spinner-border text-danger" style="width:2.5rem;height:2.5rem;" role="status">
@@ -1935,9 +1837,6 @@ $show_popup = !empty($active_popups);
 
 <main id="top">
 
-  <!-- ============================================================
-       NAVBAR
-  ============================================================ -->
  <nav class="site-nav" id="mainNavbar" role="navigation" aria-label="Navigasi Utama">
     <div class="nav-inner">
       
@@ -1973,9 +1872,6 @@ $show_popup = !empty($active_popups);
     </div>
 </nav>
 
-  <!-- ============================================================
-       FLOATING BUTTONS
-  ============================================================ -->
   <div class="float-dock" role="complementary" aria-label="Kontak Cepat">
     <a href="tel:<?= $no_igd; ?>" class="float-pill float-igd" title="Darurat IGD" aria-label="Telepon IGD">
       <div class="fp-icon"><i class="fas fa-ambulance"></i></div>
@@ -1987,9 +1883,6 @@ $show_popup = !empty($active_popups);
     </a>
   </div>
 
-  <!-- ============================================================
-       HERO / BANNER
-  ============================================================ -->
   <section class="hero-wrap p-0" id="home" aria-label="Banner Utama">
     <div id="heroCarousel" class="carousel slide carousel-fade h-100"
          data-bs-ride="carousel" data-bs-interval="6000" aria-roledescription="carousel">
@@ -2049,19 +1942,14 @@ $show_popup = !empty($active_popups);
     </div>
   </section>
 
-  <!-- ============================================================
-       ABOUT US 
-  ============================================================ -->
   <section id="about_us" class="about-section">
     <div class="container" style="max-width:1280px;">
 
-      <!-- Header Section -->
       <div class="sec-header-center mb-4">
         <div class="sec-eyebrow" aria-hidden="true">Mengenal Kami</div>
         <h2 class="sec-title"> <em>RS Jantung</em> Tasikmalaya</h2>
       </div>
 
-      <!-- Tab Buttons [1][2][3] — centered, di atas dua kolom -->
       <div class="about-tabs-row" role="tablist" aria-label="Informasi RS Jantung Tasikmalaya">
         <?php $no = 0; foreach ($tabs_config as $key => $info): ?>
           <button class="about-tab-btn <?= $no === 0 ? 'active' : ''; ?>"
@@ -2077,10 +1965,8 @@ $show_popup = !empty($active_popups);
         <?php $no++; endforeach; ?>
       </div>
 
-      <!-- Body: Gambar kiri | Kata-kata kanan -->
       <div class="about-body-grid">
 
-        <!-- Kolom Kiri: Gambar -->
         <div class="about-img-col">
           <?php 
             $first_key   = array_key_first($tabs_config);
@@ -2096,7 +1982,6 @@ $show_popup = !empty($active_popups);
           </div>
         </div>
 
-        <!-- Kolom Kanan: Konten / Kata-kata -->
         <div class="about-content-panel">
           <div class="about-pane-wrap">
             <?php $no = 0; foreach ($tabs_config as $key => $info): ?>
@@ -2118,14 +2003,11 @@ $show_popup = !empty($active_popups);
           </div>
         </div>
 
-      </div><!-- /about-body-grid -->
+      </div>
 
     </div>
   </section>
 
-  <!-- ============================================================
-       SERVICES / DEPARTMENTS
-  ============================================================ -->
   <section id="departments" class="services-section">
     <div class="container" style="max-width:1280px;">
 
@@ -2160,7 +2042,6 @@ $show_popup = !empty($active_popups);
       }
       ?>
 
-      <!-- Layanan Unggulan -->
       <?php if (!empty($layanan_data)): ?>
         <div class="dept-divider mt-2">
           <div class="dept-divider-line"></div>
@@ -2242,7 +2123,6 @@ $show_popup = !empty($active_popups);
     </div>
   </section>
 
-  <!-- Modal: Detail Layanan -->
   <div class="modal fade" id="modalLayanan" tabindex="-1" aria-labelledby="modalLayananLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden;">
@@ -2277,9 +2157,6 @@ $show_popup = !empty($active_popups);
     </div>
   </div>
 
-  <!-- ============================================================
-       FACILITIES
-  ============================================================ -->
   <?php if (!empty($facilities_data)): ?>
     <section id="facilities" class="facilities-section">
       <div class="container" style="max-width:1280px;">
@@ -2335,9 +2212,6 @@ $show_popup = !empty($active_popups);
     </section>
   <?php endif; ?>
 
-  <!-- ============================================================
-       MCU PACKAGES
-  ============================================================ -->
   <?php if (!empty($mcu_packages_data)): ?>
   <section id="mcu_packages_data" class="mcu-section">
     <div class="container" style="max-width:1280px;">
@@ -2383,7 +2257,6 @@ $show_popup = !empty($active_popups);
             </div>
           </div>
 
-          <!-- MCU Detail Modal -->
           <div class="modal fade" id="mcuModal<?= $idx; ?>" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
               <div class="modal-content">
@@ -2427,9 +2300,6 @@ $show_popup = !empty($active_popups);
   </section>
   <?php endif; ?>
 
-  <!-- ============================================================
-       VIRTUAL ROOM
-  ============================================================ -->
   <?php if ($vr_data): ?>
   <section id="virtual_room" class="vr-section">
     <div class="container" style="max-width:1280px;">
@@ -2506,7 +2376,7 @@ $show_popup = !empty($active_popups);
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3">
-                  <img src="public/assets/img/gallery/alur.jpg" class="img-fluid rounded-3 w-100 shadow-sm" alt="Gambar Alur BPJS">
+                  <img src="public/assets/img/gallery/alur.jpeg" class="img-fluid rounded-3 w-100 shadow-sm" alt="Gambar Alur BPJS">
             </div>
             <div class="modal-footer border-0 pt-0">
                 <p class="text-muted w-100 text-center" style="font-size: 11px;">
@@ -2543,9 +2413,6 @@ $show_popup = !empty($active_popups);
   </div>
   <?php endif; ?>
 
-  <!-- ============================================================
-       NEWS
-  ============================================================ -->
   <section id="news" class="news-section">
     <div class="container" style="max-width:1280px;">
 
@@ -2597,7 +2464,6 @@ $show_popup = !empty($active_popups);
     </div>
   </section>
 
-  <!-- Modal: Detail Artikel -->
   <div class="modal fade" id="modalArticle" tabindex="-1" aria-labelledby="modalArticleLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
       <div class="modal-content">
@@ -2632,9 +2498,6 @@ $show_popup = !empty($active_popups);
     </div>
   </div>
 
-  <!-- ============================================================
-       PARTNERS
-  ============================================================ -->
   <section id="partners" style="background:linear-gradient(135deg,#f8f9fa 0%,#fff 100%);">
     <div class="container">
       <div class="row justify-content-center mb-5">
@@ -2672,9 +2535,6 @@ $show_popup = !empty($active_popups);
     </div>
   </section>
 
-  <!-- ============================================================
-       PROMO POPUP
-  ============================================================ -->
 <?php if ($show_popup): ?>
 <div class="modal fade popup-modern" id="promoPopupCarousel" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -2737,10 +2597,6 @@ $show_popup = !empty($active_popups);
 </div>
 <?php endif; ?>
 
-
-  <!-- ============================================================
-       FOOTER
-  ============================================================ -->
   <footer class="site-footer" role="contentinfo">
     <div class="footer-inner">
       <div class="container" style="max-width:1280px;">
@@ -2872,20 +2728,16 @@ $show_popup = !empty($active_popups);
 
 </main>
 
-<!-- ============================================================
-     SCRIPTS
-============================================================ -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 (function() {
   'use strict';
 
-  /* ── Navbar scroll ── */
   const navbar = document.getElementById('mainNavbar');
   const onScroll = () => navbar.classList.toggle('scrolled', window.scrollY > 60);
   window.addEventListener('scroll', onScroll, { passive: true });
 
-  /* ── Hamburger menu ── */
   const toggler = document.getElementById('navToggle');
   const navMenu = document.getElementById('navMenu');
   const navCta  = document.getElementById('navCta');
@@ -2929,7 +2781,6 @@ $show_popup = !empty($active_popups);
     if (!navbar.contains(e.target)) closeMenu();
   });
 
-  /* ── Smooth Scroll ── */
   document.querySelectorAll('a[href^="index.php#"], a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
       const href = this.getAttribute('href');
@@ -2945,22 +2796,19 @@ $show_popup = !empty($active_popups);
     });
   });
 
-  /* ── About Tab Switcher ── */
   window.switchAboutTab = function(btn, targetId) {
-    /* Deactivate all */
     document.querySelectorAll('.about-tab-btn').forEach(b => {
       b.classList.remove('active');
       b.setAttribute('aria-selected', 'false');
     });
     document.querySelectorAll('.about-tab-pane').forEach(p => p.classList.remove('active'));
 
-    /* Activate chosen */
+    
     btn.classList.add('active');
     btn.setAttribute('aria-selected', 'true');
     const pane = document.getElementById(targetId);
     if (pane) pane.classList.add('active');
 
-    /* Swap image with smooth transition */
     const imgPath = btn.getAttribute('data-img');
     const mainImg = document.getElementById('main-about-image');
     if (imgPath && imgPath.trim()) {
@@ -2981,7 +2829,6 @@ $show_popup = !empty($active_popups);
     }
   };
 
-  /* ── Modal: Detail Layanan ── */
   document.addEventListener('DOMContentLoaded', function() {
     const btnToggle = document.getElementById('toggleLayanan');
     const container = document.getElementById('layananContainer');
@@ -3152,16 +2999,13 @@ window.toggleFacDesc = function(idx) {
     const promoElement = document.getElementById('promoPopupCarousel');
     
     if (promoElement) {
-        // Deteksi apakah halaman dibuka via refresh (reload)
         const navEntry = performance.getEntriesByType('navigation')[0];
         const isReload = navEntry && navEntry.type === 'reload';
 
-        // Jika refresh, hapus flag agar popup muncul kembali
         if (isReload) {
             sessionStorage.removeItem('jhc_popup_shown');
         }
 
-        // Hanya tampilkan popup jika belum ditampilkan di sesi navigasi ini
         const popupShown = sessionStorage.getItem('jhc_popup_shown');
 
         if (!popupShown) {
@@ -3181,7 +3025,6 @@ window.toggleFacDesc = function(idx) {
 
             setTimeout(() => {
                 myModal.show();
-                // Tandai bahwa popup sudah ditampilkan di sesi ini
                 sessionStorage.setItem('jhc_popup_shown', '1');
             }, 1000);
         }

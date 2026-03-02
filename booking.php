@@ -1,5 +1,4 @@
 <?php
-// 1. Cek lokasi file config untuk koneksi database
 if (file_exists("config.php")) {
     require_once "config.php";
 } elseif (file_exists("../config.php")) {
@@ -9,25 +8,21 @@ if (file_exists("config.php")) {
 $success_msg = "";
 $error_msg = "";
 
-// --- 2. LOGIKA MENANGKAP DATA DOKTER DARI URL ---
 $doctor_id = isset($_GET['doctor_id']) ? intval($_GET['doctor_id']) : 0;
 $selected_doctor = null;
 
 if ($doctor_id > 0 && isset($mysqli)) {
-    // Ambil detail dokter untuk ditampilkan sebagai ringkasan di form
     $stmt_doc = $mysqli->prepare("SELECT name, specialty FROM doctors WHERE id = ?");
     $stmt_doc->bind_param("i", $doctor_id);
     $stmt_doc->execute();
     $selected_doctor = $stmt_doc->get_result()->fetch_assoc();
 }
 
-// Buat pesan default jika ada dokter yang dipilih
 $default_message = "";
 if ($selected_doctor) {
     $default_message = "Halo, saya ingin membuat janji temu dengan " . htmlspecialchars($selected_doctor['name']) . " (" . htmlspecialchars($selected_doctor['specialty']) . ").";
 }
 
-// --- 3. PROSES FORM SAAT SUBMIT ---
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name     = trim($_POST['name']);
     $phone    = trim($_POST['phone']);
@@ -35,7 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $message  = trim($_POST['message']);
     $category = isset($_POST['category']) ? $_POST['category'] : 'Umum';
     
-    // Gabungkan info poliklinik ke dalam pesan untuk database
     $final_message = "[Poli: $category] " . $message;
 
     if (empty($name) || empty($phone) || empty($message)) {
@@ -49,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 if ($stmt->execute()) {
                     $success_msg = "Janji temu berhasil dibuat! Tim kami akan segera menghubungi Anda melalui WhatsApp untuk konfirmasi jadwal.";
-                    $default_message = ""; // Kosongkan pesan setelah sukses
+                    $default_message = "";
                 } else {
                     $error_msg = "Gagal menyimpan data: " . $stmt->error;
                 }
@@ -83,7 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         body { font-family: 'Poppins', sans-serif; background-color: var(--rs-bg); }
 
-        /* Navbar Style */
         .navbar {
             background: rgba(255, 255, 255, 0.98) !important;
             backdrop-filter: blur(15px);
@@ -92,7 +85,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         .navbar-brand img { height: 60px; }
 
-        /* Card & UI */
         .booking-card { border: none; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); overflow: hidden; }
         .booking-header { background: var(--jhc-gradient); color: white; padding: 40px 20px; text-align: center; }
         

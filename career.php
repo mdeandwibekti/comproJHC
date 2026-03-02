@@ -4,8 +4,6 @@ require_once 'config.php';
 if ($mysqli->connect_error) {
     die("Koneksi gagal: " . $mysqli->connect_error);
 }
-
-// Set timezone agar perhitungan deadline akurat
 date_default_timezone_set('Asia/Jakarta');
 ?>
 
@@ -31,8 +29,6 @@ date_default_timezone_set('Asia/Jakarta');
             background-color: var(--jhc-soft-bg);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        /* --- NAVBAR STYLE (Mirip Index.php User) --- */
         .navbar {
             padding: 0.75rem 0;
             min-height: 80px;
@@ -40,7 +36,7 @@ date_default_timezone_set('Asia/Jakarta');
             backdrop-filter: blur(15px);
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             transition: var(--transition-smooth);
-            border-bottom: 3px solid var(--jhc-red-dark); /* Aksen Merah Bawah */
+            border-bottom: 3px solid var(--jhc-red-dark); 
         }
 
         .navbar .container {
@@ -48,22 +44,18 @@ date_default_timezone_set('Asia/Jakarta');
             padding: 0 1.25rem;
         }
 
-        /* Logo Besar & Animasi */
         .navbar-brand img {
-            height: 65px; /* Ukuran Besar sesuai Index */
+            height: 65px; 
             width: auto;
             transition: var(--transition-smooth);
             object-fit: contain;
             filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
         }
 
-        /* Efek Bergerak saat Disentuh (Hover) */
         .navbar-brand:hover img {
             transform: scale(1.05);
             filter: drop-shadow(0 4px 12px rgba(200, 16, 46, 0.25));
         }
-
-        /* --- BUTTON STYLE (Sama dengan Home/Apply Job) --- */
         .btn-janji {
             background: var(--jhc-gradient) !important;
             color: white !important;
@@ -95,7 +87,6 @@ date_default_timezone_set('Asia/Jakarta');
             color: var(--jhc-red-dark) !important;
         }
 
-        /* --- CAREER HEADER --- */
         .career-header {
             background: var(--jhc-gradient);
             color: white;
@@ -103,10 +94,9 @@ date_default_timezone_set('Asia/Jakarta');
             border-radius: 0 0 50px 50px;
             margin-bottom: 20px;
             box-shadow: 0 10px 30px rgba(138, 48, 51, 0.2);
-            margin-top: 90px; /* Spacer karena navbar fixed */
+            margin-top: 90px; 
         }
 
-        /* Job Card Styling */
         .card-job {
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             border-radius: 20px;
@@ -214,13 +204,11 @@ date_default_timezone_set('Asia/Jakarta');
 <div class="container pb-5">
     <div class="row g-4">
         <?php
-        // Mengambil data lowongan yang statusnya Open
         $jobs = $mysqli->query("SELECT * FROM careers WHERE status = 'open' ORDER BY id DESC");
 
         if ($jobs && $jobs->num_rows > 0):
             while($job = $jobs->fetch_assoc()):
-                
-                // --- LOGIKA DEADLINE ---
+
                 $has_deadline = !empty($job['deadline']) && $job['deadline'] != '0000-00-00';
                 $is_expired = false;
                 $is_urgent = false;
@@ -232,7 +220,7 @@ date_default_timezone_set('Asia/Jakarta');
                     $days_diff = ($deadline_date - $today) / 86400;
 
                     if ($days_diff < 0) {
-                        $is_expired = true; // Tanggal sudah lewat
+                        $is_expired = true; 
                     } elseif ($days_diff <= 7) {
                         $is_urgent = true;
                         $deadline_label = "Sisa " . round($days_diff) . " Hari Lagi!";
@@ -240,8 +228,6 @@ date_default_timezone_set('Asia/Jakarta');
                         $deadline_label = "Batas: " . date('d M Y', $deadline_date);
                     }
                 }
-
-                // Jangan tampilkan jika sudah kedaluwarsa
                 if ($is_expired) continue;
         ?>
         <div class="col-md-6 col-lg-4">

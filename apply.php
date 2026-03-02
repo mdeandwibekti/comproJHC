@@ -1,7 +1,6 @@
 <?php 
 require_once 'config.php';
 
-// Ambil ID dari URL
 $job_id = isset($_GET['job_id']) ? $mysqli->real_escape_string($_GET['job_id']) : '';
 
 $job_name = "Pendaftaran Karir";
@@ -35,7 +34,6 @@ if ($job_id) {
             color: #333;
         }
 
-        /* Header Accent */
         .top-accent {
             height: 6px;
             background: var(--jhc-gradient);
@@ -77,7 +75,6 @@ if ($job_id) {
             background-color: #fff;
         }
 
-        /* --- BUTTON STYLE (Sama dengan Home) --- */
         .btn-janji {
             background: var(--jhc-gradient) !important;
             color: white !important;
@@ -94,7 +91,6 @@ if ($job_id) {
             justify-content: center;
         }
 
-        /* Hover & Active State: Jadi Putih */
         .btn-janji:hover, 
         .btn-janji:active,
         .btn-janji:focus {
@@ -105,7 +101,6 @@ if ($job_id) {
             box-shadow: 0 6px 20px rgba(200, 16, 46, 0.3);
         }
 
-        /* Ubah warna icon saat dihover */
         .btn-janji:hover i,
         .btn-janji:active i {
             color: var(--jhc-red-dark) !important;

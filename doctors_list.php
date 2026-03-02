@@ -7,7 +7,6 @@ $dept_name = "Tim Dokter Spesialis";
 $is_layanan = false;
 
 if ($dept_id > 0) {
-    // Ambil data departemen termasuk kategorinya
     $stmt_dept = $mysqli->prepare("SELECT name, category FROM departments WHERE id = ?");
     $stmt_dept->bind_param("i", $dept_id);
     $stmt_dept->execute();
@@ -53,7 +52,6 @@ if ($dept_id > 0) {
             color: #334155; 
         }
         
-        /* Header Ramping & Elegan */
         .hero-header { 
             background: var(--jhc-gradient); 
             color: white; 
@@ -79,7 +77,7 @@ if ($dept_id > 0) {
         }
         .btn-back:hover { background: white; color: var(--jhc-red); }
 
-        /* Card yang Lebih Terlihat & Menonjol */
+        
         .doctor-card { 
             border: 1px solid rgba(0,0,0,0.03); 
             border-radius: 24px; 
@@ -99,8 +97,6 @@ if ($dept_id > 0) {
             box-shadow: var(--shadow-hover);
             border-color: rgba(138, 48, 51, 0.15);
         }
-
-        /* Foto Profil Bulat Sempurna */
         .img-wrapper { 
             width: 130px; 
             height: 130px; 
@@ -160,7 +156,6 @@ if ($dept_id > 0) {
             box-shadow: 0 8px 15px rgba(138, 48, 51, 0.2);
         }
 
-        /* Modal Styling Premium */
         .modal-content { border-radius: 30px; border: none; overflow: hidden; }
         .modal-header-custom { background: var(--jhc-gradient); height: 110px; position: relative; }
         .modal-profile-img {
@@ -183,11 +178,10 @@ if ($dept_id > 0) {
         .info-label i { color: var(--jhc-red); margin-right: 8px; }
 
         .btn-booking {
-            /* Gradasi Hijau WhatsApp yang lebih premium */
             background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
             color: white !important;
-            border-radius: 20px; /* Sedikit lebih bulat */
-            font-weight: 800; /* Lebih tebal */
+            border-radius: 20px; 
+            font-weight: 800; 
             padding: 18px;
             text-decoration: none;
             display: flex;
@@ -197,14 +191,12 @@ if ($dept_id > 0) {
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
-            /* Bayangan lebih menyebar */
             box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
-            /* Animasi denyut halus agar menarik perhatian mata */
             animation: pulse-green 2s infinite;
         }
 
         .btn-booking:hover {
-            transform: translateY(-5px) scale(1.02); /* Naik lebih tinggi saat hover */
+            transform: translateY(-5px) scale(1.02); 
             box-shadow: 0 15px 35px rgba(37, 211, 102, 0.5);
             filter: brightness(1.1);
         }
@@ -214,7 +206,6 @@ if ($dept_id > 0) {
             margin-right: 10px;
         }
 
-        /* Keyframes untuk efek denyut (Pulse) */
         @keyframes pulse-green {
             0% {
                 box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
@@ -227,7 +218,6 @@ if ($dept_id > 0) {
             }
         }
 
-        /* Efek cahaya kilat (Shine) yang lewat sesekali */
         .btn-booking::after {
             content: '';
             position: absolute;
@@ -247,10 +237,9 @@ if ($dept_id > 0) {
             100% { left: 120%; }
         }
 
-        /* Gaya baru untuk tombol Tutup Jendela */
         .btn-close-modal {
             background: #ffffff;
-            color: #64748b !important; /* Warna abu-abu slate yang elegan */
+            color: #64748b !important; 
             border: 2px solid #e2e8f0;
             border-radius: 16px;
             font-weight: 700;

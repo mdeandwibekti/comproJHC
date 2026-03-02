@@ -1,5 +1,5 @@
 <?php
-require_once "layout/public_header.php"; // Corrected path
+require_once "layout/public_header.php"; 
 
 $article = null;
 if (isset($_GET['id'])) {
@@ -16,20 +16,18 @@ if (isset($_GET['id'])) {
     }
 }
 
-// If article not found, redirect or show error
 if (!$article) {
-    header("location: index.php"); // Redirect to homepage or a 404 page
+    header("location: index.php"); 
     exit();
 }
 
-$page_title = htmlspecialchars($article['title']); // $article is now defined here
+$page_title = htmlspecialchars($article['title']); 
 
 ?>
 
       <section class="py-8">
         <div class="bg-holder bg-size" style="background-image:url(public/assets/img/gallery/dot-bg.png);background-position:top left;background-size:auto;">
         </div>
-        <!--/.bg-holder-->
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 mx-auto">
@@ -46,9 +44,9 @@ $page_title = htmlspecialchars($article['title']); // $article is now defined he
             </div>
         </div>
       </section>
-    </main> <!-- Add this closing main tag -->
+    </main> 
 
 <?php 
 $mysqli->close();
-require_once "layout/public_footer.php"; // Corrected path
+require_once "layout/public_footer.php";
 ?>

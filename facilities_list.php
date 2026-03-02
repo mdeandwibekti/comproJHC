@@ -1,12 +1,10 @@
 <?php
 require_once 'config.php';
 
-// Menangkap parameter kategori dari URL
 $category = isset($_GET['category']) ? $_GET['category'] : '';
 $facilities_list = [];
 
 if (!empty($category)) {
-    // Query untuk mengambil data berdasarkan kolom 'category'
     $stmt = $mysqli->prepare("SELECT * FROM facilities WHERE category = ? ORDER BY display_order ASC");
     $stmt->bind_param("s", $category);
     $stmt->execute();
@@ -38,7 +36,6 @@ if (!empty($category)) {
             color: #444; 
         }
 
-        /* --- HERO HEADER (Sama dengan doctors.php) --- */
         .hero-header { 
             background: var(--jhc-gradient); 
             color: white; 
@@ -61,7 +58,6 @@ if (!empty($category)) {
         }
         .btn-back:hover { background: rgba(255,255,255,0.3); color: white; }
 
-        /* --- CARD STYLE --- */
         .facility-card {
             border: none;
             border-radius: 20px;
@@ -112,7 +108,6 @@ if (!empty($category)) {
             margin-top: 10px;
         }
         
-        /* --- MODAL STYLE --- */
         .modal-content {
             border-radius: 25px;
             border: none;
@@ -134,22 +129,19 @@ if (!empty($category)) {
             margin-bottom: 20px;
         }
 
-        /* Mencegah gambar melonjak ukurannya saat dimuat */
         #modalImg {
             width: 100%;
             height: auto;
             max-height: 350px;
             object-fit: cover;
-            background-color: #f0f0f0; /* Warna dasar saat gambar loading */
+            background-color: #f0f0f0; 
             display: block;
         }
 
-        /* Memastikan transisi kolom halus */
         #imgContainer.d-none + .col-md-12 {
             transition: all 0.3s ease;
         }
 
-        /* Tambahkan ini jika ingin gambar tetap di tengah secara vertikal */
         .modal-body .row {
             align-items: flex-start !important;
         }
@@ -254,13 +246,11 @@ if (!empty($category)) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // Inisialisasi variabel modal agar tidak error
     const facilityModal = document.getElementById('facilityModal');
 
     facilityModal.addEventListener('show.bs.modal', function (event) {
         const card = event.relatedTarget;
         
-        // Ambil data dari atribut data-*
         const name = card.getAttribute('data-name');
         const desc = card.getAttribute('data-desc');
         const imgPath = card.getAttribute('data-img');
@@ -269,29 +259,23 @@ if (!empty($category)) {
         const imgContainer = document.getElementById('imgContainer');
         const descCol = imgContainer.nextElementSibling;
 
-        // Validasi Path Gambar untuk mencegah glitch
-        // Jika gambar tidak ada atau hanya string 'public/'
         if (!imgPath || imgPath.trim() === 'public/' || imgPath.includes('undefined')) {
-            // Opsi: Sembunyikan container gambar agar teks menjadi full width (Mencegah Glitch Tata Letak)
             imgContainer.classList.add('d-none');
             descCol.classList.replace('col-md-6', 'col-md-12');
         } else {
-            // Jika gambar ada, tampilkan dengan benar
             imgContainer.classList.remove('d-none');
             descCol.classList.replace('col-md-12', 'col-md-6');
             imgElement.src = imgPath;
         }
         
-        // Isi konten teks
         document.getElementById('modalTitle').textContent = name;
         document.getElementById('modalName').textContent = name;
         document.getElementById('modalDesc').innerHTML = desc || 'Deskripsi tidak tersedia.';
     });
 
-    // Reset state saat modal ditutup agar tidak ada sisa gambar lama
     facilityModal.addEventListener('hidden.bs.modal', function () {
         const imgElement = document.getElementById('modalImg');
-        imgElement.src = ''; // Kosongkan src untuk mencegah 'flicker' saat dibuka lagi
+        imgElement.src = ''; 
     });
 </script>
 
