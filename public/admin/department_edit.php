@@ -95,6 +95,14 @@ require_once 'layout/header.php';
     .btn-save-jhc:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(138, 48, 51, 0.3); }
 </style>
 
+<nav aria-label="breadcrumb" class="mb-4 ms-2">
+    <ol class="breadcrumb bg-transparent p-0 mb-0" style="font-size: 0.8rem;">
+        <li class="breadcrumb-item"><a href="dashboard.php" class="text-muted text-decoration-none">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="departments.php" class="text-muted text-decoration-none">Departemen</a></li>
+        <li class="breadcrumb-item active fw-bold" style="color: var(--jhc-red);">Form Departemen</li>
+    </ol>
+</nav>
+
 <div class="container py-4">
     <div class="form-wrapper p-4 p-lg-5">
         <div class="mb-4 d-flex justify-content-between align-items-center">
