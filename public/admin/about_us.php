@@ -105,6 +105,13 @@ require_once 'layout/header.php';
     .btn-jhc-save { background: var(--jhc-gradient); color: white !important; border-radius: 14px; padding: 0.8rem 2.5rem; font-weight: 700; border: none; transition: 0.3s; }
 </style>
 
+<nav aria-label="breadcrumb" class="mb-4 ms-2">
+    <ol class="breadcrumb bg-transparent p-0 mb-0" style="font-size: 0.8rem;">
+        <li class="breadcrumb-item"><a href="dashboard.php" class="text-decoration-none text-muted">Dashboard</a></li>
+        <li class="breadcrumb-item active fw-bold" style="color: var(--jhc-red);">Manajemen About Us</li>
+    </ol>
+</nav>
+
 <div class="container py-4">
     <div class="page-header d-flex align-items-center">
         <div class="header-icon-box me-4 d-none d-md-flex"><i class="fas fa-building fa-lg"></i></div>

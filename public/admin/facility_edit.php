@@ -216,13 +216,13 @@ $page_title_text = empty($id) ? "Tambah Kategori Utama" : "Edit Kategori Utama";
 
 <div class="container-fluid py-4">
     <div class="main-wrapper">
-        <div class="breadcrumb-jhc">
-            <a href="dashboard.php">Dashboard</a> 
-            <span class="separator">/</span> 
-            <a href="facilities.php">Manajemen Fasilitas</a>
-            <span class="separator">/</span> 
-            <span class="current"><?php echo empty($id) ? 'Tambah Kategori' : 'Edit Kategori'; ?></span>
-        </div>
+        <nav aria-label="breadcrumb" class="mb-4 ms-2">
+            <ol class="breadcrumb bg-transparent p-0 mb-0" style="font-size: 0.8rem;">
+                <li class="breadcrumb-item"><a href="dashboard.php" class="text-muted text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="facilities.php" class="text-muted text-decoration-none">manajemen fasilitas</a></li>
+                <li class="breadcrumb-item active fw-bold" style="color: var(--jhc-red-dark);">Form fasilitas utama</li>
+            </ol>
+        </nav>
         <div class="page-header-jhc d-flex flex-column flex-md-row justify-content-between align-items-md-center">
             <div>
                 <h2 class="fw-extrabold mb-1 text-dark" style="font-weight: 800; letter-spacing: -1px;"><?php echo $page_title_text; ?></h2>

@@ -114,6 +114,13 @@ require_once 'layout/header.php';
     .btn-del:hover { background: #dc3545; color: #fff; }
 </style>
 
+<nav aria-label="breadcrumb" class="mb-4 ms-2">
+    <ol class="breadcrumb bg-transparent p-0 mb-0" style="font-size: 0.8rem;">
+        <li class="breadcrumb-item"><a href="dashboard.php" class="text-decoration-none text-muted">Dashboard</a></li>
+        <li class="breadcrumb-item active fw-bold" style="color: var(--jhc-red);">Manajemen Departemen</li>
+    </ol>
+</nav>
+
 <div class="container-fluid py-4">
     <div class="main-wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
