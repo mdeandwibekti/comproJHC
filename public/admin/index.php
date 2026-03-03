@@ -1,90 +1,64 @@
 <?php
-// Initialize the session
 session_start();
- 
-// Check if the user is already logged in, if yes then redirect him to dashboard
 if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
     header("location: dashboard.php");
     exit;
 }
  
-// Include config file
 require_once "../../config.php";
  
-// Define variables and initialize with empty values
+
 $username = $password = "";
 $username_err = $password_err = $login_err = "";
  
-// Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
  
-    // Check if username is empty
     if(empty(trim($_POST["username"]))){
         $username_err = "Silakan masukkan username.";
     } else{
         $username = trim($_POST["username"]);
     }
     
-    // Check if password is empty
     if(empty(trim($_POST["password"]))){
         $password_err = "Silakan masukkan password Anda.";
     } else{
         $password = trim($_POST["password"]);
     }
     
-    // Validate credentials
     if(empty($username_err) && empty($password_err)){
-        // Prepare a select statement
         $sql = "SELECT id, username, password FROM users WHERE username = ?";
         
         if($stmt = $mysqli->prepare($sql)){
-            // Bind variables to the prepared statement as parameters
             $stmt->bind_param("s", $param_username);
             
-            // Set parameters
             $param_username = $username;
             
-            // Attempt to execute the prepared statement
             if($stmt->execute()){
-                // Store result
                 $stmt->store_result();
                 
-                // Check if username exists, if yes then verify password
-                if($stmt->num_rows == 1){                    
-                    // Bind result variables
+                if($stmt->num_rows == 1){         
                     $stmt->bind_result($id, $username, $hashed_password);
                     if($stmt->fetch()){
                         if(password_verify($password, $hashed_password)){
-                            // Password is correct, so start a new session
-                            // session_start(); // Session already started at the top
-                            
-                            // Store data in session variables
                             $_SESSION["loggedin"] = true;
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;                            
                             
-                            // Redirect user to dashboard
                             header("location: dashboard.php");
                             exit;
                         } else{
-                            // Password is not valid
                             $login_err = "Username atau password salah.";
                         }
                     }
                 } else{
-                    // Username doesn't exist
                     $login_err = "Username atau password salah.";
                 }
             } else{
                 $login_err = "Terjadi kesalahan sistem. Coba lagi nanti.";
             }
-
-            // Close statement
             $stmt->close();
         }
     }
-    
-    // Close connection
     $mysqli->close();
 }
 ?>
